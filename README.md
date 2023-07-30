@@ -27,6 +27,11 @@ https://www.mingw-w64.org/
 
 Após instalar as ferramentas necessárias, fazer os seguintes passos:
 
+Fazer o clone do projeto:
+```
+git clone https://github.com/lucasfturos/RayTracing.git && cd RayTracing/
+```
+E criar o arquivo de build, dando como exemplo o projeto Esfera/ 
 ```
 cmake -B build
 cd build/

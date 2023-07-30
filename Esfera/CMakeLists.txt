@@ -50,6 +50,16 @@ set(PROJECT_SOURCE                    # Directory of all source file
   src/main.cpp 
 )
 
+# List all the image files
+set(RESOURCES_DIRECTORY 
+  "${CMAKE_SOURCE_DIR}/img"
+)
+
+# Copy the entire img directory to the binary directory during build
+file(COPY ${RESOURCES_DIRECTORY} 
+  DESTINATION ${CMAKE_BINARY_DIR}
+)
+
 # Add executable target with source and header files listed in 
 # PROJECT_HEADER and PROJECT_SOURCE variable
 add_executable(${PROJECT_NAME} 
