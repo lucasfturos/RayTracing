@@ -6,7 +6,7 @@ void Render::run() {
 
     // Camera
     // point3 lookfrom(26, 3, 6);
-    point3 lookfrom(13, 2, 3);
+    point3 lookfrom(9, 2, 3);
     // point3 lookfrom(0, 0, 1); // visão de frente
     //  point3 lookfrom(3, 3, 2); // Visão da diagonal
     //  Visão do observador
