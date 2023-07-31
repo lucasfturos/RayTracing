@@ -1,14 +1,17 @@
 #include "bvh.hpp"
 
-bool box_x_compare(const shared_ptr<hittable> a, const shared_ptr<hittable> b) {
+bool box_x_compare(const shared_ptr<hittable> &a,
+                   const shared_ptr<hittable> &b) {
     return box_compare(a, b, 0);
 }
 
-bool box_y_compare(const shared_ptr<hittable> a, const shared_ptr<hittable> b) {
+bool box_y_compare(const shared_ptr<hittable> &a,
+                   const shared_ptr<hittable> &b) {
     return box_compare(a, b, 1);
 }
 
-bool box_z_compare(const shared_ptr<hittable> a, const shared_ptr<hittable> b) {
+bool box_z_compare(const shared_ptr<hittable> &a,
+                   const shared_ptr<hittable> &b) {
     return box_compare(a, b, 2);
 }
 
@@ -18,9 +21,10 @@ bvh_node::bvh_node(std::vector<shared_ptr<hittable>> src_objects, size_t start,
         src_objects}; // Create a modifiable array of the source scene objects
 
     int axis{random_int(0, 2)};
-    auto comparator = (axis == 0)   ? box_x_compare
-                      : (axis == 1) ? box_y_compare
-                                    : box_z_compare;
+    auto comparator = [axis](const std::shared_ptr<hittable> &a,
+                             const std::shared_ptr<hittable> &b) {
+        return box_compare(a, b, axis);
+    };
 
     size_t object_span = end - start;
 

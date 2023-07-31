@@ -15,9 +15,9 @@ class Render {
     // Imagem
     // const double aspect_ratio{3.0 / 2.0}; // Proporção 3:2
     const double aspect_ratio{1.0}; // Proporção 1:1
-    const int image_width{40}; // Limite da função do run_term é 200 image_width
+    const int image_width{400}; // Limite da função do run_term é 200 image_width
     const int image_height{static_cast<int>(image_width / aspect_ratio)};
-    const int samples_per_pixel{100};
+    const int samples_per_pixel{200};
     const int max_depth{50};
 
     // Camera
@@ -37,6 +37,7 @@ class Render {
     shared_ptr<lambertian> red;
     shared_ptr<lambertian> white;
     shared_ptr<lambertian> green;
+    shared_ptr<lambertian> blue;
     shared_ptr<diffuse_light> light;
 
     // Caixa de Cornell

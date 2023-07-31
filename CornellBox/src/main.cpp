@@ -2,6 +2,6 @@
 
 int main() {
     auto render{make_shared<Render>()};
-    // render->run();
-    render->run_term();
+    render->run();
+    //render->run_term();
 }

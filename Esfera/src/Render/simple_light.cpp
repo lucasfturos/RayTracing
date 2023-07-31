@@ -5,14 +5,15 @@ hittable_list Render::simple_light() {
 
     material_metal = make_shared<metal>(color(.8, .8, .8), .0);
     auto pertext{make_shared<noise_texture>(4)};
-    objects.add(make_shared<sphere>(point3(0, -1000, 0), 1000,
-                                    make_shared<lambertian>(pertext)));
-    objects.add(make_shared<sphere>(point3(0, 2, 0), 2,
+    box_ = make_shared<box>(point3(-2, -0.5, -2), point3(2, -0.6, 2),
+                            material_metal);
+    objects.add(box_);
+    objects.add(make_shared<sphere>(point3(0, 0, 0), .5,
                                     make_shared<lambertian>(pertext)));
 
     difflight = make_shared<diffuse_light>(color(4, 4, 4));
-    objects.add(make_shared<xy_rect>(3, 5, 1, 3, -2, difflight));
+    objects.add(
+        make_shared<box>(point3(-1, 0.7, -1), point3(1, -0.6, 1), difflight));
 
     return objects;
 }
-

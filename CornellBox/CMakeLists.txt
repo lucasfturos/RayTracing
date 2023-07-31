@@ -3,12 +3,12 @@ cmake_minimum_required(VERSION 3.5)  # CMake version check
 # --- Project settings ---------------------------------------------------------
 
 set(PROJECT_NAME                      # Define all project info
-  CornellBoxRayTracing
+  CornellBox
   LANGUAGES CXX
   VERSION 1.0.0
 )
 
-project(${PROJECT_NAME})              # Create project "CornellBoxRayTracing"
+project(${PROJECT_NAME})              # Create project "CornellBox"
 
 set(CMAKE_CXX_STANDARD 17)            # Enable c++11 standard
 

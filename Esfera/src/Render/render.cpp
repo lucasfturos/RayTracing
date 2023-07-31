@@ -6,22 +6,22 @@ void Render::run() {
 
     // Camera
     // point3 lookfrom(26, 3, 6);
-    point3 lookfrom(9, 2, 3);
-    // point3 lookfrom(0, 0, 1); // visão de frente
+    // point3 lookfrom(9, 2, 3);
+    point3 lookfrom(0, 0, 3); // visão de frente
     //  point3 lookfrom(3, 3, 2); // Visão da diagonal
     //  Visão do observador
     point3 lookat(0, 0, 0);
     vec3 vup(0, 1, 0);
     color background(0, 0, 0);
-    background = color(0.7, 0.7, 0.7);
+    // background = color(0.7, 0.7, 0.7);
 
     cam = make_shared<camera>(lookfrom, lookat, vup, vfov, aspect_ratio);
 
     // World
     // auto world{random_scene()};
     // auto world{single_scene()};
-    auto world{solar_scene()};
-    //  auto world{simple_light()};
+    // auto world{solar_scene()};
+    auto world{simple_light()};
 
     // Renderização
     std::cout << "P3\n" << image_width << ' ' << image_height << "\n255\n";
@@ -49,19 +49,19 @@ void Render::run_term() {
     color_ptr = make_shared<Color>();
 
     // Camera
-    point3 lookfrom(0, 0, 1); // visão de frente
+    point3 lookfrom(0, 0, 3); // visão de frente
     point3 lookat(0, 0, 0);   //  Visão do observador
     vec3 vup(0, 1, 0);
     color background(0, 0, 0); // Background do céu
-    background = color(.0, 0.749, 1.0);
+    //background = color(.0, 0.749, 1.0);
 
     cam = make_shared<camera>(lookfrom, lookat, vup, vfov, aspect_ratio);
 
     // World
     // auto world{random_scene()};
-    auto world{single_scene()};
+    // auto world{single_scene()};
     // auto world{solar_scene()};
-    //  auto world{simple_light()};
+    auto world{simple_light()};
 
     // Renderização
     for (auto j{image_height - 1}; j >= 0; --j) {
