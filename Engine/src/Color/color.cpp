@@ -9,9 +9,12 @@ int Color::distance_hsl(int i, int h, int s, int l) {
 
 int Color::find_ansi_hsl(int h, int s, int l) {
     int index{0};
+    int min_distance{std::numeric_limits<int>::max()};
 
     for (int i{}; i < 256; ++i) {
-        if (distance_hsl(i, h, s, l) < distance_hsl(index, h, s, l)) {
+        int distance{distance_hsl(i, h, s, l)};
+        if (distance < min_distance) {
+            min_distance = distance;
             index = i;
         }
     }
@@ -19,9 +22,9 @@ int Color::find_ansi_hsl(int h, int s, int l) {
 }
 
 void Color::rgb_to_hsl(int r, int g, int b, int *h, int *s, int *l) {
-    float r_{r / 255.0f};
-    float g_{g / 255.0f};
-    float b_{b / 255.0f};
+    float r_=r / 255.0f;
+    float g_=g / 255.0f;
+    float b_=b / 255.0f;
 
     float epsilon{1e-6};
     float cmax{r_};
@@ -74,35 +77,19 @@ void Color::rgb_to_hsl(int r, int g, int b, int *h, int *s, int *l) {
 
 void Color::run_color(std::ostream &out, color pixel_color,
                       int samples_per_pixel) {
-    for (int i{0}; i < 256; ++i) {
-        auto r{table_rgb[i][0]};
-        auto g{table_rgb[i][1]};
-        auto b{table_rgb[i][2]};
-        // Divide a cor pelo número de amostras.
-        auto scale{1.0 / samples_per_pixel};
-        r *= scale;
-        g *= scale;
-        b *= scale;
-        int h = table_hsl[i][0];
-        int s = table_hsl[i][1];
-        int l = table_hsl[i][2];
-        rgb_to_hsl(r, g, b, &h, &s, &l);
-    }
-
-    auto r{pixel_color.x()};
-    auto g{pixel_color.y()};
-    auto b{pixel_color.z()};
-    // Divide a cor pelo número de amostras.
-    auto scale{1.0 / samples_per_pixel};
-    r *= scale;
-    g *= scale;
-    b *= scale;
+    auto scale = 1.0 / samples_per_pixel;
+    auto r = pixel_color.x() * scale;
+    auto g = pixel_color.y() * scale;
+    auto b = pixel_color.z() * scale;
 
     int h, s, l;
     rgb_to_hsl(static_cast<int>(255 * clamp(r, 0.0, 0.999)),
                static_cast<int>(255 * clamp(g, 0.0, 0.999)),
                static_cast<int>(255 * clamp(b, 0.0, 0.999)), &h, &s, &l);
-    out << "\e[48;5;" << find_ansi_hsl(h, s, l) << "m  ";
+
+    int ansi_index = find_ansi_hsl(h, s, l);
+    auto chosen_color = table_rgb[ansi_index];
+    out << "\033[48;5;" << ansi_index << "m  ";
 }
 
 void Color::write_color(std::ostream &out, color pixel_color,

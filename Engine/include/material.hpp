@@ -1,3 +1,5 @@
+#pragma once
+
 #include "../src/HitTable/hittable.hpp"
 #include "../src/Texture/texture.hpp"
 #include "constante.hpp"

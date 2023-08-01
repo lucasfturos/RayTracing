@@ -76,6 +76,6 @@ void Render::run_term() {
             }
             color_ptr->run_color(std::cout, pixel_color, samples_per_pixel);
         }
-        std::cout << "\e[0m" << '\n';
+        std::cout << "\033[0m" << '\n';
     }
 }
