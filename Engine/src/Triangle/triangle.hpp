@@ -13,7 +13,7 @@ class Triangle : public hittable {
         : v{v0, v1, v2}, mat_ptr(mat) {
         vec3 e1 = v[1] - v[0];
         vec3 e2 = v[2] - v[0];
-        surface_normal = cross(e2, e1);
+        surface_normal = cross(e1, e2);
     }
 
     virtual bool hit(const ray &r, double t_min, double t_max,

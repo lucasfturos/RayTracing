@@ -5,7 +5,7 @@ void Render::run() {
     color_ptr = make_shared<Color>();
 
     // Camera
-    // point3 lookfrom(26, 3, 6);
+    // point3 lookfrom(9, 3, 6);
     // point3 lookfrom(9, 2, 3);
     point3 lookfrom(0, 0, 3); // visão de frente
     //  point3 lookfrom(3, 3, 2); // Visão da diagonal
@@ -18,8 +18,8 @@ void Render::run() {
     cam = make_shared<camera>(lookfrom, lookat, vup, vfov, aspect_ratio);
 
     // World
-     auto world{single_scene()};
-    //auto world{simple_light()};
+    auto world{single_scene()};
+    // auto world{simple_light()};
 
     // Renderização
     std::cout << "P3\n" << image_width << ' ' << image_height << "\n255\n";

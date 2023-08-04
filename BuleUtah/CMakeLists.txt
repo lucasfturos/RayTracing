@@ -27,6 +27,7 @@ set(PROJECT_HEADER                    # Directory of all header file
   ../Engine/include/aabb.hpp
   ../Engine/include/vec3.hpp 
   ../Engine/include/ray.hpp
+  ../Engine/src/BVH/bvh.hpp
   # HEADER do Bule 
   src/Render/render.hpp
 )
@@ -40,6 +41,7 @@ set(PROJECT_SOURCE                    # Directory of all source file
   ../Engine/src/Texture/texture.cpp
   ../Engine/src/Color/color.cpp
   ../Engine/src/Rect/rect.cpp
+  ../Engine/src/BVH/bvh.cpp
   # SOURCE do Bule 
   src/Render/simple_light.cpp
   src/Render/single_scene.cpp
