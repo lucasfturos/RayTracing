@@ -5,15 +5,17 @@
 #include "../../include/material.hpp"
 #include "../../include/ray.hpp"
 #include "../HitTable/hittable.hpp"
+#include "../HitTable/hittable_list.hpp"
+#include "../Rect/rect.hpp"
 
 class Triangle : public hittable {
   public:
     Triangle(const vec3 &v0, const vec3 &v1, const vec3 &v2,
              shared_ptr<material> mat)
-        : v{v0, v1, v2}, mat_ptr(mat) {
-        vec3 e1 = v[1] - v[0];
-        vec3 e2 = v[2] - v[0];
-        surface_normal = cross(e1, e2);
+        : v0(v0), v1(v1), v2(v2), mat_ptr(mat) {
+        vec3 e1 = v1 - v0;
+        vec3 e2 = v2 - v0;
+        surface_normal = unit_vector(cross(e2, e1));
     }
 
     virtual bool hit(const ray &r, double t_min, double t_max,
@@ -23,7 +25,7 @@ class Triangle : public hittable {
                               aabb &output_box) const override;
 
   private:
-    vec3 v[3];
+    vec3 v0, v1, v2;
     vec3 surface_normal;
     shared_ptr<material> mat_ptr;
 };
@@ -42,7 +44,7 @@ class NormalTriangle : public hittable {
                               aabb &output_box) const override;
 
   private:
-    vec3 vec[3];
-    vec3 normals[3];
+    std::array<vec3, 3> vec;
+    std::array<vec3, 3> normals;
     shared_ptr<material> mat_ptr;
 };

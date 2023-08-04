@@ -12,8 +12,8 @@ void Render::run() {
     //  Visão do observador
     point3 lookat(0, 0, 0);
     vec3 vup(0, 1, 0);
-    color background(0, 0, 0);
-    background = color(0.7, 0.7, 0.7);
+    // color background(0, 0, 0);
+    color background(0.7, 0.7, 0.7);
 
     cam = make_shared<camera>(lookfrom, lookat, vup, vfov, aspect_ratio);
 
