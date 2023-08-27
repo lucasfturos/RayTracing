@@ -68,7 +68,10 @@ add_executable(${PROJECT_NAME}
   ${PROJECT_HEADER} 
   ${PROJECT_SOURCE}
 )
-
+find_package(Threads REQUIRED)
+target_link_libraries(${PROJECT_NAME}
+  PRIVATE Threads::Threads
+)
 # Specifies include directories to use when compiling a given target
 target_include_directories(${PROJECT_NAME} 
   PRIVATE src

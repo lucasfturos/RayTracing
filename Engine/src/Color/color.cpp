@@ -22,9 +22,9 @@ int Color::find_ansi_hsl(int h, int s, int l) {
 }
 
 void Color::rgb_to_hsl(int r, int g, int b, int *h, int *s, int *l) {
-    float r_=r / 255.0f;
-    float g_=g / 255.0f;
-    float b_=b / 255.0f;
+    float r_ = r / 255.0f;
+    float g_ = g / 255.0f;
+    float b_ = b / 255.0f;
 
     float epsilon{1e-6};
     float cmax{r_};
@@ -94,11 +94,11 @@ void Color::run_color(std::ostream &out, color pixel_color,
 
 void Color::write_color(std::ostream &out, color pixel_color,
                         int samples_per_pixel) {
-    auto r{pixel_color.x()};
-    auto g{pixel_color.y()};
-    auto b{pixel_color.z()};
+    auto r = pixel_color.x();
+    auto g = pixel_color.y();
+    auto b = pixel_color.z();
     // Divide a cor pelo número de amostras.
-    auto scale{1.0 / samples_per_pixel};
+    auto scale = 1.0 / samples_per_pixel;
     r *= scale;
     g *= scale;
     b *= scale;

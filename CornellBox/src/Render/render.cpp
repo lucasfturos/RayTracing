@@ -6,9 +6,9 @@ void Render::run() {
 
     // Camera
     //  Visão da sala
-    point3 lookfrom(139, 139, -400);
+    point3 lookfrom(69.5, 69.5, -200);
     //  Visão do observador
-    point3 lookat(139, 139, 0);
+    point3 lookat(69.5, 69.5, 0);
     vec3 vup(0, 1, 0);
     color background(0, 0, 0);
     // background = color(0, 0, 0.1);
@@ -39,4 +39,3 @@ void Render::run() {
     }
     std::cerr << "\nTerminou" << '\n';
 }
-

@@ -11,18 +11,12 @@ const double pi{3.1415926535897932385};
 
 // Utility Functions
 
-inline double degrees_to_radians(double degrees) {
+template <typename T> inline T degrees_to_radians(T degrees) {
     return degrees * pi / 180.0;
 }
 
-inline double clamp(double x, double min, double max) {
-    if (x < min) {
-        return min;
-    }
-    if (x > max) {
-        return max;
-    }
-    return x;
+template <typename T> inline T clamp(T value, T min, T max) {
+    return (value < min) ? min : (value > max) ? max : value;
 }
 
 // Using

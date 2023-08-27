@@ -15,5 +15,6 @@ hittable_list Render::simple_light() {
     objects.add(
         make_shared<box>(point3(-1, 0.7, -1), point3(1, -0.6, 1), difflight));
 
+    
     return objects;
 }

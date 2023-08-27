@@ -21,6 +21,9 @@ color Render::ray_color(const ray &r, const color &background,
     if (!rec.mat_ptr->scatter(r, rec, attenuation, scattered)) {
         return emitted;
     }
+
+    color material_color = attenuation;
+
     return emitted +
-           attenuation * ray_color(scattered, background, world, depth - 1);
+           material_color * ray_color(scattered, background, world, depth - 1);
 }

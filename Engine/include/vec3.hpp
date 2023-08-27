@@ -76,7 +76,7 @@ class vec3 {
     }
 
   public:
-    double e[3];
+    std::vector<double> e{3};
 };
 
 // Tipos de aliases para vec3

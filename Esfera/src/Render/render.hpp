@@ -7,6 +7,8 @@
 #include "../../../Engine/src/Constant_Medium/constant_medium.hpp"
 #include "../../../Engine/src/HitTable/hittable_list.hpp"
 #include "../../../Engine/src/Sphere/sphere.hpp"
+#include <thread>
+#include <mutex>
 
 class Render {
   private:
@@ -17,7 +19,7 @@ class Render {
     const int image_width{
         600}; // Limite da função do run_term é 200 image_width
     const int image_height{static_cast<int>(image_width / aspect_ratio)};
-    const int samples_per_pixel{200};
+    const int samples_per_pixel{100};
     const int max_depth{50};
 
     // Camera
