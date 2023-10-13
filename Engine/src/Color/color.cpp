@@ -107,3 +107,22 @@ void Color::write_color(std::ostream &out, color pixel_color,
         << static_cast<int>(255 * clamp(g, 0.0, 0.999)) << ' '
         << static_cast<int>(255 * clamp(b, 0.0, 0.999)) << '\n';
 }
+
+void Color::write_color_SDL(SDL_Renderer *renderer, color pixel_color,
+                            int samples_per_pixel) {
+    auto r = pixel_color.x();
+    auto g = pixel_color.y();
+    auto b = pixel_color.z();
+
+    auto scale = 1.0 / samples_per_pixel;
+    r *= scale;
+    g *= scale;
+    b *= scale;
+
+    SDL_Color sdl_color = {static_cast<Uint8>(clamp(r, 0.0, 0.999) * 255),
+                           static_cast<Uint8>(clamp(g, 0.0, 0.999) * 255),
+                           static_cast<Uint8>(clamp(b, 0.0, 0.999) * 255), 255};
+
+    SDL_SetRenderDrawColor(renderer, sdl_color.r, sdl_color.g, sdl_color.b,
+                           sdl_color.a);
+}

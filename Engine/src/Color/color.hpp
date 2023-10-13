@@ -2,6 +2,7 @@
 
 #include "../../include/constante.hpp"
 #include "../HitTable/hittable.hpp"
+#include <SDL2/SDL.h>
 #include <cassert>
 #include <iostream>
 
@@ -149,6 +150,8 @@ class Color {
   public:
     void write_color(std::ostream &out, color pixel_color,
                      int samples_per_pixel);
+    void write_color_SDL(SDL_Renderer *renderer, color pixel_color,
+                         int samples_per_pixel);
 
     void run_color(std::ostream &out, color pixel_color, int samples_per_pixel);
 };

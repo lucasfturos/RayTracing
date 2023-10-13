@@ -1,6 +1,6 @@
 #include "render.hpp"
 
-hittable_list Render::random_scene() {
+bvh_node Render::random_scene() {
     // World
     hittable_list world;
 
@@ -33,5 +33,5 @@ hittable_list Render::random_scene() {
         }
     }
 
-    return world;
+    return bvh_node(world, 0.0, 1.0);
 }

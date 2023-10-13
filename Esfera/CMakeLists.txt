@@ -27,6 +27,7 @@ set(PROJECT_HEADER                    # Directory of all header file
   ../Engine/include/aabb.hpp
   ../Engine/include/vec3.hpp 
   ../Engine/src/Box/box.hpp
+  ../Engine/src/BVH/bvh.hpp
   ../Engine/include/ray.hpp
   # HEADER da Esfera 
   src/Render/render.hpp
@@ -42,6 +43,7 @@ set(PROJECT_SOURCE                    # Directory of all source file
   ../Engine/src/Color/color.cpp
   ../Engine/src/Rect/rect.cpp
   ../Engine/src/Box/box.cpp
+  ../Engine/src/BVH/bvh.cpp
   # SOURCE da Esfera 
   src/Render/random_scene.cpp
   src/Render/simple_light.cpp
@@ -68,9 +70,11 @@ add_executable(${PROJECT_NAME}
   ${PROJECT_HEADER} 
   ${PROJECT_SOURCE}
 )
-find_package(Threads REQUIRED)
+
+find_package(SDL2 REQUIRED)
+include_directories(${SDL2_INCLUDE_DIRS})
 target_link_libraries(${PROJECT_NAME}
-  PRIVATE Threads::Threads
+  PRIVATE ${SDL2_LIBRARIES}
 )
 # Specifies include directories to use when compiling a given target
 target_include_directories(${PROJECT_NAME} 
