@@ -1,6 +1,18 @@
 #include "render.hpp"
 
-Render::Render() {
+Render::Render(const bvh_node &root, int opc) : world(root) {
+    if (opc == 1) {
+        initSDL2();
+    }
+}
+
+Render::~Render() {
+    SDL_DestroyRenderer(ren);
+    SDL_DestroyWindow(win);
+    SDL_Quit();
+}
+
+void Render::initSDL2() {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         std::cerr << "Erro ao inicializar o SDL: " << SDL_GetError() << '\n';
         exit(EXIT_FAILURE);
@@ -25,12 +37,6 @@ Render::Render() {
     }
 }
 
-Render::~Render() {
-    SDL_DestroyRenderer(ren);
-    SDL_DestroyWindow(win);
-    SDL_Quit();
-}
-
 void Render::run() {
     // Color
     color_ptr = make_shared<Color>();
@@ -38,7 +44,7 @@ void Render::run() {
     // Camera
     // point3 lookfrom(26, 3, 6);
     // point3 lookfrom(13, 2, 3);
-    point3 lookfrom(0, 0, 2); // visão de frente
+    point3 lookfrom(0, 0, 5); // visão de frente
     //  point3 lookfrom(3, 3, 2); // Visão da diagonal
     //  Visão do observador
     point3 lookat(0, 0, 0);
@@ -47,12 +53,6 @@ void Render::run() {
     background = color(0.7, 0.7, 0.7);
 
     cam = make_shared<camera>(lookfrom, lookat, vup, vfov, aspect_ratio);
-
-    // World
-    // auto world{random_scene()};
-    auto world{single_scene()};
-    // auto world{solar_scene()};
-    //  auto world{simple_light()};
 
     // Janela
     bool quit = false;
@@ -97,7 +97,6 @@ void Render::run() {
                     */
 
                     // Renderiza no tamanho da janela
-
                     int x = static_cast<int>(u * (screen_width - 1));
                     int y = screen_height - 1 -
                             static_cast<int>(v * (screen_height - 1));
@@ -134,15 +133,6 @@ void Render::run_ppm() {
 
     cam = make_shared<camera>(lookfrom, lookat, vup, vfov, aspect_ratio);
 
-    // World
-    // auto world{random_scene()};
-    auto world{single_scene()};
-    // auto world{solar_scene()};
-    // auto world{simple_light()};
-
-    // auto bvh_tree =
-    //   make_shared<bvh_node>(world.objects, 0, world.objects.size(), 0, 1);
-
     // Renderização
     std::cout << "P3\n" << image_width << ' ' << image_height << "\n255\n";
 
@@ -161,7 +151,7 @@ void Render::run_ppm() {
             color_ptr->write_color(std::cout, pixel_color, samples_per_pixel);
         }
     }
-    std::cerr << "\nTerminou" << '\n';
+    std::cout << "\nTerminou" << '\n';
 }
 
 void Render::run_term() {
@@ -176,15 +166,6 @@ void Render::run_term() {
     background = color(.0, 0.749, 1.0);
 
     cam = make_shared<camera>(lookfrom, lookat, vup, vfov, aspect_ratio);
-
-    // World
-    // auto world{random_scene()};
-    auto world{single_scene()};
-    // auto world{solar_scene()};
-    //  auto world{simple_light()};
-
-    // auto bvh_tree =
-    //   make_shared<bvh_node>(world.objects, 0, world.objects.size(), 0, 1);
 
     // Renderização
     for (auto j{image_height - 1}; j >= 0; --j) {

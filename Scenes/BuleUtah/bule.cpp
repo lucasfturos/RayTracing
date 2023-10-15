@@ -1,7 +1,7 @@
-#include "render.hpp"
+#include "bule.hpp"
 #include "teapot.hpp"
 
-hittable_list Render::single_scene() {
+bvh_node BuleUtah::single_scene() {
     hittable_list world;
 
     auto material_triangle = make_shared<lambertian>(color(.55, .62, .27));
@@ -26,5 +26,5 @@ hittable_list Render::single_scene() {
     world.add(make_shared<bvh_node>(triangles, 0, triangles.size(), 0, 10));
     world.add(box_);
 
-    return world;
+    return bvh_node(world, 0.0, 1.0);
 }

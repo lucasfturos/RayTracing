@@ -12,7 +12,7 @@ Sobre os arquivos:
 
 Também será implementado métodos de paralelismo para tornar a renderização mais eficiente, também foi implementado um suporte para renderizar no Terminal, e logo irei organizar melhor as pastas do conteúdo do projeto. Foi feito no Linux.
 
-## Instalação e como usar
+## Instalação
 
 Instalação no Linux para as ferramentas do C e C++ (Debian). 
 Também será instalado a biblioteca [stb](https://github.com/nothings/stb), que é usada para pegar imagens para as texturas dos objeto:
@@ -35,16 +35,16 @@ Fazer o clone do projeto:
 ```
 git clone https://github.com/lucasfturos/RayTracing.git && cd RayTracing/
 ```
-E criar o arquivo de build, dando como exemplo o projeto Esfera/ 
+E criar o arquivo de build 
 ```
 cmake -B build
 cd build/
 make
-./EsferaRayTracing >> output.ppm
-eog output.ppm
 ```
 
-O comando eog é um programa de visualização de imagens do Gnome, caso não tenha use um visualizador de imagens compatível com o formato .ppm.
+## Como Usar
+
+
 
 ## Créditos
 

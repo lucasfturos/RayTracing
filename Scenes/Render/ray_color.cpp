@@ -1,7 +1,7 @@
 #include "render.hpp"
 
 color Render::ray_color(const ray &r, const color &background,
-                        const hittable &world, int depth) {
+                        const bvh_node &root, int depth) {
     hit_record rec;
     // Se exceder o limite do rebatimento dos pacotes de luz, não haverá mais
     // coleta de luz.
@@ -10,7 +10,7 @@ color Render::ray_color(const ray &r, const color &background,
     }
 
     // Se o raio não atingir nada, retorna a cor de fundo.
-    if (!world.hit(r, .000001, infinity, rec)) {
+    if (!root.hit(r, .0001, infinity, rec)) {
         return background;
     }
 
@@ -22,5 +22,5 @@ color Render::ray_color(const ray &r, const color &background,
         return emitted;
     }
     return emitted +
-           attenuation * ray_color(scattered, background, world, depth - 1);
+           attenuation * ray_color(scattered, background, root, depth - 1);
 }

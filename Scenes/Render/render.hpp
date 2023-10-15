@@ -1,13 +1,12 @@
 #pragma once
 
-#include "../../../Engine/include/camera.hpp"
-#include "../../../Engine/include/perlin.hpp"
-#include "../../../Engine/src/BVH/bvh.hpp"
-#include "../../../Engine/src/Box/box.hpp"
-#include "../../../Engine/src/Color/color.hpp"
-#include "../../../Engine/src/Constant_Medium/constant_medium.hpp"
-#include "../../../Engine/src/HitTable/hittable_list.hpp"
-#include "../../../Engine/src/Sphere/sphere.hpp"
+#include "../../Engine/include/camera.hpp"
+#include "../../Engine/include/perlin.hpp"
+#include "../../Engine/src/BVH/bvh.hpp"
+#include "../../Engine/src/Box/box.hpp"
+#include "../../Engine/src/Color/color.hpp"
+#include "../../Engine/src/Constant_Medium/constant_medium.hpp"
+#include "../../Engine/src/HitTable/hittable_list.hpp"
 #include <SDL2/SDL.h>
 
 class Render {
@@ -20,6 +19,7 @@ class Render {
     // SDL2
     SDL_Window *win;
     SDL_Renderer *ren;
+    void initSDL2();
 
     // Imagem
     const double aspect_ratio{3.0 / 2.0}; // Proporção 3:2
@@ -41,25 +41,11 @@ class Render {
     color ray_color(const ray &r, const color &background, const bvh_node &root,
                     int depth);
 
-    // Material
-    shared_ptr<metal> material_metal;
-    shared_ptr<diffuse_light> difflight;
-    shared_ptr<dielectric> material_dieletric;
-    shared_ptr<lambertian> material_lambertian;
-    shared_ptr<lambertian> material_lambertian_checker;
-    shared_ptr<lambertian> material_lambertian_pertext;
-
-    // Caixa
-    shared_ptr<hittable> box_;
-
-    // Esferas
-    bvh_node random_scene();
-    bvh_node single_scene();
-    bvh_node solar_scene();
-    bvh_node simple_light();
+    // Objeto
+    bvh_node world;
 
   public:
-    Render();
+    Render(const bvh_node &root, int opc);
     ~Render();
     void run();
     void run_ppm();
