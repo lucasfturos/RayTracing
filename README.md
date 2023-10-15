@@ -44,7 +44,31 @@ make
 
 ## Como Usar
 
+O sistema tem as seguintes opções de objetos:
 
+- Bule: Bule de Utah
+- Esfera: Esfera
+- Room: CornellBox
+
+E as seguintes formas de visualização:
+
+- SDL: Janela de visualização
+- PPM: Renderiza em uma imagem
+- Term: Renderiza no terminal
+
+Para usar é só usar esse dessa forma:
+
+```
+./Ray Objeto Visualizar
+```
+
+Exemplos:
+
+```
+./Ray Bule SDL
+./Ray Bule PPM > out.ppm
+./Ray Bule Term
+```
 
 ## Créditos
 
