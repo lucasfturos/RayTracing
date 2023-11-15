@@ -14,57 +14,62 @@ set(CMAKE_CXX_STANDARD 14)            # Enable c++14 standard
 
 set(PROJECT_HEADER                    # Directory of all header file
   # HEADER da Engine includes
-  Engine/include/constante.hpp
-  Engine/include/material.hpp
-  Engine/include/camera.hpp
-  Engine/include/perlin.hpp
-  Engine/include/aabb.hpp
-  Engine/include/vec3.hpp 
-  Engine/include/ray.hpp
+  src/Engine/include/constante.hpp
+  src/Engine/include/material.hpp
+  src/Engine/include/camera.hpp
+  src/Engine/include/perlin.hpp
+  src/Engine/include/aabb.hpp
+  src/Engine/include/vec3.hpp 
+  src/Engine/include/ray.hpp
   # HEADER da Engine src
-  Engine/src/Constant_Medium/constant_medium.hpp
-  Engine/src/HitTable/hittable_list.hpp
-  Engine/src/HitTable/hittable.hpp
-  Engine/src/Triangle/triangle.hpp
-  Engine/src/Texture/texture.hpp
-  Engine/src/Sphere/sphere.hpp
-  Engine/src/Color/color.hpp
-  Engine/src/Rect/rect.hpp
-  Engine/src/Box/box.hpp
-  Engine/src/BVH/bvh.hpp
+  src/Engine/src/Constant_Medium/constant_medium.hpp
+  src/Engine/src/HitTable/hittable_list.hpp
+  src/Engine/src/HitTable/hittable.hpp
+  src/Engine/src/Triangle/triangle.hpp
+  src/Engine/src/ReadObj/read_obj.hpp
+  src/Engine/src/Texture/texture.hpp
+  src/Engine/src/Sphere/sphere.hpp
+  src/Engine/src/Color/color.hpp
+  src/Engine/src/Torus/torus.hpp
+  src/Engine/src/Rect/rect.hpp
+  src/Engine/src/Box/box.hpp
+  src/Engine/src/BVH/bvh.hpp
   # HEADER Scenes 
-  Scenes/CornellBox/cornell_box.hpp
-  Scenes/BuleUtah/teapot.hpp
-  Scenes/Render/render.hpp
-  Scenes/BuleUtah/bule.hpp
-  Scenes/Esfera/esfera.hpp
+  src/Scenes/CornellBox/cornell_box.hpp
+  src/Scenes/Object/teapot.hpp
+  src/Scenes/Render/render.hpp
+  src/Scenes/Object/obj.hpp
+  src/Scenes/Esfera/esfera.hpp
 )
 
 set(PROJECT_SOURCE                    # Directory of all source file
   # SOURCE da Engine
-  Engine/src/Constant_Medium/constant_medium.cpp
-  Engine/src/HitTable/hittable_list.cpp
-  Engine/src/HitTable/hittable.cpp
-  Engine/src/Triangle/triangle.cpp
-  Engine/src/Texture/texture.cpp
-  Engine/src/Sphere/sphere.cpp
-  Engine/src/Color/color.cpp
-  Engine/src/Rect/rect.cpp
-  Engine/src/Box/box.cpp
-  Engine/src/BVH/bvh.cpp
+  src/Engine/src/Constant_Medium/constant_medium.cpp
+  src/Engine/src/HitTable/hittable_list.cpp
+  src/Engine/src/HitTable/hittable.cpp
+  src/Engine/src/Triangle/triangle.cpp
+  src/Engine/src/ReadObj/read_obj.cpp
+  src/Engine/src/Texture/texture.cpp
+  src/Engine/src/Sphere/sphere.cpp
+  src/Engine/src/Color/color.cpp
+  src/Engine/src/Torus/torus.cpp
+  src/Engine/src/Rect/rect.cpp
+  src/Engine/src/Box/box.cpp
+  src/Engine/src/BVH/bvh.cpp
   # SOURCE Scenes
-  Scenes/Render/render.cpp
-  Scenes/Esfera/esfera.cpp
-  Scenes/BuleUtah/bule.cpp
-  Scenes/Render/ray_color.cpp
-  Scenes/CornellBox/cornell_box.cpp
+  src/Scenes/Object/obj.cpp
+  src/Scenes/Render/render.cpp
+  src/Scenes/Esfera/esfera.cpp
+  src/Scenes/Render/ray_color.cpp
+  src/Scenes/CornellBox/cornell_box.cpp
   # SOURCE main
-  main.cpp 
+  src/main.cpp 
 )
 
 # List all the image files
 set(RESOURCES_DIRECTORY 
-  "${CMAKE_SOURCE_DIR}/Scenes/Esfera/img"
+  "${CMAKE_SOURCE_DIR}/img"
+  "${CMAKE_SOURCE_DIR}/obj"
 )
 
 # Copy the entire img directory to the binary directory during build
@@ -86,8 +91,7 @@ target_link_libraries(${PROJECT_NAME}
 )
 # Specifies include directories to use when compiling a given target
 target_include_directories(${PROJECT_NAME} 
-  PRIVATE Scenes
-  PRIVATE Engine/include
+  PRIVATE src 
 )
 
 # ------------------------------------------------------------------------------

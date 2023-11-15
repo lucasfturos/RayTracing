@@ -81,3 +81,4 @@ Aqui o link direto para os livros:
 
 O Suporte para renderizar as imagens no terminal foi feito utilizando como base o vídeo [3D ASCII with Colors](https://youtu.be/M-sIyi9VMSU) do canal [Tsoding Daily](https://www.youtube.com/@TsodingDaily).
 
+[Iwein Bau - ThreadPool](https://github.com/iweinbau/Ray-Tracing/tree/master/Ray%20tracing/ThreadPool)
