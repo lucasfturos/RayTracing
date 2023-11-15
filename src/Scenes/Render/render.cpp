@@ -44,8 +44,11 @@ void Render::run() {
     // Camera
     // point3 lookfrom(26, 3, 6);
     // point3 lookfrom(13, 2, 3);
-    point3 lookfrom(0, 0, 3); // visão de frente
-    //  point3 lookfrom(3, 3, 2); // Visão da diagonal
+    point3 lookfrom(0, 0, 30); // visão de frente
+    // point3 lookfrom(3, 3, 2); // Visão da diagonal
+    // point3 lookfrom(15, 0, 30); // Posição da câmera para visualização
+    // diagonal
+
     //  Visão do observador
     point3 lookat(0, 0, 0);
     vec3 vup(0, 1, 0);

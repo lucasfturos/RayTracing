@@ -28,7 +28,7 @@ bvh_node Esfera::single_scene() {
                             material_lambertian);
     // world.add(box_);
     //  Objeto no centro
-    world.add(make_shared<torus>(point3(.0, .0, -1), 1.0, 1.0,
+    world.add(make_shared<torus>(point3(.0, .0, -1), 10.0, 5.0,
                                  material_lambertian));
     // Objeto a esquerda
     // world.add(make_shared<sphere>(point3(-1.0, .0, -1.0), .5, difflight));

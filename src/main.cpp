@@ -17,7 +17,7 @@ int main(int argc, char *argv[]) {
         auto room{make_shared<CornellBox>()};
         auto obj_read{make_shared<ReadObj>("obj/teapot.obj")};
         unordered_map<std::string, int> options_scenes{
-            {"Esfera", 1},
+            {"Simple", 1},
             {"Room", 2},
             {"Obj", 3},
         };

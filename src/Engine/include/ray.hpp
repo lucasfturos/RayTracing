@@ -13,6 +13,7 @@ class ray {
     double time() const { return tm; }
 
     point3 at(double t) const { return orig + t * dir; }
+    point3 operator()(const double t) const { return orig + t * dir; }
 
   public:
     point3 orig;
