@@ -11,8 +11,8 @@ Object::Object(const std::string &filepath) {
 bvh_node Object::single_scene() {
     hittable_list world;
 
-    // auto material_triangle = make_shared<lambertian>(color(.55, .62, .27));
-    auto material_triangle = make_shared<metal>(color(.7, .7, .7), 0);
+    auto material_triangle = make_shared<lambertian>(color(.55, .62, .27));
+    // auto material_triangle = make_shared<metal>(color(.7, .7, .7), 0);
     // auto material_triangle = make_shared<dielectric>(0.2);
     auto material_ground = make_shared<lambertian>(color(.8, .8, .8));
     // auto box_ = make_shared<box>(point3(-2, -0.5, -2), point3(2, -0.6, 2),

@@ -1,7 +1,7 @@
-#include "Scenes/CornellBox/cornell_box.hpp"
-#include "Scenes/Esfera/esfera.hpp"
-#include "Scenes/Object/obj.hpp"
-#include "Scenes/Render/render.hpp"
+#include "CornellBox/cornell_box.hpp"
+#include "Esfera/esfera.hpp"
+#include "Object/obj.hpp"
+#include "Render/render.hpp"
 
 using std::vector;
 

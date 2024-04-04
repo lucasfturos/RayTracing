@@ -1,12 +1,8 @@
 #pragma once
 
 #include "../../Engine/include/camera.hpp"
-#include "../../Engine/include/perlin.hpp"
 #include "../../Engine/src/BVH/bvh.hpp"
-#include "../../Engine/src/Box/box.hpp"
 #include "../../Engine/src/Color/color.hpp"
-#include "../../Engine/src/Constant_Medium/constant_medium.hpp"
-#include "../../Engine/src/HitTable/hittable_list.hpp"
 #include <SDL2/SDL.h>
 
 class Render {
@@ -29,7 +25,7 @@ class Render {
     // const double aspect_ratio{1.0}; // Proporção 1:1
     // const double aspect_ratio{16.0 / 9.0}; // Proporção 16:9
     const int image_width{
-        300}; // Limite da função do run_term é 200 image_width
+        720}; // Limite da função do run_term é 200 image_width
     const int image_height{static_cast<int>(image_width / aspect_ratio)};
     const int samples_per_pixel{100};
     const int max_depth{50};

@@ -1,3 +1,5 @@
+# ------------------------------------------------------------------------------
+
 cmake_minimum_required(VERSION 3.5)  # CMake version check
 
 # --- Project settings ---------------------------------------------------------
@@ -30,5 +32,6 @@ add_compile_options(
 
 # Add subdirectories for source file
 add_subdirectory(src)
+add_subdirectory(Engine)
 
 # ------------------------------------------------------------------------------

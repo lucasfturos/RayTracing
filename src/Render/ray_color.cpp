@@ -1,4 +1,5 @@
 #include "render.hpp"
+#include "../../Engine/include/material.hpp"
 
 color Render::ray_color(const ray &r, const color &background,
                         const bvh_node &root, int depth) {

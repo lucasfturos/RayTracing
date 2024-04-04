@@ -26,11 +26,11 @@ bvh_node Esfera::single_scene() {
     material_dieletric = make_shared<dielectric>(1.5);
 
     // Chão
-    box_ = make_shared<box>(point3(-2, -0.5, -2), point3(2, -0.6, 2),
-                            material_lambertian);
-    // world.add(box_);
+    box_ = make_shared<box>(point3(-2, -2.0, -2), point3(2, -1, 2),
+                            material_lambertian_checker);
+    world.add(box_);
     //  Objeto no centro
-    world.add(make_shared<sphere>(point3(0, -5, -1), 5, material_lambertian));
+    world.add(make_shared<sphere>(point3(0, -0.5, 0), 0.5, material_metal));
     // Objeto a esquerda
     // world.add(make_shared<sphere>(point3(-1.0, .0, -1.0), .5, difflight));
     // Objeto a direita
