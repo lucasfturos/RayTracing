@@ -16,8 +16,7 @@ set(CMAKE_CXX_STANDARD 20)            # Enable c++14 standard
 
 # List all the image files
 set(RESOURCES_DIRECTORY 
-  # "${CMAKE_SOURCE_DIR}/img"
-  "${CMAKE_SOURCE_DIR}/obj"
+  "${CMAKE_SOURCE_DIR}/assets"
 )
 
 # Copy the entire img directory to the binary directory during build

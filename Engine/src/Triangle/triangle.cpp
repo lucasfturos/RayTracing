@@ -1,11 +1,17 @@
 #include "triangle.hpp"
+#include <cmath>
 
 Triangle::Triangle(const vec3 &v0, const vec3 &v1, const vec3 &v2,
                    shared_ptr<material> mat)
     : v0(v0), v1(v1), v2(v2), mat_ptr(mat) {
     e1 = v1 - v0;
     e2 = v2 - v0;
+    normal = unit_vector(cross(e1, e2));
 }
+
+// Triangle::Triangle(const vec3 &v0, const vec3 &v1, const vec3 &v2,
+//                    const vec3 &normal, shared_ptr<material> mat)
+//     : v0(v0), v1(v1), v2(v2), normal(normal), mat_ptr(mat) {}
 
 bool Triangle::hit(const ray &r, double t_min, double t_max,
                    hit_record &rec) const {
@@ -14,7 +20,7 @@ bool Triangle::hit(const ray &r, double t_min, double t_max,
 
     double det = dot(e1, ray_cross_e2);
 
-    if (det > -eps && det < eps) {
+    if (fabs(det) > -eps && fabs(det) < eps) {
         return false;
     }
 
@@ -41,7 +47,7 @@ bool Triangle::hit(const ray &r, double t_min, double t_max,
 
     rec.t = t;
     rec.p = r.at(t);
-    rec.normal = unit_vector(cross(e1, e2));
+    rec.normal = normal;
     rec.mat_ptr = mat_ptr;
 
     return true;

@@ -3,7 +3,7 @@
 #include "../../Engine/src/Sphere/sphere.hpp"
 
 bvh_node Esfera::solar_scene() {
-    const char *filename = "img/earthmap.jpg";
+    const char *filename = "assets/img/earthmap.jpg";
     auto solar_texture{make_shared<image_texture>(filename)};
     auto solar_surface{make_shared<lambertian>(solar_texture)};
     auto globe{make_shared<sphere>(point3(0, 0, 0), 2, solar_surface)};

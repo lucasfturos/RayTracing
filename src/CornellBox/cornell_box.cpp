@@ -63,7 +63,5 @@ bvh_node CornellBox::cornell_box() {
     box2 = make_shared<translate>(box2, vec3(65, 0, 32.5));
     objects.add(box2);
 
-    // Crie uma hierarquia BVH com as caixas
-
     return bvh_node(objects, 0.0, 1.0);
 }

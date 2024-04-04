@@ -12,7 +12,7 @@ int main(int argc, char *argv[]) {
         }
 
         shared_ptr<Render> render;
-        auto obj{make_shared<Object>("obj/teapot.obj")};
+        auto obj{make_shared<Object>("assets/obj/teapot.obj")};
         auto esfera{make_shared<Esfera>()};
         auto room{make_shared<CornellBox>()};
         unordered_map<std::string, int> options_scenes{

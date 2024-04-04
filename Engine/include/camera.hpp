@@ -1,6 +1,8 @@
 #pragma once
 
+#include "../src/BVH/bvh.hpp"
 #include "constante.hpp"
+#include "material.hpp"
 
 class camera {
   public:
@@ -25,6 +27,31 @@ class camera {
     ray get_ray(double s, double t) const {
         return ray(origin,
                    lower_left_corner + s * horizontal + t * vertical - origin);
+    }
+
+    color ray_color(const ray &r, const color &background, const bvh_node &root,
+                    int depth) {
+        hit_record rec;
+        // Se exceder o limite do rebatimento dos pacotes de luz, não haverá
+        // mais coleta de luz.
+        if (depth <= 0) {
+            return color(0, 0, 0);
+        }
+
+        // Se o raio não atingir nada, retorna a cor de fundo.
+        if (!root.hit(r, eps, infinity, rec)) {
+            return background;
+        }
+
+        ray scattered;
+        color attenuation;
+        color emitted = rec.mat_ptr->emitted(rec.u, rec.v, rec.p);
+
+        if (!rec.mat_ptr->scatter(r, rec, attenuation, scattered)) {
+            return emitted;
+        }
+        return emitted +
+               attenuation * ray_color(scattered, background, root, depth - 1);
     }
 
   private:

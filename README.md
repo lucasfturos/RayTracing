@@ -65,9 +65,9 @@ Para usar é só usar esse dessa forma:
 Exemplos:
 
 ```
-./Ray Bule SDL
-./Ray Bule PPM > out.ppm
-./Ray Bule Term
+./Ray Simple SDL
+./Ray Room PPM > out.ppm
+./Ray Obj Term
 ```
 
 ## Créditos

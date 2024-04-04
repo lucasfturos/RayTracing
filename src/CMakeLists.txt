@@ -2,10 +2,10 @@
 
 set(PROJECT_HEADER                    # Directory of all header file
   # HEADER Scenes 
-  CornellBox/cornell_box.hpp
-  Render/render.hpp
   Object/obj.hpp
   Esfera/esfera.hpp
+  Render/render.hpp
+  CornellBox/cornell_box.hpp
 )
 
 set(PROJECT_SOURCE                    # Directory of all source file
@@ -13,7 +13,6 @@ set(PROJECT_SOURCE                    # Directory of all source file
   Object/obj.cpp
   Render/render.cpp
   Esfera/esfera.cpp
-  Render/ray_color.cpp
   CornellBox/cornell_box.cpp
   # SOURCE main
   main.cpp 
