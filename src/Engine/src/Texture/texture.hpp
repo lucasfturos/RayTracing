@@ -16,7 +16,8 @@ class solid_color : public texture {
     solid_color(double red, double green, double blue)
         : solid_color(color(red, green, blue)) {}
 
-    virtual color value(double u, double v, const vec3 &p) const override {
+    virtual color value(double /* u */, double /* v */,
+                        const vec3 & /* p */) const override {
         return color_value;
     }
 
@@ -35,7 +36,7 @@ class checker_texture : public texture {
           odd(make_shared<solid_color>(c2)) {}
 
     virtual color value(double u, double v, const point3 &p) const override {
-        auto sines{sin(10 * p.x()) * sin(10 * p.y()) * sin(10 * p.z())};
+        auto sines{sin(10 * p.x) * sin(10 * p.y) * sin(10 * p.z)};
         if (sines < 0) {
             return odd->value(u, v, p);
         } else {
@@ -53,7 +54,8 @@ class noise_texture : public texture {
     noise_texture() {}
     noise_texture(double sc) : scale(sc) {}
 
-    virtual color value(double u, double v, const point3 &p) const override {
+    virtual color value(double /* u */, double /* v */,
+                        const point3 &p) const override {
         // Textura de Perlin - Interpolação usando vetores aleatórios nos pontos
         // da grade
         // return color(1, 1, 1) * 0.5 * (1.0 + noise.noise(scale *  p));
@@ -63,7 +65,7 @@ class noise_texture : public texture {
 
         // Textura de Perlin - Turbulência com ajuste da fase
         return color(1, 1, 1) * 0.5 *
-               (1 + sin(scale * p.z() + 10 * noise.turb(p)));
+               (1 + sin(scale * p.z + 10 * noise.turb(p)));
     }
 
   public:

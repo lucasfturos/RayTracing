@@ -44,7 +44,7 @@ void Render::run() {
     // Camera
     // point3 lookfrom(26, 3, 6);
     // point3 lookfrom(13, 2, 3);
-    point3 lookfrom(0, 0, 30); // visão de frente
+    point3 lookfrom(0, -3, 5); // visão de frente
     // point3 lookfrom(3, 3, 2); // Visão da diagonal
     // point3 lookfrom(15, 0, 30); // Posição da câmera para visualização
     // diagonal
@@ -63,16 +63,16 @@ void Render::run() {
     bool ren_complete = false;
     int current_scanline = 0;
 
-    int start_x = (screen_width - image_width) / 2;
-    int start_y = (screen_height - image_height) / 2;
+    // int start_x = (screen_width - image_width) / 2;
+    // int start_y = (screen_height - image_height) / 2;
 
     SDL_RenderClear(ren);
     while (!quit) {
         while (SDL_PollEvent(&event)) {
-            event.type == SDL_QUIT ? (quit = 1) : 0;
+            event.type == SDL_QUIT ? (quit = true) : 0;
             switch (event.key.keysym.sym) {
             case 'q':
-                quit = 1;
+                quit = true;
                 break;
             default:
                 break;
@@ -126,7 +126,7 @@ void Render::run_ppm() {
     // Camera
     // point3 lookfrom(26, 3, 6);
     // point3 lookfrom(13, 2, 3);
-    point3 lookfrom(0, 0, 2); // visão de frente
+    point3 lookfrom(0, 0, 5); // visão de frente
     //  point3 lookfrom(3, 3, 2); // Visão da diagonal
     //  Visão do observador
     point3 lookat(0, 0, 0);
@@ -183,6 +183,6 @@ void Render::run_term() {
             }
             color_ptr->run_color(std::cout, pixel_color, samples_per_pixel);
         }
-        std::cout << "\e[0m" << '\n';
+        std::cout << "\033[0m" << '\n';
     }
 }

@@ -1,9 +1,8 @@
 #pragma once
 
 #include "../../Engine/src/BVH/bvh.hpp"
-#include "../../Engine/src/Box/box.hpp"
-#include "../../Engine/src/ReadObj/read_obj.hpp"
-#include "../../Engine/src/Triangle/triangle.hpp"
+#include "../../Engine/src/ReadObjectFile/read_object_file.hpp"
+#include "../../Engine/include/material.hpp"
 
 class Object {
     // Material
@@ -11,8 +10,11 @@ class Object {
     shared_ptr<diffuse_light> difflight;
     shared_ptr<lambertian> material_lambertian;
 
+    shared_ptr<ReadObjectFile> read_object_ptr;
+
   public:
-    bvh_node single_scene(std::vector<vec3> vertices,
-                          std::vector<point3> faces);
+    Object(const std::string &filepath);
+
+    bvh_node single_scene();
     // bvh_node simple_light();
 };

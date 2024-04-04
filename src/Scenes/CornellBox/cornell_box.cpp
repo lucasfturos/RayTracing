@@ -1,4 +1,7 @@
 #include "cornell_box.hpp"
+#include "../../Engine/src/Box/box.hpp"
+#include "../../Engine/src/Constant_Medium/constant_medium.hpp"
+#include "../../Engine/src/Rect/rect.hpp"
 
 bvh_node CornellBox::cornell_smoke() {
     hittable_list objects;

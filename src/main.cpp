@@ -12,10 +12,9 @@ int main(int argc, char *argv[]) {
         }
 
         shared_ptr<Render> render;
-        auto obj{make_shared<Object>()};
+        auto obj{make_shared<Object>("obj/teapot.obj")};
         auto esfera{make_shared<Esfera>()};
         auto room{make_shared<CornellBox>()};
-        auto obj_read{make_shared<ReadObj>("obj/teapot.obj")};
         unordered_map<std::string, int> options_scenes{
             {"Simple", 1},
             {"Room", 2},
@@ -80,24 +79,15 @@ int main(int argc, char *argv[]) {
         case 3:
             switch (opc[1]) {
             case 1:
-                render = make_shared<Render>(
-                    obj->single_scene(obj_read->getVertices(),
-                                      obj_read->getFaces()),
-                    1);
+                render = make_shared<Render>(obj->single_scene(), 1);
                 render->run();
                 break;
             case 2:
-                render = make_shared<Render>(
-                    obj->single_scene(obj_read->getVertices(),
-                                      obj_read->getFaces()),
-                    0);
+                render = make_shared<Render>(obj->single_scene(), 0);
                 render->run_ppm();
                 break;
             case 3:
-                render = make_shared<Render>(
-                    obj->single_scene(obj_read->getVertices(),
-                                      obj_read->getFaces()),
-                    0);
+                render = make_shared<Render>(obj->single_scene(), 0);
                 render->run_term();
                 break;
             default:

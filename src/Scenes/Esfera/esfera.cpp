@@ -1,4 +1,6 @@
 #include "esfera.hpp"
+#include "../../Engine/src/Box/box.hpp"
+#include "../../Engine/src/Sphere/sphere.hpp"
 
 bvh_node Esfera::solar_scene() {
     const char *filename = "img/earthmap.jpg";
@@ -28,8 +30,7 @@ bvh_node Esfera::single_scene() {
                             material_lambertian);
     // world.add(box_);
     //  Objeto no centro
-    world.add(make_shared<torus>(point3(.0, .0, -1), 10.0, 5.0,
-                                 material_lambertian));
+    world.add(make_shared<sphere>(point3(0, -5, -1), 5, material_lambertian));
     // Objeto a esquerda
     // world.add(make_shared<sphere>(point3(-1.0, .0, -1.0), .5, difflight));
     // Objeto a direita

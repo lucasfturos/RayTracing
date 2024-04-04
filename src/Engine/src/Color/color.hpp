@@ -1,7 +1,6 @@
 #pragma once
 
-#include "../../include/constante.hpp"
-#include "../HitTable/hittable.hpp"
+#include "../../include/vec3.hpp"
 #include <SDL2/SDL.h>
 #include <cassert>
 #include <iostream>

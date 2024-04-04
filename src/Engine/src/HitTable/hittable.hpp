@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../../include/aabb.hpp"
-#include "../../include/constante.hpp"
 
 class material;
 
@@ -24,7 +23,7 @@ class hittable {
     virtual bool hit(const ray &r, double t_min, double t_max,
                      hit_record &rec) const = 0;
 
-    virtual bool bounding_box(double time0, double time1,
+    virtual bool bounding_box(double /* time0 */, double /* time1 */,
                               aabb &output_box) const = 0;
 };
 
@@ -51,7 +50,7 @@ class rotate_y : public hittable {
     virtual bool hit(const ray &r, double t_min, double t_max,
                      hit_record &rec) const override;
 
-    virtual bool bounding_box(double time0, double time1,
+    virtual bool bounding_box(double /* time0 */, double /* time1 */,
                               aabb &output_box) const override {
         output_box = bbox;
         return hasbox;

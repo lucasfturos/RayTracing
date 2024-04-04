@@ -1,8 +1,14 @@
 #include "obj.hpp"
-#include "teapot.hpp"
+// #include "../../Engine/src/Box/box.hpp"
+#include "../../Engine/src/BVH/bvh.hpp"
+#include "../../Engine/src/Triangle/triangle.hpp"
+#include <glm/fwd.hpp>
 
-bvh_node Object::single_scene(std::vector<vec3> vertices,
-                              std::vector<point3> faces) {
+Object::Object(const std::string &filepath) {
+    read_object_ptr = make_shared<ReadObjectFile>(filepath);
+}
+
+bvh_node Object::single_scene() {
     hittable_list world;
 
     auto material_triangle = make_shared<lambertian>(color(.55, .62, .27));
@@ -13,14 +19,18 @@ bvh_node Object::single_scene(std::vector<vec3> vertices,
     //                            material_ground);
 
     std::vector<shared_ptr<hittable>> triangles;
-    for (int i = 0; i < teapot_indices.size() - 1; i += 3) {
-        int index1 = teapot_indices.at(i + 0);
-        int index2 = teapot_indices.at(i + 1);
-        int index3 = teapot_indices.at(i + 2);
+    std::vector<glm::vec3> vertices = read_object_ptr->sources().vertices;
+    std::vector<glm::ivec3> faces = read_object_ptr->sources().faces;
 
-        auto triangle = make_shared<Triangle>(
-            teapot_vertices.at(index1), teapot_vertices.at(index2),
-            teapot_vertices.at(index3), material_triangle);
+    for (std::size_t i = 0; i < faces.size(); ++i) {
+        vec3 v1 = vec3(vertices[faces[i].x].x, vertices[faces[i].x].y,
+                       vertices[faces[i].x].z);
+        vec3 v2 = vec3(vertices[faces[i].y].x, vertices[faces[i].y].y,
+                       vertices[faces[i].y].z);
+        vec3 v3 = vec3(vertices[faces[i].z].x, vertices[faces[i].z].y,
+                       vertices[faces[i].z].z);
+
+        auto triangle = make_shared<Triangle>(v1, v2, v3, material_triangle);
         triangles.push_back(triangle);
     }
 

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../../include/aabb.hpp"
-#include "../../include/constante.hpp"
 #include "../HitTable/hittable.hpp"
 
 class xy_rect : public hittable {
@@ -15,7 +14,7 @@ class xy_rect : public hittable {
     virtual bool hit(const ray &r, double t_min, double t_max,
                      hit_record &rec) const override;
 
-    virtual bool bounding_box(double time0, double time1,
+    virtual bool bounding_box(double /* time0 */, double /* time1 */,
                               aabb &output_box) const override {
         // O bounding box deve ter largura diferente de zero em cada
         // dimensão, então preencha a dimensão Z um pouco.
@@ -25,8 +24,8 @@ class xy_rect : public hittable {
     }
 
   public:
-    shared_ptr<material> mp;
     double x0, x1, y0, y1, k;
+    shared_ptr<material> mp;
 };
 
 class xz_rect : public hittable {
@@ -40,7 +39,7 @@ class xz_rect : public hittable {
     virtual bool hit(const ray &r, double t_min, double t_max,
                      hit_record &rec) const override;
 
-    virtual bool bounding_box(double time0, double time1,
+    virtual bool bounding_box(double /* time0 */, double /* time1 */,
                               aabb &output_box) const override {
         // O bounding box deve ter largura diferente de zero em cada dimensão,
         // então preencha a dimensão Y um pouco.
@@ -50,8 +49,8 @@ class xz_rect : public hittable {
     }
 
   public:
-    shared_ptr<material> mp;
     double x0, x1, z0, z1, k;
+    shared_ptr<material> mp;
 };
 
 class yz_rect : public hittable {
@@ -65,7 +64,7 @@ class yz_rect : public hittable {
     virtual bool hit(const ray &r, double t_min, double t_max,
                      hit_record &rec) const override;
 
-    virtual bool bounding_box(double time0, double time1,
+    virtual bool bounding_box(double /* time0 */, double /* time1 */,
                               aabb &output_box) const override {
         // O bounding box deve ter largura diferente de zero em cada dimensão,
         // então preencha a dimensão X um pouco.
@@ -75,6 +74,6 @@ class yz_rect : public hittable {
     }
 
   public:
-    shared_ptr<material> mp;
     double y0, y1, z0, z1, k;
+    shared_ptr<material> mp;
 };

@@ -2,7 +2,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>
 
-color image_texture::value(double u, double v, const vec3 &p) const {
+color image_texture::value(double u, double v, const vec3 & /* p */) const {
     // Se não tivermos dados de textura, retorna uma cor ciano sólido como
     // um auxílio de depuração.
     if (data == nullptr) {

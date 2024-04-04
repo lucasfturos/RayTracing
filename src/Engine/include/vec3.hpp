@@ -26,28 +26,26 @@ inline int random_int(int min, int max) {
 
 class vec3 {
   public:
-    vec3() : e{0, 0, 0} {}
-    vec3(double e0, double e1, double e2) : e{e0, e1, e2} {}
+    double x, y, z;
 
-    double x() const { return e.at(0); }
-    double y() const { return e.at(1); }
-    double z() const { return e.at(2); }
+    vec3() : x(0), y(0), z(0) {}
+    vec3(double x_, double y_, double z_) : x(x_), y(y_), z(z_) {}
 
-    vec3 operator-() const { return vec3(-e.at(0), -e.at(1), -e.at(2)); }
-    double operator[](int i) const { return e.at(i); }
-    double &operator[](int i) { return e.at(i); }
+    vec3 operator-() const { return vec3(-x, -y, -z); }
+    double operator[](int i) const { return (&x)[i]; }
+    double &operator[](int i) { return (&x)[i]; }
 
     vec3 &operator+=(const vec3 &v) {
-        e.at(0) += v.e.at(0);
-        e.at(1) += v.e.at(1);
-        e.at(2) += v.e.at(2);
+        x += v.x;
+        y += v.y;
+        z += v.z;
         return *this;
     }
 
     vec3 &operator*=(const double t) {
-        e.at(0) *= t;
-        e.at(1) *= t;
-        e.at(2) *= t;
+        x *= t;
+        y *= t;
+        z *= t;
         return *this;
     }
 
@@ -55,16 +53,11 @@ class vec3 {
 
     double length() const { return sqrt(length_squared()); }
 
-    double length_squared() const {
-        return e.at(0) * e.at(0) + e.at(1) * e.at(1) + e.at(2) * e.at(2);
-    }
+    double length_squared() const { return x * x + y * y + z * z; }
 
     bool near_zero() const {
-        // Retorna verdadeiro se o vetor estiver próximo de zero em todas as
-        // dimensões.
         const auto s = 1e-8;
-        return (fabs(e.at(0)) < s) && (fabs(e.at(1)) < s) &&
-               (fabs(e.at(2)) < s);
+        return (fabs(x) < s) && (fabs(y) < s) && (fabs(z) < s);
     }
 
     static vec3 random() {
@@ -75,9 +68,6 @@ class vec3 {
         return vec3(random_double(min, max), random_double(min, max),
                     random_double(min, max));
     }
-
-  public:
-    std::vector<double> e{3};
 };
 
 // Tipos de aliases para vec3
@@ -87,26 +77,23 @@ using color = vec3;  // RGB color
 // vec3 funções usuais
 
 inline std::ostream &operator<<(std::ostream &out, const vec3 &v) {
-    return out << v.e.at(0) << ' ' << v.e.at(1) << ' ' << v.e.at(2);
+    return out << v.x << ' ' << v.y << ' ' << v.z;
 }
 
 inline vec3 operator+(const vec3 &u, const vec3 &v) {
-    return vec3(u.e.at(0) + v.e.at(0), u.e.at(1) + v.e.at(1),
-                u.e.at(2) + v.e.at(2));
+    return vec3(u.x + v.x, u.y + v.y, u.z + v.z);
 }
 
 inline vec3 operator-(const vec3 &u, const vec3 &v) {
-    return vec3(u.e.at(0) - v.e.at(0), u.e.at(1) - v.e.at(1),
-                u.e.at(2) - v.e.at(2));
+    return vec3(u.x - v.x, u.y - v.y, u.z - v.z);
 }
 
 inline vec3 operator*(const vec3 &u, const vec3 &v) {
-    return vec3(u.e.at(0) * v.e.at(0), u.e.at(1) * v.e.at(1),
-                u.e.at(2) * v.e.at(2));
+    return vec3(u.x * v.x, u.y * v.y, u.z * v.z);
 }
 
 inline vec3 operator*(double t, const vec3 &v) {
-    return vec3(t * v.e.at(0), t * v.e.at(1), t * v.e.at(2));
+    return vec3(t * v.x, t * v.y, t * v.z);
 }
 
 inline vec3 operator*(const vec3 &v, double t) { return t * v; }
@@ -114,19 +101,17 @@ inline vec3 operator*(const vec3 &v, double t) { return t * v; }
 inline vec3 operator/(const vec3 &v, double t) { return (1 / t) * v; }
 
 inline double dot(const vec3 &u, const vec3 &v) {
-    return u.e.at(0) * v.e.at(0) + u.e.at(1) * v.e.at(1) +
-           u.e.at(2) * v.e.at(2);
+    return u.x * v.x + u.y * v.y + u.z * v.z;
 }
 
 inline vec3 cross(const vec3 &u, const vec3 &v) {
-    return vec3(u.e.at(1) * v.e.at(2) - u.e.at(2) * v.e.at(1),
-                u.e.at(2) * v.e.at(0) - u.e.at(0) * v.e.at(2),
-                u.e.at(0) * v.e.at(1) - u.e.at(1) * v.e.at(0));
+    return vec3(u.y * v.z - u.z * v.y, u.z * v.x - u.x * v.z,
+                u.x * v.y - u.y * v.x);
 }
 
 inline vec3 normalize(vec3 v) {
     double mag = v.length();
-    return vec3(v.x() / mag, v.y() / mag, v.z() / mag);
+    return vec3(v.x / mag, v.y / mag, v.z / mag);
 }
 
 inline vec3 unit_vector(vec3 v) { return v / v.length(); }

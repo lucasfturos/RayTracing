@@ -56,7 +56,7 @@ bvh_node::bvh_node(std::vector<shared_ptr<hittable>> src_objects, size_t start,
     box = surrounding_box(box_left, box_right);
 }
 
-bool bvh_node::bounding_box(double time0, double time1,
+bool bvh_node::bounding_box(double /* time0 */, double /* time1 */,
                             aabb &output_box) const {
     output_box = box;
     return true;

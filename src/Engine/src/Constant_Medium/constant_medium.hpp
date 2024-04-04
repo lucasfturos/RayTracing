@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../HitTable/hittable.hpp"
-#include "../Texture/texture.hpp"
 #include "../../include/constante.hpp"
 #include "../../include/material.hpp"
+#include "../HitTable/hittable.hpp"
+#include "../Texture/texture.hpp"
 
 class constant_medium : public hittable {
   public:
@@ -25,6 +25,6 @@ class constant_medium : public hittable {
 
   public:
     shared_ptr<hittable> boundary;
-    shared_ptr<material> phase_function;
     double neg_inv_density;
+    shared_ptr<material> phase_function;
 };

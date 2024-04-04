@@ -21,8 +21,10 @@ template <typename T> inline T clamp(T value, T min, T max) {
 
 // Using
 using std::make_shared;
+using std::make_unique;
 using std::shared_ptr;
 using std::sqrt;
+using std::unique_ptr;
 using std::unordered_map;
 
 // Header

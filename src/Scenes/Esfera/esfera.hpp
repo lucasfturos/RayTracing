@@ -1,11 +1,7 @@
 #pragma once
 
-#include "../../Engine/include/perlin.hpp"
+#include "../../Engine/include/material.hpp"
 #include "../../Engine/src/BVH/bvh.hpp"
-#include "../../Engine/src/Box/box.hpp"
-#include "../../Engine/src/Constant_Medium/constant_medium.hpp"
-#include "../../Engine/src/Sphere/sphere.hpp"
-#include "../../Engine/src/Torus/torus.hpp"
 #include <SDL2/SDL.h>
 
 class Esfera {

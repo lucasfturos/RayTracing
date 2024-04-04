@@ -1,4 +1,5 @@
 #include "color.hpp"
+#include "../../include/constante.hpp"
 
 int Color::distance_hsl(int i, int h, int s, int l) {
     int dh{h - table_hsl[i][0]};
@@ -78,9 +79,9 @@ void Color::rgb_to_hsl(int r, int g, int b, int *h, int *s, int *l) {
 void Color::run_color(std::ostream &out, color pixel_color,
                       int samples_per_pixel) {
     auto scale = 1.0 / samples_per_pixel;
-    auto r = pixel_color.x() * scale;
-    auto g = pixel_color.y() * scale;
-    auto b = pixel_color.z() * scale;
+    auto r = pixel_color.x * scale;
+    auto g = pixel_color.y * scale;
+    auto b = pixel_color.z * scale;
 
     int h, s, l;
     rgb_to_hsl(static_cast<int>(255 * clamp(r, 0.0, 0.999)),
@@ -88,7 +89,7 @@ void Color::run_color(std::ostream &out, color pixel_color,
                static_cast<int>(255 * clamp(b, 0.0, 0.999)), &h, &s, &l);
 
     int ansi_index = find_ansi_hsl(h, s, l);
-    auto chosen_color = table_rgb[ansi_index];
+    // auto chosen_color = table_rgb[ansi_index];
     out << "\033[48;5;" << ansi_index << "m  ";
 }
 
@@ -96,39 +97,39 @@ void Color::write_color(std::ostream &out, color pixel_color,
                         int samples_per_pixel) {
     color color = pixel_color;
 
-    color.x() != color.x() ? color.e[0] = 0.0 : 0;
-    color.y() != color.y() ? color.e[1] = 0.0 : 0;
-    color.z() != color.z() ? color.e[2] = 0.0 : 0;
+    color.x != color.x ? color.x = 0.0 : 0;
+    color.y != color.y ? color.y = 0.0 : 0;
+    color.z != color.z ? color.z = 0.0 : 0;
 
     // Divide a cor pelo número de amostras.
     auto scale = 1.0 / samples_per_pixel;
-    color.e[0] *= scale;
-    color.e[1] *= scale;
-    color.e[2] *= scale;
+    color.x *= scale;
+    color.y *= scale;
+    color.z *= scale;
 
     // Write the translated [0,255] value of each color component.
-    out << static_cast<int>(255 * clamp(color.x(), 0.0, 0.999)) << ' '
-        << static_cast<int>(255 * clamp(color.y(), 0.0, 0.999)) << ' '
-        << static_cast<int>(255 * clamp(color.z(), 0.0, 0.999)) << '\n';
+    out << static_cast<int>(255 * clamp(color.x, 0.0, 0.999)) << ' '
+        << static_cast<int>(255 * clamp(color.y, 0.0, 0.999)) << ' '
+        << static_cast<int>(255 * clamp(color.z, 0.0, 0.999)) << '\n';
 }
 
 void Color::write_color_SDL(SDL_Renderer *renderer, color pixel_color,
                             int samples_per_pixel) {
     color color = pixel_color;
 
-    color.x() != color.x() ? color.e[0] = 0.0 : 0;
-    color.y() != color.y() ? color.e[1] = 0.0 : 0;
-    color.z() != color.z() ? color.e[2] = 0.0 : 0;
+    color.x != color.x ? color.x = 0.0 : 0;
+    color.y != color.y ? color.y = 0.0 : 0;
+    color.z != color.z ? color.z = 0.0 : 0;
 
     auto scale = 1.0 / samples_per_pixel;
-    color.e[0] *= scale;
-    color.e[1] *= scale;
-    color.e[2] *= scale;
+    color.x *= scale;
+    color.y *= scale;
+    color.z *= scale;
 
-    SDL_Color sdl_color = {
-        static_cast<Uint8>(255 * clamp(color.x(), 0.0, 0.999)),
-        static_cast<Uint8>(255 * clamp(color.y(), 0.0, 0.999)),
-        static_cast<Uint8>(255 * clamp(color.z(), 0.0, 0.999)), 255};
+    SDL_Color sdl_color = {static_cast<Uint8>(255 * clamp(color.x, 0.0, 0.999)),
+                           static_cast<Uint8>(255 * clamp(color.y, 0.0, 0.999)),
+                           static_cast<Uint8>(255 * clamp(color.z, 0.0, 0.999)),
+                           255};
 
     SDL_SetRenderDrawColor(renderer, sdl_color.r, sdl_color.g, sdl_color.b,
                            sdl_color.a);

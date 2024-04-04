@@ -43,15 +43,15 @@ bool Triangle::hit(const ray &r, double t_min, double t_max,
     return false;
 }
 
-bool Triangle::bounding_box(double time0, double time1,
+bool Triangle::bounding_box(double /* time0 */, double /* time1 */,
                             aabb &output_box) const {
-    double min_x = std::min(v0.x(), std::min(v1.x(), v2.x()));
-    double min_y = std::min(v0.y(), std::min(v1.y(), v2.y()));
-    double min_z = std::min(v0.z(), std::min(v1.z(), v2.z()));
+    double min_x = std::min(v0.x, std::min(v1.x, v2.x));
+    double min_y = std::min(v0.y, std::min(v1.y, v2.y));
+    double min_z = std::min(v0.z, std::min(v1.z, v2.z));
 
-    double max_x = std::max(v0.x(), std::max(v1.x(), v2.x()));
-    double max_y = std::max(v0.y(), std::max(v1.y(), v2.y()));
-    double max_z = std::max(v0.z(), std::max(v1.z(), v2.z()));
+    double max_x = std::max(v0.x, std::max(v1.x, v2.x));
+    double max_y = std::max(v0.y, std::max(v1.y, v2.y));
+    double max_z = std::max(v0.z, std::max(v1.z, v2.z));
 
     output_box = aabb(point3(min_x, min_y, min_z), point3(max_x, max_y, max_z));
     return true;

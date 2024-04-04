@@ -1,8 +1,6 @@
 #pragma once
 
-#include "../../include/constante.hpp"
 #include "../HitTable/hittable_list.hpp"
-#include "../Rect/rect.hpp"
 
 class box : public hittable {
   public:
@@ -12,7 +10,7 @@ class box : public hittable {
     virtual bool hit(const ray &r, double t_min, double t_max,
                      hit_record &rec) const override;
 
-    virtual bool bounding_box(double time0, double time1,
+    virtual bool bounding_box(double /* time0 */, double /* time1 */,
                               aabb &output_box) const override {
         output_box = aabb(box_min, box_max);
         return true;
