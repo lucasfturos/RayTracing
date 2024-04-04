@@ -26,15 +26,13 @@ add_executable(${PROJECT_NAME}
   ${PROJECT_SOURCE}
 )
 
-# Find SDL2 and GLM libraries
+# Find SDL2 libraries
 find_package(SDL2 REQUIRED)
-find_package(glm REQUIRED)
 
 include_directories(${SDL2_INCLUDE_DIRS})
 
 target_link_libraries(${PROJECT_NAME}
   PRIVATE ${SDL2_LIBRARIES}
-  PRIVATE glm::glm
   PRIVATE engine_lib
 )
 

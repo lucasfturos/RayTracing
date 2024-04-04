@@ -44,14 +44,14 @@ void Render::run() {
     // Camera
     // point3 lookfrom(26, 3, 6);
     // point3 lookfrom(13, 2, 3);
-    point3 lookfrom(0, 0, 4.5); // visão de frente
+    point3 lookfrom(0, 0, 5); // visão de frente
     // point3 lookfrom(3, 3, 2); // Visão da diagonal
     // point3 lookfrom(15, 0, 30); // Posição da câmera para visualização
     // diagonal
 
     //  Visão do observador
-    // point3 lookat(0, 2, 0);
-    point3 lookat(0, 0, 0);
+    point3 lookat(0, 2, 0);
+    // point3 lookat(0, 0, 0);
     vec3 vup(0, 1, 0);
     color background(0, 0, 0);
     background = color(0.7, 0.7, 0.7);
@@ -64,8 +64,8 @@ void Render::run() {
     bool ren_complete = false;
     int current_scanline = 0;
 
-    int start_x = (screen_width - image_width) / 2;
-    int start_y = (screen_height - image_height) / 2;
+    // int start_x = (screen_width - image_width) / 2;
+    // int start_y = (screen_height - image_height) / 2;
 
     SDL_RenderClear(ren);
     while (!quit) {
@@ -96,13 +96,13 @@ void Render::run() {
 
                     // Renderiza no tamanho da imagem
 
-                    int x = start_x + i;
-                    int y = start_y + image_height - current_scanline - 1;
+                    // int x = start_x + i;
+                    // int y = start_y + image_height - current_scanline - 1;
 
                     // Renderiza no tamanho da janela
-                    // int x = static_cast<int>(u * (screen_width - 1));
-                    // int y = screen_height - 1 -
-                    //         static_cast<int>(v * (screen_height - 1));
+                    int x = static_cast<int>(u * (screen_width - 1));
+                    int y = screen_height - 1 -
+                            static_cast<int>(v * (screen_height - 1));
 
                     color_ptr->write_color_SDL(ren, pixel_color,
                                                samples_per_pixel);

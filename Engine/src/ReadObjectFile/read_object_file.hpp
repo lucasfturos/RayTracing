@@ -1,25 +1,23 @@
 #pragma once
 
+#include "../../include/vec3.hpp"
 #include <fstream>
-#include <glm/glm.hpp>
 #include <iostream>
 #include <sstream>
 #include <string>
 #include <vector>
 
 struct ObjectProgramSource {
-    std::vector<glm::vec3> vertices;
-    std::vector<glm::ivec3> faces;
-    std::vector<glm::vec3> normals;
-    std::vector<glm::vec2> textures;
+    std::vector<vec3> vertices;
+    std::vector<ivec3> faces;
+    std::vector<vec3> normals;
 };
 
 class ReadObjectFile {
   private:
-    std::vector<glm::vec3> vertices;
-    std::vector<glm::ivec3> faces;
-    std::vector<glm::vec3> normals;
-    std::vector<glm::vec2> textures;
+    std::vector<vec3> vertices;
+    std::vector<ivec3> faces;
+    std::vector<vec3> normals;
 
     void reset();
     void parseLine(const std::string &line);

@@ -8,12 +8,7 @@
 class Triangle : public hittable {
   public:
     Triangle(const vec3 &v0, const vec3 &v1, const vec3 &v2,
-             shared_ptr<material> mat)
-        : v0(v0), v1(v1), v2(v2), mat_ptr(mat) {
-        vec3 e1 = v1 - v0;
-        vec3 e2 = v2 - v0;
-        surface_normal = normalize(unit_vector(cross(e2, e1)));
-    }
+             shared_ptr<material> mat);
 
     virtual bool hit(const ray &r, double t_min, double t_max,
                      hit_record &rec) const override;
@@ -23,6 +18,6 @@ class Triangle : public hittable {
 
   private:
     vec3 v0, v1, v2;
-    vec3 surface_normal;
     shared_ptr<material> mat_ptr;
+    vec3 e1, e2;
 };

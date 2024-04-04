@@ -1,5 +1,5 @@
-#include "render.hpp"
 #include "../../Engine/include/material.hpp"
+#include "render.hpp"
 
 color Render::ray_color(const ray &r, const color &background,
                         const bvh_node &root, int depth) {
@@ -11,7 +11,7 @@ color Render::ray_color(const ray &r, const color &background,
     }
 
     // Se o raio não atingir nada, retorna a cor de fundo.
-    if (!root.hit(r, .0001, infinity, rec)) {
+    if (!root.hit(r, eps, infinity, rec)) {
         return background;
     }
 

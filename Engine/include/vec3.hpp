@@ -19,106 +19,123 @@ inline double random_double(double min, double max) {
     return min + (max - min) * random_double();
 }
 
+inline int random_int() {
+    // Returns a random real in [0,1).
+    static std::mt19937 generator(std::random_device{}());
+    std::uniform_int_distribution<int> distribution(0, 1);
+    return distribution(generator);
+}
+
 inline int random_int(int min, int max) {
     // Returns a random integer in [min,max].
     return static_cast<int>(random_double(min, max + 0));
 }
 
-class vec3 {
+template <typename T> class Vec3 {
   public:
-    double x, y, z;
+    T x, y, z;
 
-    vec3() : x(0), y(0), z(0) {}
-    vec3(double x_, double y_, double z_) : x(x_), y(y_), z(z_) {}
+    Vec3() : x(0), y(0), z(0) {}
+    Vec3(T x_, T y_, T z_) : x(x_), y(y_), z(z_) {}
 
-    vec3 operator-() const { return vec3(-x, -y, -z); }
-    double operator[](int i) const { return (&x)[i]; }
-    double &operator[](int i) { return (&x)[i]; }
+    Vec3 operator-() const { return Vec3(-x, -y, -z); }
+    T operator[](int i) const { return (&x)[i]; }
+    T &operator[](int i) { return (&x)[i]; }
 
-    vec3 &operator+=(const vec3 &v) {
+    Vec3 &operator+=(const Vec3 &v) {
         x += v.x;
         y += v.y;
         z += v.z;
         return *this;
     }
 
-    vec3 &operator*=(const double t) {
+    Vec3 &operator*=(const T t) {
         x *= t;
         y *= t;
         z *= t;
         return *this;
     }
 
-    vec3 &operator/=(const double t) { return *this *= 1 / t; }
+    Vec3 &operator/=(const T t) { return *this *= 1 / t; }
 
-    double length() const { return sqrt(length_squared()); }
+    T length() const { return sqrt(length_squared()); }
 
-    double length_squared() const { return x * x + y * y + z * z; }
+    T length_squared() const { return x * x + y * y + z * z; }
 
     bool near_zero() const {
         const auto s = 1e-8;
         return (fabs(x) < s) && (fabs(y) < s) && (fabs(z) < s);
     }
 
-    static vec3 random() {
-        return vec3(random_double(), random_double(), random_double());
+    static Vec3 random() {
+        return Vec3(random_double(), random_double(), random_double());
     }
 
-    static vec3 random(double min, double max) {
-        return vec3(random_double(min, max), random_double(min, max),
+    static Vec3 random(double min, double max) {
+        return Vec3(random_double(min, max), random_double(min, max),
                     random_double(min, max));
     }
 };
 
 // Tipos de aliases para vec3
+using vec3 = Vec3<double>;
+using ivec3 = Vec3<int>;
 using point3 = vec3; // 3D point
 using color = vec3;  // RGB color
 
 // vec3 funções usuais
 
-inline std::ostream &operator<<(std::ostream &out, const vec3 &v) {
+template <typename T>
+inline std::ostream &operator<<(std::ostream &out, const Vec3<T> &v) {
     return out << v.x << ' ' << v.y << ' ' << v.z;
 }
 
-inline vec3 operator+(const vec3 &u, const vec3 &v) {
-    return vec3(u.x + v.x, u.y + v.y, u.z + v.z);
+template <typename T>
+inline Vec3<T> operator+(const Vec3<T> &u, const Vec3<T> &v) {
+    return Vec3<T>(u.x + v.x, u.y + v.y, u.z + v.z);
 }
 
-inline vec3 operator-(const vec3 &u, const vec3 &v) {
-    return vec3(u.x - v.x, u.y - v.y, u.z - v.z);
+template <typename T>
+inline Vec3<T> operator-(const Vec3<T> &u, const Vec3<T> &v) {
+    return Vec3<T>(u.x - v.x, u.y - v.y, u.z - v.z);
 }
 
-inline vec3 operator*(const vec3 &u, const vec3 &v) {
-    return vec3(u.x * v.x, u.y * v.y, u.z * v.z);
+template <typename T>
+inline Vec3<T> operator*(const Vec3<T> &u, const Vec3<T> &v) {
+    return Vec3<T>(u.x * v.x, u.y * v.y, u.z * v.z);
 }
 
-inline vec3 operator*(double t, const vec3 &v) {
-    return vec3(t * v.x, t * v.y, t * v.z);
+template <typename T> inline Vec3<T> operator*(double t, const Vec3<T> &v) {
+    return Vec3<T>(t * v.x, t * v.y, t * v.z);
 }
 
-inline vec3 operator*(const vec3 &v, double t) { return t * v; }
+template <typename T> inline Vec3<T> operator*(const Vec3<T> &v, double t) {
+    return t * v;
+}
 
-inline vec3 operator/(const vec3 &v, double t) { return (1 / t) * v; }
+template <typename T> inline Vec3<T> operator/(const Vec3<T> &v, double t) {
+    return (1 / t) * v;
+}
 
-inline double dot(const vec3 &u, const vec3 &v) {
+template <typename T> inline double dot(const Vec3<T> &u, const Vec3<T> &v) {
     return u.x * v.x + u.y * v.y + u.z * v.z;
 }
 
-inline vec3 cross(const vec3 &u, const vec3 &v) {
-    return vec3(u.y * v.z - u.z * v.y, u.z * v.x - u.x * v.z,
-                u.x * v.y - u.y * v.x);
+template <typename T> inline Vec3<T> cross(const Vec3<T> &u, const Vec3<T> &v) {
+    return Vec3<T>(u.y * v.z - u.z * v.y, u.z * v.x - u.x * v.z,
+                   u.x * v.y - u.y * v.x);
 }
 
-inline vec3 normalize(vec3 v) {
+template <typename T> inline Vec3<T> normalize(Vec3<T> v) {
     double mag = v.length();
-    return vec3(v.x / mag, v.y / mag, v.z / mag);
+    return Vec3<T>(v.x / mag, v.y / mag, v.z / mag);
 }
 
-inline vec3 unit_vector(vec3 v) { return v / v.length(); }
+ inline vec3 unit_vector(vec3 v) { return v / v.length(); }
 
 inline vec3 random_in_unit_sphere() {
     while (true) {
-        auto p{vec3::random(-1, 1)};
+        auto p = vec3::random(-1, 1);
         if (p.length_squared() >= 1) {
             continue;
         }
@@ -130,8 +147,9 @@ inline vec3 random_unit_vector() {
     return unit_vector(random_in_unit_sphere());
 }
 
-inline vec3 random_in_hemisphere(const vec3 &normal) {
-    vec3 in_unit_sphere{random_in_unit_sphere()};
+template <typename T>
+inline Vec3<T> random_in_hemisphere(const Vec3<T> &normal) {
+    Vec3<T> in_unit_sphere{random_in_unit_sphere()};
     if (dot(in_unit_sphere, normal) > .0) {
         return -in_unit_sphere;
     } else {
@@ -139,13 +157,16 @@ inline vec3 random_in_hemisphere(const vec3 &normal) {
     }
 }
 
-inline vec3 reflect(const vec3 &v, const vec3 &n) {
+template <typename T>
+inline Vec3<T> reflect(const Vec3<T> &v, const Vec3<T> &n) {
     return v - 2 * dot(v, n) * n;
 }
 
-inline vec3 refract(const vec3 &uv, const vec3 &n, double etai_over_etat) {
+template <typename T>
+inline Vec3<T> refract(const Vec3<T> &uv, const Vec3<T> &n,
+                       double etai_over_etat) {
     auto cos_theta = fmin(dot(-uv, n), 1.0);
-    vec3 r_out_perp = etai_over_etat * (uv + cos_theta * n);
-    vec3 r_out_parallel = -sqrt(fabs(1.0 - r_out_perp.length_squared())) * n;
+    Vec3<T> r_out_perp = etai_over_etat * (uv + cos_theta * n);
+    Vec3<T> r_out_parallel = -sqrt(fabs(1.0 - r_out_perp.length_squared())) * n;
     return r_out_perp + r_out_parallel;
 }

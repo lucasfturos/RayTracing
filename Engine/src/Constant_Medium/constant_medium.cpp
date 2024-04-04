@@ -4,7 +4,7 @@ bool constant_medium::hit(const ray &r, double t_min, double t_max,
                           hit_record &rec) const {
     // Print occasional samples when debugging. To enable, set enableDebug true.
     const bool enableDebug{false};
-    const bool debugging{enableDebug && random_double() < 0.00001};
+    const bool debugging{enableDebug && random_double() < eps};
 
     hit_record rec1, rec2;
 
@@ -12,7 +12,7 @@ bool constant_medium::hit(const ray &r, double t_min, double t_max,
         return false;
     }
 
-    if (!boundary->hit(r, rec1.t + 0.0001, infinity, rec2)) {
+    if (!boundary->hit(r, rec1.t + eps, infinity, rec2)) {
         return false;
     }
 

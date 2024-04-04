@@ -1,46 +1,50 @@
 #include "triangle.hpp"
 
+Triangle::Triangle(const vec3 &v0, const vec3 &v1, const vec3 &v2,
+                   shared_ptr<material> mat)
+    : v0(v0), v1(v1), v2(v2), mat_ptr(mat) {
+    e1 = v1 - v0;
+    e2 = v2 - v0;
+}
+
 bool Triangle::hit(const ray &r, double t_min, double t_max,
                    hit_record &rec) const {
-    vec3 e1 = v1 - v0;
-    vec3 e2 = v2 - v0;
 
-    vec3 h = cross(r.direction(), e2);
-    double det = dot(e1, h);
+    vec3 ray_cross_e2 = cross(r.direction(), e2);
 
-    if (det > -0.00001 && det < 0.00001) {
+    double det = dot(e1, ray_cross_e2);
+
+    if (det > -eps && det < eps) {
         return false;
     }
 
     double inv_det = 1.0 / det;
     vec3 s = r.origin() - v0;
-    double u = dot(s, h) * inv_det;
+    double u = inv_det * dot(s, ray_cross_e2);
 
     if (u < 0.0 || u > 1.0) {
         return false;
     }
 
-    vec3 q = cross(s, e1);
-    double v = dot(r.direction(), q) * inv_det;
+    vec3 s_cross_e1 = cross(s, e1);
+    double v = inv_det * dot(r.direction(), s_cross_e1);
 
     if (v < 0.0 || u + v > 1.0) {
         return false;
     }
 
-    double t = dot(e2, q) * inv_det;
+    double t = inv_det * dot(e2, s_cross_e1);
 
-    if (t > 0.00001 && t < t_max && t > t_min) {
-        rec.t = t;
-        rec.p = r.at(t);
-        rec.normal = surface_normal;
-        rec.mat_ptr = mat_ptr;
-
-        return true;
+    if (t < t_min || t > t_max) {
+        return false;
     }
 
+    rec.t = t;
+    rec.p = r.at(t);
+    rec.normal = unit_vector(cross(e1, e2));
     rec.mat_ptr = mat_ptr;
 
-    return false;
+    return true;
 }
 
 bool Triangle::bounding_box(double /* time0 */, double /* time1 */,

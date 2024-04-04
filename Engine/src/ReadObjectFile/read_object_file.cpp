@@ -7,7 +7,6 @@ ReadObjectFile::ReadObjectFile(const std::string &filePath) {
 void ReadObjectFile::reset() {
     vertices.clear();
     faces.clear();
-    textures.clear();
     normals.clear();
 }
 
@@ -21,11 +20,11 @@ void ReadObjectFile::parseLine(const std::string &line) {
     iss >> type;
 
     if (type == "v") {
-        glm::vec3 vertex;
+        vec3 vertex;
         iss >> vertex.x >> vertex.y >> vertex.z;
         vertices.push_back(vertex);
     } else if (type == "f") {
-        glm::ivec3 face;
+        ivec3 face;
         char slash;
         if (line.find('/') != std::string::npos) {
             iss >> face.x >> slash >> face.y >> slash >> face.z;
@@ -36,12 +35,8 @@ void ReadObjectFile::parseLine(const std::string &line) {
             face.z--;
         }
         faces.push_back(face);
-    } else if (type == "vt") {
-        glm::vec2 texture;
-        iss >> texture.x >> texture.y;
-        textures.push_back(texture);
     } else if (type == "vn") {
-        glm::vec3 normal;
+        vec3 normal;
         iss >> normal.x >> normal.y >> normal.z;
         normals.push_back(normal);
     }
@@ -66,5 +61,9 @@ void ReadObjectFile::loadFile(const std::string &filePath) {
 }
 
 ObjectProgramSource ReadObjectFile::sources() {
-    return {vertices, faces, normals, textures};
+    return {
+        .vertices = vertices,
+        .faces = faces,
+        .normals = normals,
+    };
 }
