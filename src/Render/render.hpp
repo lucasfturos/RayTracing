@@ -10,10 +10,7 @@ class Render {
     // Window
     const int screen_width{1080};
     const int screen_height{720};
-    const char *title{"Ray Tracing - Window Render"};
-
-    // Thread
-    const int num_threads{3};
+    std::string title{"Ray Tracing - Window Render"};
 
     // SDL2
     SDL_Window *win;

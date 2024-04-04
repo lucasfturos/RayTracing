@@ -1,6 +1,6 @@
 #include "obj.hpp"
 #include "../../Engine/src/BVH/bvh.hpp"
-// #include "../../Engine/src/Box/box.hpp"
+#include "../../Engine/src/Box/box.hpp"
 #include "../../Engine/src/Triangle/triangle.hpp"
 
 Object::Object(const std::string &filepath) {
@@ -10,16 +10,18 @@ Object::Object(const std::string &filepath) {
 bvh_node Object::single_scene() {
     hittable_list world;
 
+    auto checker = make_shared<checker_texture>(color(0.0, 0.0, 0.0),
+                                                color(0.9, 0.9, 0.9));
+
     // auto material_triangle = make_shared<lambertian>(color(.55, .62, .27));
+    // auto material_triangle = make_shared<lambertian>(checker);
     auto material_triangle = make_shared<metal>(color(.55, .62, .27), 0);
     // auto material_triangle = make_shared<dielectric>(2.5);
 
-    // auto checker = make_shared<checker_texture>(color(0.0, 0.0, 0.0),
-    //                                             color(0.9, 0.9, 0.9));
     // auto material_ground = make_shared<lambertian>(color(.8, .8, .8));
-    // auto material_ground = make_shared<lambertian>(checker);
-    // auto box_ = make_shared<box>(point3(-2, -0.5, -2), point3(2, -0.6, 2),
-    //                              material_ground);
+    auto material_ground = make_shared<lambertian>(checker);
+    auto box_ = make_shared<box>(point3(-2, -0.5, -2), point3(2, -0.6, 2),
+                                 material_ground);
 
     std::vector<shared_ptr<hittable>> triangles;
     std::vector<vec3> vertices = read_object_ptr->sources().vertices;
@@ -33,14 +35,12 @@ bvh_node Object::single_scene() {
         vec3 v1 = vertices[index1];
         vec3 v2 = vertices[index2];
 
-        // vec3 normal = unit_vector(cross(v1 - v0, v2 - v0));
-
         auto triangle = make_shared<Triangle>(v0, v1, v2, material_triangle);
         triangles.push_back(triangle);
     }
 
     world.add(make_shared<bvh_node>(triangles, 0, triangles.size(), 0, 1));
-    // world.add(box_);
+    world.add(box_);
 
     return bvh_node(world, 0.0, 1.0);
 }

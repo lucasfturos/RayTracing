@@ -18,7 +18,7 @@ void Render::initSDL2() {
         exit(EXIT_FAILURE);
     }
 
-    win = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED,
+    win = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_UNDEFINED,
                            SDL_WINDOWPOS_UNDEFINED, screen_width, screen_height,
                            SDL_WINDOW_VULKAN);
     if (!win) {
@@ -44,7 +44,7 @@ void Render::run() {
     // Camera
     // point3 lookfrom(26, 3, 6);
     // point3 lookfrom(13, 2, 3);
-    point3 lookfrom(0, 3, 11.5); // visão de frente
+    point3 lookfrom(0, 3, 8); // visão de frente
     // point3 lookfrom(3, 3, 2); // Visão da diagonal
     // point3 lookfrom(15, 0, 30); // Posição da câmera para visualização
     // diagonal
