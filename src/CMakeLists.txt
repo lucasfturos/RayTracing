@@ -27,10 +27,13 @@ add_executable(${PROJECT_NAME}
 
 # Find SDL2 libraries
 find_package(SDL2 REQUIRED)
+# Find Threads libraries
+find_package(Threads REQUIRED)
 
 include_directories(${SDL2_INCLUDE_DIRS})
 
 target_link_libraries(${PROJECT_NAME}
+  PRIVATE Threads::Threads
   PRIVATE ${SDL2_LIBRARIES}
   PRIVATE engine_lib
 )

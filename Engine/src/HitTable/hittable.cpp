@@ -23,10 +23,9 @@ bool translate::bounding_box(double time0, double time1,
     return true;
 }
 
-rotate_y::rotate_y(shared_ptr<hittable> p, double angle) : ptr(p) {
-    auto radians{degrees_to_radians(angle)};
-    sin_theta = sin(radians);
-    cos_theta = cos(radians);
+rotate_y::rotate_y(shared_ptr<hittable> p, double angle)
+    : ptr(p), sin_theta(sin(degrees_to_radians(angle))),
+      cos_theta(cos(degrees_to_radians(angle))) {
     hasbox = ptr->bounding_box(0, 1, bbox);
 
     point3 min(infinity, infinity, infinity);

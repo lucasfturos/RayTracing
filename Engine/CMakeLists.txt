@@ -1,7 +1,7 @@
 # ------------------------------------------------------------------------------
 
 target_include_directories(${PROJECT_NAME} 
-  PRIVATE include
+    PRIVATE include
 )
 
 add_subdirectory(src)

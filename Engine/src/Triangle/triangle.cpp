@@ -6,12 +6,7 @@ Triangle::Triangle(const vec3 &v0, const vec3 &v1, const vec3 &v2,
     : v0(v0), v1(v1), v2(v2), mat_ptr(mat) {
     e1 = v1 - v0;
     e2 = v2 - v0;
-    normal = unit_vector(cross(e1, e2));
 }
-
-// Triangle::Triangle(const vec3 &v0, const vec3 &v1, const vec3 &v2,
-//                    const vec3 &normal, shared_ptr<material> mat)
-//     : v0(v0), v1(v1), v2(v2), normal(normal), mat_ptr(mat) {}
 
 bool Triangle::hit(const ray &r, double t_min, double t_max,
                    hit_record &rec) const {
@@ -47,7 +42,7 @@ bool Triangle::hit(const ray &r, double t_min, double t_max,
 
     rec.t = t;
     rec.p = r.at(t);
-    rec.normal = normal;
+    rec.normal = normalize<double>(cross(e1, e2));
     rec.mat_ptr = mat_ptr;
 
     return true;

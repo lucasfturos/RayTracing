@@ -30,28 +30,32 @@ class camera {
     }
 
     color ray_color(const ray &r, const color &background, const bvh_node &root,
-                    int depth) {
-        hit_record rec;
-        // Se exceder o limite do rebatimento dos pacotes de luz, não haverá
-        // mais coleta de luz.
-        if (depth <= 0) {
-            return color(0, 0, 0);
+                    int max_depth) {
+        color current_attenuation = color(1.0, 1.0, 1.0);
+        ray current_ray = r;
+
+        for (int depth = 0; depth < max_depth; ++depth) {
+            hit_record rec;
+
+            if (!root.hit(current_ray, eps, infinity, rec)) {
+                return current_attenuation * background;
+            }
+
+            color emitted = rec.mat_ptr->emitted(rec.u, rec.v, rec.p);
+            ray scattered;
+            color attenuation;
+
+            if (rec.mat_ptr->scatter(current_ray, rec, attenuation,
+                                     scattered)) {
+                current_attenuation *= attenuation;
+                current_ray = scattered;
+            } else {
+                return current_attenuation * emitted;
+            }
         }
 
-        // Se o raio não atingir nada, retorna a cor de fundo.
-        if (!root.hit(r, eps, infinity, rec)) {
-            return background;
-        }
-
-        ray scattered;
-        color attenuation;
-        color emitted = rec.mat_ptr->emitted(rec.u, rec.v, rec.p);
-
-        if (!rec.mat_ptr->scatter(r, rec, attenuation, scattered)) {
-            return emitted;
-        }
-        return emitted +
-               attenuation * ray_color(scattered, background, root, depth - 1);
+        // Se atingir a profundidade máxima, retorna preto
+        return color(0, 0, 0);
     }
 
   private:

@@ -7,8 +7,14 @@ Render::Render(const bvh_node &root, int opc) : world(root) {
 }
 
 Render::~Render() {
-    SDL_DestroyRenderer(ren);
-    SDL_DestroyWindow(win);
+    if (ren) {
+        SDL_DestroyRenderer(ren);
+        ren = nullptr;
+    }
+    if (win) {
+        SDL_DestroyWindow(win);
+        win = nullptr;
+    }
     SDL_Quit();
 }
 
@@ -72,7 +78,7 @@ void Render::run() {
         while (SDL_PollEvent(&event)) {
             event.type == SDL_QUIT ? (quit = true) : 0;
             switch (event.key.keysym.sym) {
-            case 'q':
+            case SDLK_ESCAPE:
                 quit = true;
                 break;
             default:

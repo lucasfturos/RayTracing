@@ -46,8 +46,8 @@ make
 
 O sistema tem as seguintes opções de objetos:
 
-- Bule: Bule de Utah
-- Esfera: Esfera
+- Obj: Bule de Utah
+- Simple: Esfera
 - Room: CornellBox
 
 E as seguintes formas de visualização:

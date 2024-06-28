@@ -55,6 +55,13 @@ template <typename T> class Vec3 {
         z *= t;
         return *this;
     }
+    
+    Vec3 &operator*=(const Vec3 &v) {
+        x *= v.x;
+        y *= v.y;
+        z *= v.z;
+        return *this;
+    }
 
     Vec3 &operator/=(const T t) { return *this *= 1 / t; }
 
@@ -131,7 +138,7 @@ template <typename T> inline Vec3<T> normalize(Vec3<T> v) {
     return Vec3<T>(v.x / mag, v.y / mag, v.z / mag);
 }
 
- inline vec3 unit_vector(vec3 v) { return v / v.length(); }
+inline vec3 unit_vector(vec3 v) { return v / v.length(); }
 
 inline vec3 random_in_unit_sphere() {
     while (true) {
