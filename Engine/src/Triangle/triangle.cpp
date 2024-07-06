@@ -7,8 +7,7 @@ Triangle::Triangle(const vec3 &v0, const vec3 &v1, const vec3 &v2,
     e2 = v2 - v0;
 }
 
-bool Triangle::hit(const ray &r, double t_min, double t_max,
-                   hit_record &rec) const {
+bool Triangle::hit(const ray &r, interval ray_t, hit_record &rec) const {
 
     vec3 h = cross(r.direction(), e2);
 
@@ -32,7 +31,7 @@ bool Triangle::hit(const ray &r, double t_min, double t_max,
 
     double t = inv_det * dot(e2, s_cross_e1);
 
-    if (t < t_min || t > t_max) {
+    if (t < ray_t.min || t > ray_t.max) {
         return false;
     }
 

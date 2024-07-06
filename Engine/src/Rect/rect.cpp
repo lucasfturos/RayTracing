@@ -1,10 +1,9 @@
 #include "rect.hpp"
 
-bool xy_rect::hit(const ray &r, double t_min, double t_max,
-                  hit_record &rec) const {
+bool xy_rect::hit(const ray &r, interval ray_t, hit_record &rec) const {
     double t = (k - r.origin().z) / r.direction().z;
 
-    if (t < t_min || t > t_max) {
+    if (ray_t.surrounds(t)) {
         return false;
     }
 
@@ -26,11 +25,10 @@ bool xy_rect::hit(const ray &r, double t_min, double t_max,
     return true;
 }
 
-bool xz_rect::hit(const ray &r, double t_min, double t_max,
-                  hit_record &rec) const {
+bool xz_rect::hit(const ray &r, interval ray_t, hit_record &rec) const {
     double t = (k - r.origin().y) / r.direction().y;
 
-    if (t < t_min || t > t_max) {
+    if (t < ray_t.min || t > ray_t.max) {
         return false;
     }
 
@@ -52,11 +50,10 @@ bool xz_rect::hit(const ray &r, double t_min, double t_max,
     return true;
 }
 
-bool yz_rect::hit(const ray &r, double t_min, double t_max,
-                  hit_record &rec) const {
+bool yz_rect::hit(const ray &r, interval ray_t, hit_record &rec) const {
     double t = (k - r.origin().x) / r.direction().x;
 
-    if (t < t_min || t > t_max) {
+    if (t < ray_t.min || t > ray_t.max) {
         return false;
     }
 

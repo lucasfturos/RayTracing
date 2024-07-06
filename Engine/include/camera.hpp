@@ -2,6 +2,7 @@
 
 #include "../src/BVH/bvh.hpp"
 #include "constante.hpp"
+#include "interval.hpp"
 #include "material.hpp"
 
 class camera {
@@ -37,7 +38,7 @@ class camera {
         for (int depth = 0; depth < max_depth; ++depth) {
             hit_record rec;
 
-            if (!root.hit(current_ray, eps, infinity, rec)) {
+            if (!root.hit(current_ray, interval(eps, infinity), rec)) {
                 return current_attenuation * background;
             }
 

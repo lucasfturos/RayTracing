@@ -13,13 +13,15 @@ bvh_node Object::single_scene() {
     auto checker = make_shared<checker_texture>(color(0.0, 0.0, 0.0),
                                                 color(0.9, 0.9, 0.9));
 
+    auto difflight = make_shared<diffuse_light>(color(4, 4, 4));
+
     // auto material_triangle = make_shared<lambertian>(color(.55, .62, .27));
     // auto material_triangle = make_shared<lambertian>(checker);
-    auto material_triangle = make_shared<metal>(color(.55, .62, .27), 0);
-    // auto material_triangle = make_shared<dielectric>(2.5);
+    // auto material_triangle = make_shared<metal>(color(.55, .62, .27), 0);
+    auto material_triangle = make_shared<dielectric>(1.5);
 
-    // auto material_ground = make_shared<lambertian>(color(.8, .8, .8));
-    auto material_ground = make_shared<lambertian>(checker);
+    auto material_ground = make_shared<lambertian>(color(.5, .0, .8));
+    // auto material_ground = make_shared<lambertian>(checker);
     auto box_ = make_shared<box>(point3(-2, -0.5, -2), point3(2, -0.6, 2),
                                  material_ground);
 
@@ -40,6 +42,8 @@ bvh_node Object::single_scene() {
     }
 
     world.add(make_shared<bvh_node>(triangles, 0, triangles.size(), 0, 1));
+    world.add(
+        make_shared<box>(point3(-2, 4.5, -2), point3(2, 4.6, 2), difflight));
     world.add(box_);
 
     return bvh_node(world, 0.0, 1.0);

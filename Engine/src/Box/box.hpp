@@ -7,7 +7,7 @@ class box : public hittable {
     box() {}
     box(const point3 &p0, const point3 &p1, shared_ptr<material> ptr);
 
-    virtual bool hit(const ray &r, double t_min, double t_max,
+    virtual bool hit(const ray &r, interval ray_t,
                      hit_record &rec) const override;
 
     virtual bool bounding_box(double /* time0 */, double /* time1 */,

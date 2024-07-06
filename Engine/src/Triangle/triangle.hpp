@@ -10,7 +10,7 @@ class Triangle : public hittable {
     Triangle(const vec3 &v0, const vec3 &v1, const vec3 &v2,
              shared_ptr<material> mat);
 
-    virtual bool hit(const ray &r, double t_min, double t_max,
+    virtual bool hit(const ray &r, interval ray_t,
                      hit_record &rec) const override;
 
     virtual bool bounding_box(double time0, double time1,

@@ -50,7 +50,7 @@ void Render::run() {
     // Camera
     // point3 lookfrom(26, 3, 6);
     // point3 lookfrom(13, 2, 3);
-    point3 lookfrom(0, 3, 8); // visão de frente
+    point3 lookfrom(0, 2.2, 7.5); // visão de frente
     // point3 lookfrom(3, 3, 2); // Visão da diagonal
     // point3 lookfrom(15, 0, 30); // Posição da câmera para visualização
     // diagonal
@@ -60,7 +60,8 @@ void Render::run() {
     // point3 lookat(0, 0, 0);
     vec3 vup(0, 1, 0);
     color background(0, 0, 0);
-    background = color(0.7, 0.7, 0.7);
+    double illumination = 0.2;
+    background = color(illumination, illumination, illumination);
 
     cam = make_shared<camera>(lookfrom, lookat, vup, vfov, aspect_ratio);
 
@@ -100,21 +101,18 @@ void Render::run() {
                     ray r = cam->get_ray(u, v);
                     pixel_color +=
                         cam->ray_color(r, background, world, max_depth);
-
-                    // Renderiza no tamanho da imagem
-
-                    int x = start_x + i;
-                    int y = start_y + image_height - current_scanline - 1;
-
-                    // Renderiza no tamanho da janela
-                    // int x = static_cast<int>(u * (screen_width - 1));
-                    // int y = screen_height - 1 -
-                    //         static_cast<int>(v * (screen_height - 1));
-
-                    color_ptr->write_color_SDL(ren, pixel_color,
-                                               samples_per_pixel);
-                    SDL_RenderDrawPoint(ren, x, y);
                 }
+                // Renderiza no tamanho da imagem
+                int x = start_x + i;
+                int y = start_y + image_height - current_scanline - 1;
+
+                // Renderiza no tamanho da janela
+                // int x = static_cast<int>(u * (screen_width - 1));
+                // int y = screen_height - 1 -
+                //         static_cast<int>(v * (screen_height - 1));
+
+                color_ptr->write_color_SDL(ren, pixel_color, samples_per_pixel);
+                SDL_RenderDrawPoint(ren, x, y);
             }
             current_scanline++;
 

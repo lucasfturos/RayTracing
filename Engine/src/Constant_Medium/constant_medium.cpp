@@ -1,18 +1,17 @@
 #include "constant_medium.hpp"
 
-bool constant_medium::hit(const ray &r, double t_min, double t_max,
-                          hit_record &rec) const {
+bool constant_medium::hit(const ray &r, interval ray_t, hit_record &rec) const {
     // Print occasional samples when debugging. To enable, set enableDebug true.
     const bool enableDebug = false;
     const bool debugging = enableDebug && random_double() < eps;
 
     hit_record rec1, rec2;
 
-    if (!boundary->hit(r, -infinity, infinity, rec1)) {
+    if (!boundary->hit(r, interval(-infinity, infinity), rec1)) {
         return false;
     }
 
-    if (!boundary->hit(r, rec1.t + eps, infinity, rec2)) {
+    if (!boundary->hit(r, interval(rec1.t + eps, infinity), rec2)) {
         return false;
     }
 
@@ -20,11 +19,11 @@ bool constant_medium::hit(const ray &r, double t_min, double t_max,
         std::cerr << "\nt_min=" << rec1.t << ", t_max=" << rec2.t << '\n';
     }
 
-    if (rec1.t < t_min) {
-        rec1.t = t_min;
+    if (rec1.t < ray_t.min) {
+        rec1.t = ray_t.min;
     }
-    if (rec2.t > t_max) {
-        rec2.t = t_max;
+    if (rec2.t > ray_t.max) {
+        rec2.t = ray_t.max;
     }
 
     if (rec1.t >= rec2.t) {

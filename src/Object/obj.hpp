@@ -1,15 +1,11 @@
 #pragma once
 
+#include "../../Engine/include/material.hpp"
 #include "../../Engine/src/BVH/bvh.hpp"
 #include "../../Engine/src/ReadObjectFile/read_object_file.hpp"
-#include "../../Engine/include/material.hpp"
 
 class Object {
-    // Material
-    shared_ptr<metal> material_metal;
-    shared_ptr<diffuse_light> difflight;
-    shared_ptr<lambertian> material_lambertian;
-
+    // Read Object File
     shared_ptr<ReadObjectFile> read_object_ptr;
 
   public:

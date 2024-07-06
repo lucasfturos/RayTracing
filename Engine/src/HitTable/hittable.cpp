@@ -1,9 +1,8 @@
 #include "hittable.hpp"
 
-bool translate::hit(const ray &r, double t_min, double t_max,
-                    hit_record &rec) const {
+bool translate::hit(const ray &r, interval ray_t, hit_record &rec) const {
     ray moved_r(r.origin() - offset, r.direction(), r.time());
-    if (!ptr->hit(moved_r, t_min, t_max, rec))
+    if (!ptr->hit(moved_r, ray_t, rec))
         return false;
 
     rec.p += offset;
@@ -54,8 +53,7 @@ rotate_y::rotate_y(shared_ptr<hittable> p, double angle)
     bbox = aabb(min, max);
 }
 
-bool rotate_y::hit(const ray &r, double t_min, double t_max,
-                   hit_record &rec) const {
+bool rotate_y::hit(const ray &r, interval ray_t, hit_record &rec) const {
     auto origin = r.origin();
     auto direction = r.direction();
 
@@ -67,7 +65,7 @@ bool rotate_y::hit(const ray &r, double t_min, double t_max,
 
     ray rotated_r(origin, direction, r.time());
 
-    if (!ptr->hit(rotated_r, t_min, t_max, rec)) {
+    if (!ptr->hit(rotated_r, ray_t, rec)) {
         return false;
     }
 

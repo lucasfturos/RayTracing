@@ -15,6 +15,10 @@ template <typename T> inline T degrees_to_radians(T degrees) {
     return degrees * pi / 180.0;
 }
 
+template <typename T> inline T clamp(T value, T min, T max) {
+    return (value < min) ? min : (value > max) ? max : value;
+}
+
 // Using
 using std::make_shared;
 using std::make_unique;
@@ -25,6 +29,6 @@ using std::unordered_map;
 
 // Header
 
+#include "interval.hpp"
 #include "ray.hpp"
 #include "vec3.hpp"
-#include "interval.hpp"
