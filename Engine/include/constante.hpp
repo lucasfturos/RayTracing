@@ -7,17 +7,12 @@
 #include <unordered_map>
 
 // Constants
-const double infinity{std::numeric_limits<double>::infinity()};
 const double pi{3.1415926535897932385};
 const double eps = std::numeric_limits<float>::epsilon();
 
 // Utility Functions
 template <typename T> inline T degrees_to_radians(T degrees) {
     return degrees * pi / 180.0;
-}
-
-template <typename T> inline T clamp(T value, T min, T max) {
-    return (value < min) ? min : (value > max) ? max : value;
 }
 
 // Using
@@ -32,3 +27,4 @@ using std::unordered_map;
 
 #include "ray.hpp"
 #include "vec3.hpp"
+#include "interval.hpp"

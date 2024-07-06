@@ -3,8 +3,8 @@
 bool hittable_list::hit(const ray &r, double t_min, double t_max,
                         hit_record &rec) const {
     hit_record temp_rec;
-    bool hit_anything{false};
-    auto closet_so_far{t_max};
+    bool hit_anything = false;
+    auto closet_so_far = t_max;
 
     for (const auto &object : objects) {
         if (object->hit(r, t_min, closet_so_far, temp_rec)) {
@@ -23,7 +23,7 @@ bool hittable_list::bounding_box(double time0, double time1,
     }
 
     aabb temp_box;
-    bool first_box{true};
+    bool first_box = true;
 
     for (const auto &object : objects) {
         if (!object->bounding_box(time0, time1, temp_box)) {

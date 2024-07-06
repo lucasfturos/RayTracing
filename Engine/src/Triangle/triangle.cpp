@@ -1,5 +1,4 @@
 #include "triangle.hpp"
-#include <cmath>
 
 Triangle::Triangle(const vec3 &v0, const vec3 &v1, const vec3 &v2,
                    shared_ptr<material> mat)
@@ -11,25 +10,22 @@ Triangle::Triangle(const vec3 &v0, const vec3 &v1, const vec3 &v2,
 bool Triangle::hit(const ray &r, double t_min, double t_max,
                    hit_record &rec) const {
 
-    vec3 ray_cross_e2 = cross(r.direction(), e2);
+    vec3 h = cross(r.direction(), e2);
 
-    double det = dot(e1, ray_cross_e2);
-
-    if (fabs(det) > -eps && fabs(det) < eps) {
+    double det = dot(e1, h);
+    if (std::abs(det) > -eps && std::abs(det) < eps) {
         return false;
     }
 
     double inv_det = 1.0 / det;
     vec3 s = r.origin() - v0;
-    double u = inv_det * dot(s, ray_cross_e2);
-
+    double u = inv_det * dot(s, h);
     if (u < 0.0 || u > 1.0) {
         return false;
     }
 
     vec3 s_cross_e1 = cross(s, e1);
     double v = inv_det * dot(r.direction(), s_cross_e1);
-
     if (v < 0.0 || u + v > 1.0) {
         return false;
     }
@@ -40,9 +36,16 @@ bool Triangle::hit(const ray &r, double t_min, double t_max,
         return false;
     }
 
+    rec.u = u;
+    rec.v = v;
+
     rec.t = t;
     rec.p = r.at(t);
-    rec.normal = normalize<double>(cross(e1, e2));
+
+    vec3 outward_normal = normalize(cross(e1, e2));
+    rec.normal = outward_normal;
+    rec.set_face_normal(r, outward_normal);
+
     rec.mat_ptr = mat_ptr;
 
     return true;

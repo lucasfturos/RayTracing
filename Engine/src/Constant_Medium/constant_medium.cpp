@@ -3,8 +3,8 @@
 bool constant_medium::hit(const ray &r, double t_min, double t_max,
                           hit_record &rec) const {
     // Print occasional samples when debugging. To enable, set enableDebug true.
-    const bool enableDebug{false};
-    const bool debugging{enableDebug && random_double() < eps};
+    const bool enableDebug = false;
+    const bool debugging = enableDebug && random_double() < eps;
 
     hit_record rec1, rec2;
 
@@ -35,9 +35,9 @@ bool constant_medium::hit(const ray &r, double t_min, double t_max,
         rec1.t = 0;
     }
 
-    const auto ray_length{r.direction().length()};
-    const auto distance_inside_boundary{(rec2.t - rec1.t) * ray_length};
-    const auto hit_distance{neg_inv_density * log(random_double())};
+    const double ray_length = r.direction().length();
+    const double distance_inside_boundary = (rec2.t - rec1.t) * ray_length;
+    const double hit_distance = neg_inv_density * log(random_double());
 
     if (hit_distance > distance_inside_boundary) {
         return false;

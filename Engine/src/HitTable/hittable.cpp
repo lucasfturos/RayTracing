@@ -34,12 +34,12 @@ rotate_y::rotate_y(shared_ptr<hittable> p, double angle)
     for (int i = 0; i < 2; i++) {
         for (int j = 0; j < 2; j++) {
             for (int k = 0; k < 2; k++) {
-                auto x{i * bbox.max().x + (1 - i) * bbox.min().x};
-                auto y{j * bbox.max().y + (1 - j) * bbox.min().y};
-                auto z{k * bbox.max().z + (1 - k) * bbox.min().z};
+                auto x = i * bbox.max().x + (1 - i) * bbox.min().x;
+                auto y = j * bbox.max().y + (1 - j) * bbox.min().y;
+                auto z = k * bbox.max().z + (1 - k) * bbox.min().z;
 
-                auto newx{cos_theta * x + sin_theta * z};
-                auto newz{-sin_theta * x + cos_theta * z};
+                auto newx = cos_theta * x + sin_theta * z;
+                auto newz = -sin_theta * x + cos_theta * z;
 
                 vec3 tester(newx, y, newz);
 
@@ -56,8 +56,8 @@ rotate_y::rotate_y(shared_ptr<hittable> p, double angle)
 
 bool rotate_y::hit(const ray &r, double t_min, double t_max,
                    hit_record &rec) const {
-    auto origin{r.origin()};
-    auto direction{r.direction()};
+    auto origin = r.origin();
+    auto direction = r.direction();
 
     origin[0] = cos_theta * r.origin()[0] - sin_theta * r.origin()[2];
     origin[2] = sin_theta * r.origin()[0] + cos_theta * r.origin()[2];
@@ -71,8 +71,8 @@ bool rotate_y::hit(const ray &r, double t_min, double t_max,
         return false;
     }
 
-    auto p{rec.p};
-    auto normal{rec.normal};
+    auto p = rec.p;
+    auto normal = rec.normal;
 
     p[0] = cos_theta * rec.p[0] + sin_theta * rec.p[2];
     p[2] = -sin_theta * rec.p[0] + cos_theta * rec.p[2];
