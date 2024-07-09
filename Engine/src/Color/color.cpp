@@ -1,5 +1,6 @@
 #include "color.hpp"
-#include "../../include/constante.hpp"
+
+static const interval intensity(0.0, 0.999);
 
 int Color::distance_hsl(int i, int h, int s, int l) {
     int dh{h - table_hsl[i][0]};
@@ -27,53 +28,38 @@ void Color::rgb_to_hsl(int r, int g, int b, int *h, int *s, int *l) {
     float g_ = g / 255.0f;
     float b_ = b / 255.0f;
 
-    float epsilon{1e-6};
-    float cmax{r_};
+    float cmax = std::max({r_, g_, b_});
+    float cmin = std::min({r_, g_, b_});
+    float delta = cmax - cmin;
 
-    if (g_ > cmax) {
-        cmax = g_;
-    }
-    if (b_ > cmax) {
-        cmax = b_;
-    }
-
-    float cmin{r_};
-    if (g_ < cmin) {
-        cmin = g_;
-    }
-    if (b_ < cmin) {
-        cmin = b_;
-    }
-
-    float delta{cmax - cmin};
-
-    // H
-    float hf{0};
-    if (delta < epsilon) {
-        hf = 0;
-    } else if (cmax == r_) {
-        hf = 60 * fmodf((g_ - b_) / delta, 6.0f);
-    } else if (cmax == g_) {
-        hf = 60 * ((b_ - r_) / delta + 2);
-    } else if (cmax == b_) {
-        hf = 60 * ((r_ - g_) / delta + 4);
+    // Hue calculation
+    float hf = 0.0f;
+    if (delta < 1e-6f) {
+        hf = 0.0f;
     } else {
-        assert(0 && "Inacessivel");
+        if (cmax == r_) {
+            hf = 60.0f * fmodf((g_ - b_) / delta, 6.0f);
+        } else if (cmax == g_) {
+            hf = 60.0f * ((b_ - r_) / delta + 2.0f);
+        } else if (cmax == b_) {
+            hf = 60.0f * ((r_ - g_) / delta + 4.0f);
+        }
     }
 
-    float lf{(cmax + cmin) / 2.0f}; // L
+    // Lightness calculation
+    float lf = (cmax + cmin) / 2.0f;
 
-    // S
-    float sf{0};
-    if (delta < epsilon) {
-        sf = 0.0;
+    // Saturation calculation
+    float sf = 0.0f;
+    if (delta < 1e-6f) {
+        sf = 0.0f;
     } else {
-        sf = delta / (1 - fabsf(2 * lf - 1));
+        sf = delta / (1.0f - std::abs(2.0f * lf - 1.0f));
     }
 
-    *h = fmodf(fmodf(hf, 360.0f) + 360.0f, 360.0f);
-    *s = (sf * 100.0f);
-    *l = (lf * 100.0f);
+    *h = static_cast<int>(fmodf(hf, 360.0f) + 360.0f) % 360;
+    *s = static_cast<int>(sf * 100.0f);
+    *l = static_cast<int>(lf * 100.0f);
 }
 
 void Color::run_color(std::ostream &out, color pixel_color,
@@ -84,9 +70,9 @@ void Color::run_color(std::ostream &out, color pixel_color,
     auto b = pixel_color.z * scale;
 
     int h, s, l;
-    rgb_to_hsl(static_cast<int>(255 * clamp(r, 0.0, 0.999)),
-               static_cast<int>(255 * clamp(g, 0.0, 0.999)),
-               static_cast<int>(255 * clamp(b, 0.0, 0.999)), &h, &s, &l);
+    rgb_to_hsl(static_cast<int>(256 * intensity.clamp(r)),
+               static_cast<int>(256 * intensity.clamp(g)),
+               static_cast<int>(256 * intensity.clamp(b)), &h, &s, &l);
 
     int ansi_index = find_ansi_hsl(h, s, l);
     // auto chosen_color = table_rgb[ansi_index];
@@ -108,9 +94,16 @@ void Color::write_color(std::ostream &out, color pixel_color,
     color.z *= scale;
 
     // Write the translated [0,255] value of each color component.
-    out << static_cast<int>(255 * clamp(color.x, 0.0, 0.999)) << ' '
-        << static_cast<int>(255 * clamp(color.y, 0.0, 0.999)) << ' '
-        << static_cast<int>(255 * clamp(color.z, 0.0, 0.999)) << '\n';
+    out << static_cast<int>(255 * intensity.clamp(color.x)) << ' '
+        << static_cast<int>(255 * intensity.clamp(color.y)) << ' '
+        << static_cast<int>(255 * intensity.clamp(color.z)) << '\n';
+}
+
+double Color::linear_to_gamma(double linear_component) {
+    if (linear_component > 0) {
+        return sqrt(linear_component);
+    }
+    return 0;
 }
 
 void Color::write_color_SDL(SDL_Renderer *renderer, color pixel_color,
@@ -126,10 +119,14 @@ void Color::write_color_SDL(SDL_Renderer *renderer, color pixel_color,
     color.y *= scale;
     color.z *= scale;
 
-    SDL_Color sdl_color = {static_cast<Uint8>(255 * clamp(color.x, 0.0, 0.999)),
-                           static_cast<Uint8>(255 * clamp(color.y, 0.0, 0.999)),
-                           static_cast<Uint8>(255 * clamp(color.z, 0.0, 0.999)),
-                           255};
+    // color.x = linear_to_gamma(color.x);
+    // color.y = linear_to_gamma(color.y);
+    // color.z = linear_to_gamma(color.z);
+
+    SDL_Color sdl_color = {static_cast<Uint8>(255 * intensity.clamp(color.x)),
+                           static_cast<Uint8>(255 * intensity.clamp(color.y)),
+                           static_cast<Uint8>(255 * intensity.clamp(color.z)),
+                           SDL_ALPHA_OPAQUE};
 
     SDL_SetRenderDrawColor(renderer, sdl_color.r, sdl_color.g, sdl_color.b,
                            sdl_color.a);

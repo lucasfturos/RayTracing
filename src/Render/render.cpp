@@ -4,6 +4,29 @@ Render::Render(const bvh_node &root, int opc) : world(root) {
     if (opc == 1) {
         initSDL2();
     }
+
+    // Initialize cam
+    // point3 lookfrom(26, 3, 6);
+    // point3 lookfrom(13, 2, 3);
+    point3 lookfrom(0, 2.2, 7.5); // visão de frente
+    // point3 lookfrom(3, 3, 2); // Visão da diagonal
+    // point3 lookfrom(15, 0, 30); // Posição da câmera para visualização
+    // diagonal
+
+    //  Visão do observador
+    point3 lookat(0, 2, 0);
+    // point3 lookat(0, 0, 0);
+    vec3 vup(0, 1, 0);
+
+    double aspect_ratio = 1.5;
+    image_width = screen_width;
+    int max_depth = 3;
+    double vfov = 50;
+
+    cam = make_shared<camera>(aspect_ratio, image_width, samples_per_pixel,
+                              max_depth, vfov, lookfrom, lookat, vup);
+
+    image_height = cam->getHeight();
 }
 
 Render::~Render() {
@@ -46,32 +69,15 @@ void Render::initSDL2() {
 void Render::run() {
     // Color
     color_ptr = make_shared<Color>();
-
-    // Camera
-    // point3 lookfrom(26, 3, 6);
-    // point3 lookfrom(13, 2, 3);
-    point3 lookfrom(0, 2.2, 7.5); // visão de frente
-    // point3 lookfrom(3, 3, 2); // Visão da diagonal
-    // point3 lookfrom(15, 0, 30); // Posição da câmera para visualização
-    // diagonal
-
-    //  Visão do observador
-    point3 lookat(0, 2, 0);
-    // point3 lookat(0, 0, 0);
-    vec3 vup(0, 1, 0);
     color background(0, 0, 0);
-    double illumination = 0.2;
+    double illumination = 0.7;
     background = color(illumination, illumination, illumination);
-
-    cam = make_shared<camera>(lookfrom, lookat, vup, vfov, aspect_ratio);
 
     // Janela
     bool quit = false;
     SDL_Event event;
     bool ren_complete = false;
     int current_scanline = 0;
-
-    int start_x = (screen_width - image_width) / 2;
     int start_y = (screen_height - image_height) / 2;
 
     SDL_RenderClear(ren);
@@ -88,37 +94,21 @@ void Render::run() {
         }
 
         if (!ren_complete) {
-            // Renderização em progresso
-            std::cerr << "\rLinhas de varredura restantes: " << current_scanline
-                      << ' ' << std::flush;
-            for (auto i{0}; i < image_width; ++i) {
-                color pixel_color(0, 0, 0);
-                for (auto s{0}; s < samples_per_pixel; ++s) {
-                    double u = (i + random_double()) / (image_width - 1);
-                    double v = (current_scanline + random_double()) /
-                               (image_height - 1);
+            cam->render(world, background, current_scanline,
+                        [&](int i, const color &pixel_color) {
+                            int x = i;
+                            int y =
+                                start_y + image_height - current_scanline - 1;
 
-                    ray r = cam->get_ray(u, v);
-                    pixel_color +=
-                        cam->ray_color(r, background, world, max_depth);
-                }
-                // Renderiza no tamanho da imagem
-                int x = start_x + i;
-                int y = start_y + image_height - current_scanline - 1;
-
-                // Renderiza no tamanho da janela
-                // int x = static_cast<int>(u * (screen_width - 1));
-                // int y = screen_height - 1 -
-                //         static_cast<int>(v * (screen_height - 1));
-
-                color_ptr->write_color_SDL(ren, pixel_color, samples_per_pixel);
-                SDL_RenderDrawPoint(ren, x, y);
-            }
+                            color_ptr->write_color_SDL(ren, pixel_color,
+                                                       samples_per_pixel);
+                            SDL_RenderDrawPoint(ren, x, y);
+                        });
             current_scanline++;
 
             if (current_scanline == image_height) {
                 ren_complete = true;
-                std::cout << '\n';
+                std::cout << "Done \n";
             }
         }
         SDL_RenderPresent(ren);
@@ -128,67 +118,31 @@ void Render::run() {
 void Render::run_ppm() {
     // Color
     color_ptr = make_shared<Color>();
-
-    // Camera
-    // point3 lookfrom(26, 3, 6);
-    // point3 lookfrom(13, 2, 3);
-    point3 lookfrom(0, 0, 5); // visão de frente
-    //  point3 lookfrom(3, 3, 2); // Visão da diagonal
-    //  Visão do observador
-    point3 lookat(0, 0, 0);
-    vec3 vup(0, 1, 0);
-    color background(0, 0, 0);
-    background = color(0.7, 0.7, 0.7);
-
-    cam = make_shared<camera>(lookfrom, lookat, vup, vfov, aspect_ratio);
+    color background = color(0.7, 0.7, 0.7);
 
     // Renderização
     std::cout << "P3\n" << image_width << ' ' << image_height << "\n255\n";
-
     for (auto j{image_height - 1}; j >= 0; --j) {
-        std::cerr << "\rLinhas de varredura restantes: " << j << ' '
-                  << std::flush;
-        for (auto i{0}; i < image_width; ++i) {
-            color pixel_color(0, 0, 0);
-            for (auto s{0}; s < samples_per_pixel; ++s) {
-                auto u{(i + random_double()) / (image_width - 1)};
-                auto v{(j + random_double()) / (image_height - 1)};
-
-                ray r{cam->get_ray(u, v)};
-                pixel_color += cam->ray_color(r, background, world, max_depth);
-            }
+        std::cerr << "\rLinhas de varredura restantes: " << (image_height - j)
+                  << ' ' << std::flush;
+        cam->render(world, background, j, [&](int, const color &pixel_color) {
             color_ptr->write_color(std::cout, pixel_color, samples_per_pixel);
-        }
+        });
     }
+
     std::cout << "\nTerminou" << '\n';
 }
 
 void Render::run_term() {
     // Color
     color_ptr = make_shared<Color>();
-
-    // Camera
-    point3 lookfrom(0, 0, 1); // visão de frente
-    point3 lookat(0, 0, 0);   //  Visão do observador
-    vec3 vup(0, 1, 0);
-    color background(0, 0, 0); // Background do céu
-    background = color(.0, 0.749, 1.0);
-
-    cam = make_shared<camera>(lookfrom, lookat, vup, vfov, aspect_ratio);
+    color background(.0, 0.749, 1.0);
 
     // Renderização
     for (auto j{image_height - 1}; j >= 0; --j) {
-        for (auto i{0}; i < image_width; ++i) {
-            color pixel_color(0, 0, 0);
-            for (auto s{0}; s < samples_per_pixel; ++s) {
-                auto u{(i + random_double()) / (image_width - 1)};
-                auto v{(j + random_double()) / (image_height - 1)};
-
-                ray r{cam->get_ray(u, v)};
-                pixel_color += cam->ray_color(r, background, world, max_depth);
-            }
+        cam->render(world, background, j, [&](int, const color &pixel_color) {
             color_ptr->run_color(std::cout, pixel_color, samples_per_pixel);
-        }
-        std::cout << "\033[0m" << '\n';
+        });
+        std::cout << "\033[0m\n";
     }
 }

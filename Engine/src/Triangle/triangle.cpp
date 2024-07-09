@@ -8,43 +8,38 @@ Triangle::Triangle(const vec3 &v0, const vec3 &v1, const vec3 &v2,
 }
 
 bool Triangle::hit(const ray &r, interval ray_t, hit_record &rec) const {
-
-    vec3 h = cross(r.direction(), e2);
-
-    double det = dot(e1, h);
+    vec3 dir_cross_e2 = cross(r.direction(), e2);
+    double det = dot(e1, dir_cross_e2);
     if (std::abs(det) > -eps && std::abs(det) < eps) {
         return false;
     }
 
-    double inv_det = 1.0 / det;
-    vec3 s = r.origin() - v0;
-    double u = inv_det * dot(s, h);
+    double f = 1.0 / det;
+    vec3 v0_to_origin = r.origin() - v0;
+    double u = f * dot(v0_to_origin, dir_cross_e2);
     if (u < 0.0 || u > 1.0) {
         return false;
     }
 
-    vec3 s_cross_e1 = cross(s, e1);
-    double v = inv_det * dot(r.direction(), s_cross_e1);
+    vec3 origin_cross_e1 = cross(v0_to_origin, e1);
+    double v = f * dot(r.direction(), origin_cross_e1);
     if (v < 0.0 || u + v > 1.0) {
         return false;
     }
 
-    double t = inv_det * dot(e2, s_cross_e1);
-
+    double t = f * dot(e2, origin_cross_e1);
     if (t < ray_t.min || t > ray_t.max) {
         return false;
     }
 
     rec.u = u;
     rec.v = v;
-
     rec.t = t;
     rec.p = r.at(t);
 
-    vec3 outward_normal = normalize(cross(e1, e2));
-    rec.normal = outward_normal;
-    rec.set_face_normal(r, outward_normal);
-
+    vec3 normal = unit_vector(cross(e2, e1));
+    rec.normal = normal;
+    rec.set_face_normal(r, normal);
     rec.mat_ptr = mat_ptr;
 
     return true;

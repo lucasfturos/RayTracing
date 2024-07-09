@@ -55,7 +55,7 @@ template <typename T> class Vec3 {
         z *= t;
         return *this;
     }
-    
+
     Vec3 &operator*=(const Vec3 &v) {
         x *= v.x;
         y *= v.y;
@@ -133,11 +133,6 @@ template <typename T> inline Vec3<T> cross(const Vec3<T> &u, const Vec3<T> &v) {
                    u.x * v.y - u.y * v.x);
 }
 
-template <typename T> inline Vec3<T> normalize(Vec3<T> v) {
-    double mag = v.length();
-    return Vec3<T>(v.x / mag, v.y / mag, v.z / mag);
-}
-
 inline vec3 unit_vector(vec3 v) { return v / v.length(); }
 
 inline vec3 random_in_unit_sphere() {
@@ -161,6 +156,14 @@ inline Vec3<T> random_in_hemisphere(const Vec3<T> &normal) {
         return -in_unit_sphere;
     } else {
         return in_unit_sphere;
+    }
+}
+
+inline vec3 random_in_unit_disk() {
+    while (true) {
+        auto p = vec3(random_double(-1, 1), random_double(-1, 1), 0);
+        if (p.length_squared() < 1)
+            return p;
     }
 }
 
