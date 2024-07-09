@@ -5,13 +5,14 @@
 color image_texture::value(double u, double v, const vec3 & /* p */) const {
     // Se não tivermos dados de textura, retorna uma cor ciano sólido como
     // um auxílio de depuração.
+    interval interval(0.0, 1.0);
     if (data == nullptr) {
         return color(0, 1, 1);
     }
 
     // Define as coordenadas da textura de entrada para [0,1] x [1,0]
-    u = clamp(u, 0.0, 1.0);
-    v = 1.0 - clamp(v, 0.0, 1.0); // Flip V to image coordinates
+    u = interval.clamp(u);
+    v = 1.0 - interval.clamp(v); // Flip V to image coordinates
 
     auto i = static_cast<int>(u * width);
     auto j = static_cast<int>(v * height);
