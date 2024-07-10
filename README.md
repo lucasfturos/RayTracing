@@ -2,6 +2,8 @@
 
 Repostório focado no meu aprendizado de Ray Tracing utilizando o C++ e os conhecimentos adquiridos na literatura (os links dos livros estão disponíveis na seção Créditos).
 
+Também tem a versão em Rust na pasta `rust-version`.
+
 Sobre os arquivos:
 
 -   BuleUtah: o [Bule de Utah](https://pt.wikipedia.org/wiki/Bule_de_Utah) ou bule de Newell é um tradicional modelo 3D usado para testes e também uma piada interna no ramo da computação gráfica.
