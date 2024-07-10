@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../../include/aabb.hpp"
 #include "../../include/material.hpp"
 #include "../../include/ray.hpp"
+#include "../AABB/aabb.hpp"
 #include "../HitTable/hittable.hpp"
 
 class Triangle : public hittable {
@@ -13,8 +13,7 @@ class Triangle : public hittable {
     virtual bool hit(const ray &r, interval ray_t,
                      hit_record &rec) const override;
 
-    virtual bool bounding_box(double time0, double time1,
-                              aabb &output_box) const override;
+    virtual aabb bounding_box() const override;
 
   private:
     vec3 v0, v1, v2;

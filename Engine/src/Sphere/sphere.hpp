@@ -7,13 +7,15 @@ class sphere : public hittable {
   public:
     sphere() {}
     sphere(point3 cen, double r, shared_ptr<material> m)
-        : center(cen), radius(r), mat_ptr(m){};
+        : center(cen), radius(r), mat_ptr(m) {
+        auto rvec = vec3(radius, radius, radius);
+        bbox = aabb(center - rvec, center + rvec);
+    };
 
     virtual bool hit(const ray &r, interval ray_t,
                      hit_record &rec) const override;
 
-    virtual bool bounding_box(double time0, double time1,
-                              aabb &output_box) const override;
+    aabb bounding_box() const override { return bbox; }
 
   private:
     static void get_sphere_uv(const point3 &p, double &u, double &v) {
@@ -35,4 +37,5 @@ class sphere : public hittable {
     point3 center;
     double radius;
     shared_ptr<material> mat_ptr;
+    aabb bbox;
 };

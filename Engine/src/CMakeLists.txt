@@ -2,32 +2,36 @@
 
 set(ENGINE_HEADERS
     # HEADER da Engine src
+    AABB/aabb.hpp
     Box/box.hpp
     BVH/bvh.hpp
-    Rect/rect.hpp
     Color/color.hpp
+    Constant_Medium/constant_medium.hpp
+    HitTable/hittable_list.hpp
+    HitTable/hittable.hpp
+    Interval/interval.hpp
+    ReadObjectFile/read_object_file.hpp
+    Rect/rect.hpp
     Sphere/sphere.hpp
     Texture/texture.hpp
-    HitTable/hittable.hpp
     Triangle/triangle.hpp
-    HitTable/hittable_list.hpp
-    Constant_Medium/constant_medium.hpp
-    ReadObjectFile/read_object_file.hpp
 )
 
 set(ENGINE_SOURCES
     # SOURCE da Engine
+    AABB/aabb.cpp
     Box/box.cpp
     BVH/bvh.cpp
-    Rect/rect.cpp
     Color/color.cpp
+    Constant_Medium/constant_medium.cpp
+    HitTable/hittable_list.cpp
+    HitTable/hittable.cpp
+    Interval/interval.cpp
+    ReadObjectFile/read_object_file.cpp
+    Rect/rect.cpp
     Sphere/sphere.cpp
     Texture/texture.cpp
-    HitTable/hittable.cpp
     Triangle/triangle.cpp
-    HitTable/hittable_list.cpp
-    ReadObjectFile/read_object_file.cpp
-    Constant_Medium/constant_medium.cpp
 )
 
 add_library(engine_lib 

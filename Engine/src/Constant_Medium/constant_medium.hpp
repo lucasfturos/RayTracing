@@ -18,10 +18,7 @@ class constant_medium : public hittable {
     virtual bool hit(const ray &r, interval ray_t,
                      hit_record &rec) const override;
 
-    virtual bool bounding_box(double time0, double time1,
-                              aabb &output_box) const override {
-        return boundary->bounding_box(time0, time1, output_box);
-    }
+    aabb bounding_box() const override { return boundary->bounding_box(); }
 
   public:
     shared_ptr<hittable> boundary;

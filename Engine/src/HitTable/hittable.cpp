@@ -11,21 +11,10 @@ bool translate::hit(const ray &r, interval ray_t, hit_record &rec) const {
     return true;
 }
 
-bool translate::bounding_box(double time0, double time1,
-                             aabb &output_box) const {
-    if (!ptr->bounding_box(time0, time1, output_box)) {
-        return false;
-    }
-
-    output_box = aabb(output_box.min() + offset, output_box.max() + offset);
-
-    return true;
-}
-
 rotate_y::rotate_y(shared_ptr<hittable> p, double angle)
     : ptr(p), sin_theta(sin(degrees_to_radians(angle))),
       cos_theta(cos(degrees_to_radians(angle))) {
-    hasbox = ptr->bounding_box(0, 1, bbox);
+    bbox = ptr->bounding_box();
 
     point3 min(infinity, infinity, infinity);
     point3 max(-infinity, -infinity, -infinity);
@@ -33,9 +22,9 @@ rotate_y::rotate_y(shared_ptr<hittable> p, double angle)
     for (int i = 0; i < 2; i++) {
         for (int j = 0; j < 2; j++) {
             for (int k = 0; k < 2; k++) {
-                auto x = i * bbox.max().x + (1 - i) * bbox.min().x;
-                auto y = j * bbox.max().y + (1 - j) * bbox.min().y;
-                auto z = k * bbox.max().z + (1 - k) * bbox.min().z;
+                auto x = i * bbox.x.max + (1 - i) * bbox.x.min;
+                auto y = j * bbox.y.max + (1 - j) * bbox.y.min;
+                auto z = k * bbox.z.max + (1 - k) * bbox.z.min;
 
                 auto newx = cos_theta * x + sin_theta * z;
                 auto newz = -sin_theta * x + cos_theta * z;

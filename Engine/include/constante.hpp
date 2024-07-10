@@ -25,6 +25,6 @@ using std::unordered_map;
 
 // Header
 
-#include "interval.hpp"
+#include "../src/Interval/interval.hpp"
 #include "ray.hpp"
 #include "vec3.hpp"

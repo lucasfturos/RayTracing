@@ -2,13 +2,9 @@
 
 bool bvh_node::box_compare(const shared_ptr<hittable> a,
                            const shared_ptr<hittable> b, int axis) {
-    aabb box_a;
-    aabb box_b;
-
-    if (!a->bounding_box(0, 0, box_a) || !b->bounding_box(0, 0, box_b))
-        std::cerr << "No bounding box in bvh_node constructor.\n";
-
-    return box_a.min()[axis] < box_b.min()[axis];
+    auto a_axis_interval = a->bounding_box().axis_interval(axis);
+    auto b_axis_interval = b->bounding_box().axis_interval(axis);
+    return a_axis_interval.min < b_axis_interval.min;
 }
 
 bool bvh_node::box_x_compare(const shared_ptr<hittable> &a,
@@ -26,16 +22,16 @@ bool bvh_node::box_z_compare(const shared_ptr<hittable> &a,
     return box_compare(a, b, 2);
 }
 
-bvh_node::bvh_node(std::vector<shared_ptr<hittable>> src_objects, size_t start,
-                   size_t end, double time0, double time1) {
-    // Create a modifiable array of the source scene objects
-    auto objects = src_objects;
+bvh_node::bvh_node(std::vector<shared_ptr<hittable>> objects, size_t start,
+                   size_t end) {
+    bbox = aabb::empty;
+    for (size_t object_index = start; object_index < end; object_index++)
+        bbox = aabb(bbox, objects[object_index]->bounding_box());
 
-    int axis = random_int(0, 2);
-    auto comparator = [this, axis](const std::shared_ptr<hittable> &a,
-                                   const std::shared_ptr<hittable> &b) {
-        return this->box_compare(a, b, axis);
-    };
+    int axis = bbox.longest_axis();
+    auto comparator = (axis == 0)   ? box_x_compare
+                      : (axis == 1) ? box_y_compare
+                                    : box_z_compare;
 
     size_t object_span = end - start;
 
@@ -53,28 +49,13 @@ bvh_node::bvh_node(std::vector<shared_ptr<hittable>> src_objects, size_t start,
         std::sort(objects.begin() + start, objects.begin() + end, comparator);
 
         auto mid = start + object_span / 2;
-        left = make_shared<bvh_node>(objects, start, mid, time0, time1);
-        right = make_shared<bvh_node>(objects, mid, end, time0, time1);
+        left = make_shared<bvh_node>(objects, start, mid);
+        right = make_shared<bvh_node>(objects, mid, end);
     }
-
-    aabb box_left, box_right;
-
-    if (!left->bounding_box(time0, time1, box_left) ||
-        !right->bounding_box(time0, time1, box_right)) {
-        std::cerr << "No bounding box in bvh_node constructor.\n";
-    }
-
-    box = surrounding_box(box_left, box_right);
-}
-
-bool bvh_node::bounding_box(double /* time0 */, double /* time1 */,
-                            aabb &output_box) const {
-    output_box = box;
-    return true;
 }
 
 bool bvh_node::hit(const ray &r, interval ray_t, hit_record &rec) const {
-    if (!box.hit(r, ray_t)) {
+    if (!bbox.hit(r, ray_t)) {
         return false;
     }
 
