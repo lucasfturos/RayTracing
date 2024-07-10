@@ -8,12 +8,11 @@ class interval {
   public:
     double min, max;
 
-    interval() : min(+infinity), max(-infinity) {} // Default interval is empty
+    interval() : min(+infinity), max(-infinity) {}
 
     interval(double min, double max) : min(min), max(max) {}
 
     interval(const interval &a, const interval &b) {
-        // Create the interval tightly enclosing the two input intervals.
         min = a.min <= b.min ? a.min : b.min;
         max = a.max >= b.max ? a.max : b.max;
     }
@@ -35,4 +34,3 @@ class interval {
 
     static const interval empty, universe;
 };
-

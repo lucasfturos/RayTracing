@@ -25,8 +25,9 @@ bool bvh_node::box_z_compare(const shared_ptr<hittable> &a,
 bvh_node::bvh_node(std::vector<shared_ptr<hittable>> objects, size_t start,
                    size_t end) {
     bbox = aabb::empty;
-    for (size_t object_index = start; object_index < end; object_index++)
+    for (size_t object_index = start; object_index < end; ++object_index) {
         bbox = aabb(bbox, objects[object_index]->bounding_box());
+    }
 
     int axis = bbox.longest_axis();
     auto comparator = (axis == 0)   ? box_x_compare
@@ -34,7 +35,6 @@ bvh_node::bvh_node(std::vector<shared_ptr<hittable>> objects, size_t start,
                                     : box_z_compare;
 
     size_t object_span = end - start;
-
     if (object_span == 1) {
         left = right = objects[start];
     } else if (object_span == 2) {
@@ -52,6 +52,7 @@ bvh_node::bvh_node(std::vector<shared_ptr<hittable>> objects, size_t start,
         left = make_shared<bvh_node>(objects, start, mid);
         right = make_shared<bvh_node>(objects, mid, end);
     }
+    bbox = aabb(left->bounding_box(), right->bounding_box());
 }
 
 bool bvh_node::hit(const ray &r, interval ray_t, hit_record &rec) const {

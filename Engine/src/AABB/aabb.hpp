@@ -5,10 +5,10 @@
 class aabb {
   public:
     interval x, y, z;
+    static const aabb empty, universe;
 
     aabb() {}
-    aabb(const interval &x, const interval &y, const interval &z)
-        : x(x), y(y), z(z) {}
+    aabb(const interval &x, const interval &y, const interval &z);
     aabb(const point3 &a, const point3 &b);
     aabb(const aabb &box0, const aabb &box1);
 
@@ -18,5 +18,6 @@ class aabb {
 
     int longest_axis() const;
 
-    static const aabb empty, universe;
+  private:
+    void pad_to_minimums();
 };

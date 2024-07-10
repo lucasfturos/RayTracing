@@ -37,7 +37,7 @@ bool Triangle::hit(const ray &r, interval ray_t, hit_record &rec) const {
     rec.t = t;
     rec.p = r.at(t);
 
-    vec3 normal = unit_vector(cross(e2, e1));
+    vec3 normal = unit_vector(cross(e1, e2));
     rec.normal = normal;
     rec.set_face_normal(r, normal);
     rec.mat_ptr = mat_ptr;

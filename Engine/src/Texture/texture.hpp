@@ -60,12 +60,15 @@ class noise_texture : public texture {
         // da grade
         // return color(1, 1, 1) * 0.5 * (1.0 + noise.noise(scale *  p));
 
-        // Textura de Perlin - Turbulência
-        // return color(1, 1, 1) * noise.turb(scale * p);
+        // Textura de Perlin - Turbulência com ajuste de fase
+        return color(1, 1, 1) * noise.turb(scale * p);
 
-        // Textura de Perlin - Turbulência com ajuste da fase
-        return color(1, 1, 1) * 0.5 *
-               (1 + sin(scale * p.z + 10 * noise.turb(p)));
+        // Textura de Perlin - Turbulência
+        // return color(1, 1, 1) * noise.turb(p);
+
+        // Textura de Perlin - Efeito de Marmore
+        // return color(.5, .5, .5) *
+        //        (1 + sin(scale * p.z + 10 * noise.turb(p, 7)));
     }
 
   public:
