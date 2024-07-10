@@ -1,7 +1,6 @@
 #pragma once
 
 #include "hittable.hpp"
-#include <vector>
 
 class hittable_list : public hittable {
   public:
@@ -21,6 +20,16 @@ class hittable_list : public hittable {
 
     aabb bounding_box() const override { return bbox; }
 
+    virtual double pdf_value(const point3 &origin,
+                             const vec3 &direction) const override;
+
+    virtual vec3 random(const point3 &origin) const override;
+
   private:
     aabb bbox;
+};
+
+struct Scene {
+    hittable_list world;
+    hittable_list lights;
 };

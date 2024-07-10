@@ -149,10 +149,9 @@ class Color {
     void rgb_to_hsl(int r, int g, int b, int *h, int *s, int *l);
 
   public:
-    void write_color(std::ostream &out, color pixel_color,
-                     int samples_per_pixel);
+    void write_color(std::ostream &out, color pixel_color, double scale);
     void write_color_SDL(SDL_Renderer *renderer, color pixel_color,
-                         int samples_per_pixel);
+                         double scale);
 
-    void run_color(std::ostream &out, color pixel_color, int samples_per_pixel);
+    void run_color(std::ostream &out, color pixel_color, double scale);
 };

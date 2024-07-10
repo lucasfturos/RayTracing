@@ -7,10 +7,11 @@
 class Object {
     // Read Object File
     shared_ptr<ReadObjectFile> read_object_ptr;
+    hittable_list world;
+    hittable_list lights;
 
   public:
     Object(const std::string &filepath);
 
-    bvh_node single_scene();
-    // bvh_node simple_light();
+    Scene single_scene();
 };

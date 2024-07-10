@@ -2,16 +2,17 @@
 #include "../../Engine/src/Quad/quad.hpp"
 #include "../../Engine/src/Sphere/sphere.hpp"
 
-bvh_node Esfera::solar_scene() {
+Scene Esfera::solar_scene() {
     const char *filename = "assets/img/earthmap.jpg";
     auto solar_texture{make_shared<image_texture>(filename)};
     auto solar_surface{make_shared<lambertian>(solar_texture)};
     auto globe{make_shared<sphere>(point3(0, 0, 0), 2, solar_surface)};
-    return bvh_node(hittable_list(globe));
+    auto m = shared_ptr<material>();
+    lights.add(make_shared<sphere>(point3(0, 0, 0), 2, m));
+    return {hittable_list(globe), lights};
 }
 
-bvh_node Esfera::single_scene() {
-    hittable_list world;
+Scene Esfera::single_scene() {
     // Texture
     auto checker{make_shared<checker_texture>(color(0.0, 0.0, 0.0),
                                               color(0.9, 0.9, 0.9))};
@@ -31,18 +32,20 @@ bvh_node Esfera::single_scene() {
     //  Objeto no centro
     world.add(make_shared<sphere>(point3(0, -0.5, 0), 0.5, material_metal));
     // Objeto a esquerda
-    world.add(make_shared<sphere>(point3(-1.0, .0, -1.0), .5, difflight));
+    // world.add(make_shared<sphere>(point3(-1.0, .0, -1.0), .5, difflight));
     // Objeto a direita
-    world.add(make_shared<sphere>(point3(1.0, .0, -1.0), .5, difflight));
+    // world.add(make_shared<sphere>(point3(1.0, .0, -1.0), .5, difflight));
     // Objeto em cima do centro
-    world.add(make_shared<sphere>(point3(.0, 1.2, -1), .5, difflight));
+    // world.add(make_shared<sphere>(point3(.0, 1.2, -1), .5, difflight));
 
-    return bvh_node(world);
+    auto m = shared_ptr<material>();
+    lights.add(
+        make_shared<quad>(point3(3, 1, -2), vec3(2, 0, 0), vec3(0, 2, 0), m));
+
+    return {world, lights};
 }
 
-bvh_node Esfera::simple_light() {
-    hittable_list world;
-
+Scene Esfera::simple_light() {
     auto pertext = make_shared<noise_texture>(4);
     world.add(make_shared<sphere>(point3(0, -1000, 0), 1000,
                                   make_shared<lambertian>(pertext)));
@@ -55,13 +58,15 @@ bvh_node Esfera::simple_light() {
     world.add(make_shared<quad>(point3(3, 1, -2), vec3(2, 0, 0), vec3(0, 2, 0),
                                 difflight));
 
-    return bvh_node(world);
+    auto m = shared_ptr<material>();
+    lights.add(make_shared<sphere>(point3(0, 7, 0), 2, m));
+    lights.add(
+        make_shared<quad>(point3(3, 1, -2), vec3(2, 0, 0), vec3(0, 2, 0), m));
+
+    return {world, lights};
 }
 
-bvh_node Esfera::random_scene() {
-    // World
-    hittable_list world;
-
+Scene Esfera::random_scene() {
     material_lambertian = make_shared<lambertian>(color(.5, .5, .5));
     world.add(
         make_shared<sphere>(point3(0, -100, -1), 100, material_lambertian));
@@ -91,5 +96,5 @@ bvh_node Esfera::random_scene() {
         }
     }
 
-    return bvh_node(world);
+    return {world, lights};
 }

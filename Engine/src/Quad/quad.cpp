@@ -7,6 +7,7 @@ quad::quad(const point3 &Q, const vec3 &u, const vec3 &v,
     normal = unit_vector(n);
     D = dot(normal, Q);
     w = n / dot(n, n);
+    area = n.length();
 
     set_bounding_box();
 }
@@ -54,4 +55,20 @@ bool quad::is_interior(double a, double b, hit_record &rec) const {
     rec.u = a;
     rec.v = b;
     return true;
+}
+
+double quad::pdf_value(const point3 &origin, const vec3 &direction) const {
+    hit_record rec;
+    if (!this->hit(ray(origin, direction), interval(0.001, infinity), rec))
+        return 0;
+
+    auto distance_squared = rec.t * rec.t * direction.length_squared();
+    auto cosine = fabs(dot(direction, rec.normal) / direction.length());
+
+    return distance_squared / (cosine * area);
+}
+
+vec3 quad::random(const point3 &origin) const {
+    auto p = Q + (random_double() * u) + (random_double() * v);
+    return p - origin;
 }

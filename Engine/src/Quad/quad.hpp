@@ -17,11 +17,17 @@ class quad : public hittable {
 
     virtual bool is_interior(double a, double b, hit_record &rec) const;
 
+    virtual double pdf_value(const point3 &origin,
+                             const vec3 &direction) const override;
+
+    virtual vec3 random(const point3 &origin) const override;
+
   private:
     point3 Q;
     vec3 u, v, w;
     vec3 normal;
     double D;
+    double area;
     shared_ptr<material> mat;
     aabb bbox;
 };

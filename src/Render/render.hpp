@@ -29,10 +29,11 @@ class Render {
     shared_ptr<Color> color_ptr;
 
     // Objeto
-    bvh_node world;
+    hittable_list world;
+    hittable_list lights;
 
   public:
-    Render(const bvh_node &root, int opc);
+    Render(const Scene &root, int opc);
     ~Render();
     void run();
     void run_ppm();

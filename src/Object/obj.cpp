@@ -7,9 +7,7 @@ Object::Object(const std::string &filepath) {
     read_object_ptr = make_shared<ReadObjectFile>(filepath);
 }
 
-bvh_node Object::single_scene() {
-    hittable_list world;
-
+Scene Object::single_scene() {
     auto pertext = make_shared<noise_texture>(4);
     auto checker = make_shared<checker_texture>(color(0.0, 0.0, 0.0),
                                                 color(0.9, 0.9, 0.9));
@@ -18,6 +16,8 @@ bvh_node Object::single_scene() {
     auto material_triangle = make_shared<lambertian>(pertext);
     // auto material_triangle = make_shared<metal>(color(.55, .62, .27), 0);
     // auto material_triangle = make_shared<dielectric>(1.5);
+    // auto material_triangle = make_shared<lambertian>(
+    //     make_shared<image_texture>("assets/img/earthmap.jpg"));
 
     // auto material_ground = make_shared<lambertian>(color(.5, .0, .8));
     auto material_ground = make_shared<lambertian>(checker);
@@ -42,5 +42,8 @@ bvh_node Object::single_scene() {
     world.add(box(point3(-2, 4.5, -2), point3(2, 4.6, 2), difflight));
     world.add(box(point3(-2, -0.5, -2), point3(2, -0.6, 2), material_ground));
 
-    return bvh_node(world);
+    auto m = shared_ptr<material>();
+    lights.add(box(point3(-2, 4.5, -2), point3(2, 4.6, 2), m));
+
+    return {world, lights};
 }

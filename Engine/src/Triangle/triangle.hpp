@@ -1,8 +1,6 @@
 #pragma once
 
-#include "../../include/material.hpp"
-#include "../../include/ray.hpp"
-#include "../AABB/aabb.hpp"
+#include "../../include/constante.hpp"
 #include "../HitTable/hittable.hpp"
 
 class Triangle : public hittable {

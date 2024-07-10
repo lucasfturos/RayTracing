@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../src/BVH/bvh.hpp"
-#include "../src/Interval/interval.hpp"
 #include "constante.hpp"
 #include "material.hpp"
 #include <functional>
@@ -18,21 +17,26 @@ class camera {
         initialize();
     }
 
-    void render(const bvh_node &world, const color &background, int j,
-                std::function<void(int, const color &)> draw_pixel) {
+    void render(const bvh_node &world, const hittable &lights,
+                const color &background, int j,
+                std::function<void(int, double, const color &)> draw_pixel) {
         for (int i = 0; i < image_width; ++i) {
             color pixel_color(0, 0, 0);
-            for (int s = 0; s < samples_per_pixel; ++s) {
-                ray r = get_ray(i, j);
-                pixel_color += ray_color(r, background, world);
+            for (int s_j = 0; s_j < sqrt_spp; s_j++) {
+                for (int s_i = 0; s_i < sqrt_spp; s_i++) {
+                    ray r = get_ray(i, j, s_i, s_j);
+                    pixel_color +=
+                        ray_color(r, background, max_depth, world, lights);
+                }
             }
-            draw_pixel(i, pixel_color);
+            draw_pixel(i, pixel_samples_scale, pixel_color);
         }
     }
 
     int getHeight() { return image_height; }
 
   private:
+    // Variáveis do Construtor
     int image_width;
     int image_height;
     int samples_per_pixel;
@@ -46,13 +50,18 @@ class camera {
     point3 lookfrom;
     point3 lookat;
     vec3 vup;
+
+    // Variáveis privadas
     point3 center;
     point3 pixel00_loc;
     vec3 pixel_delta_u;
     vec3 pixel_delta_v;
     vec3 u, v, w;
-    vec3 defocus_disk_u; // Defocus disk horizontal radius
-    vec3 defocus_disk_v; // Defocus disk vertical radius
+    vec3 defocus_disk_u;
+    vec3 defocus_disk_v;
+    int sqrt_spp;
+    double recip_sqrt_spp;
+    double pixel_samples_scale;
 
     void initialize() {
         image_height = static_cast<int>(image_width / aspect_ratio);
@@ -60,8 +69,11 @@ class camera {
 
         center = lookfrom;
 
+        sqrt_spp = int(sqrt(samples_per_pixel));
+        pixel_samples_scale = 1.0 / (sqrt_spp * sqrt_spp);
+        recip_sqrt_spp = 1.0 / sqrt_spp;
+
         // Determine viewport dimensions.
-        // auto focal_length = (lookfrom - lookat).length();
         auto theta = degrees_to_radians(vfov);
         auto h = tan(theta / 2);
         auto viewport_height = 2 * h * focus_dist;
@@ -97,11 +109,12 @@ class camera {
         defocus_disk_v = v * defocus_radius;
     }
 
-    ray get_ray(int i, int j) const {
-        // Construct a camera ray originating from the origin and directed at
-        // randomly sampled point around the pixel location i, j.
+    ray get_ray(int i, int j, int s_i, int s_j) const {
+        // Construct a camera ray originating from the defocus disk and directed
+        // at a randomly sampled point around the pixel location i, j for
+        // stratified sample square s_i, s_j.
 
-        auto offset = sample_square();
+        auto offset = sample_square_stratified(s_i, s_j);
         auto pixel_sample = pixel00_loc + ((i + offset.x) * pixel_delta_u) +
                             ((j + offset.y) * pixel_delta_v);
 
@@ -117,37 +130,60 @@ class camera {
         return vec3(random_double() - 0.5, random_double() - 0.5, 0);
     }
 
+    vec3 sample_square_stratified(int s_i, int s_j) const {
+        // Returns the vector to a random point in the square sub-pixel
+        // specified by grid indices s_i and s_j, for an idealized unit square
+        // pixel [-.5,-.5] to [+.5,+.5].
+
+        auto px = ((s_i + random_double()) * recip_sqrt_spp) - 0.5;
+        auto py = ((s_j + random_double()) * recip_sqrt_spp) - 0.5;
+
+        return vec3(px, py, 0);
+    }
+
     point3 defocus_disk_sample() const {
         // Returns a random point in the camera defocus disk.
         auto p = random_in_unit_disk();
         return center + (p.x * defocus_disk_u) + (p.y * defocus_disk_v);
     }
 
-    color ray_color(const ray &r, const color &background,
-                    const bvh_node &root) {
-        color current_attenuation = color(1.0, 1.0, 1.0);
-        ray current_ray = r;
+    color ray_color(const ray &r, color background, int depth,
+                    const hittable &world, const hittable &lights) const {
+        // If we've exceeded the ray bounce limit, no more light is gathered.
+        if (depth <= 0)
+            return color(0, 0, 0);
+
         hit_record rec;
-        ray scattered;
-        color attenuation, emitted;
 
-        for (int depth = 0; depth < max_depth; ++depth) {
-            if (!root.hit(current_ray, interval(0.001, infinity), rec)) {
-                return current_attenuation * background;
-            }
+        // If the ray hits nothing, return the background color.
+        if (!world.hit(r, interval(0.001, infinity), rec))
+            return background;
 
-            emitted = rec.mat_ptr->emitted(rec.u, rec.v, rec.p);
+        scatter_record srec;
+        color color_from_emission =
+            rec.mat_ptr->emitted(r, rec, rec.u, rec.v, rec.p);
 
-            if (rec.mat_ptr->scatter(current_ray, rec, attenuation,
-                                     scattered)) {
-                current_attenuation *= attenuation;
-                current_ray = scattered;
-            } else {
-                return current_attenuation * emitted;
-            }
+        if (!rec.mat_ptr->scatter(r, rec, srec))
+            return color_from_emission;
+
+        if (srec.skip_pdf) {
+            return srec.attenuation * ray_color(srec.skip_pdf_ray, background,
+                                                depth - 1, world, lights);
         }
 
-        // Se atingir a profundidade máxima, retorna preto
-        return color(0, 0, 0);
+        auto light_ptr = make_shared<hittable_pdf>(lights, rec.p);
+        mixture_pdf p(light_ptr, srec.pdf_ptr);
+
+        ray scattered = ray(rec.p, p.generate(), r.time());
+        auto pdf_val = p.value(scattered.direction());
+
+        double scattering_pdf = rec.mat_ptr->scattering_pdf(r, rec, scattered);
+
+        color sample_color =
+            ray_color(scattered, background, depth - 1, world, lights);
+        color color_from_scatter =
+            (srec.attenuation * scattering_pdf * sample_color) / pdf_val;
+
+        return color_from_emission + color_from_scatter;
     }
 };

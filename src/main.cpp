@@ -47,7 +47,7 @@ int main(int argc, char *argv[]) {
                 render->run();
                 break;
             case 2:
-                render = make_shared<Render>(esfera->single_scene(), 0);
+                render = make_shared<Render>(esfera->simple_light(), 0);
                 render->run_ppm();
                 break;
             case 3:
@@ -65,7 +65,7 @@ int main(int argc, char *argv[]) {
                 render->run();
                 break;
             case 2:
-                render = make_shared<Render>(room->final_scene(), 0);
+                render = make_shared<Render>(room->cornell_box(), 0);
                 render->run_ppm();
                 break;
             case 3:

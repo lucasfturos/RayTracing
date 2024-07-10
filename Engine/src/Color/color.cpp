@@ -62,9 +62,14 @@ void Color::rgb_to_hsl(int r, int g, int b, int *h, int *s, int *l) {
     *l = static_cast<int>(lf * 100.0f);
 }
 
-void Color::run_color(std::ostream &out, color pixel_color,
-                      int samples_per_pixel) {
-    auto scale = 1.0 / samples_per_pixel;
+double Color::linear_to_gamma(double linear_component) {
+    if (linear_component > 0) {
+        return sqrt(linear_component);
+    }
+    return 0;
+}
+
+void Color::run_color(std::ostream &out, color pixel_color, double scale) {
     auto r = pixel_color.x * scale;
     auto g = pixel_color.y * scale;
     auto b = pixel_color.z * scale;
@@ -75,12 +80,11 @@ void Color::run_color(std::ostream &out, color pixel_color,
                static_cast<int>(256 * intensity.clamp(b)), &h, &s, &l);
 
     int ansi_index = find_ansi_hsl(h, s, l);
-    // auto chosen_color = table_rgb[ansi_index];
-    out << "\033[48;5;" << ansi_index << "m  ";
+    auto chosen_color = table_rgb[ansi_index];
+    out << "\033[48;5;" << chosen_color << "m  ";
 }
 
-void Color::write_color(std::ostream &out, color pixel_color,
-                        int samples_per_pixel) {
+void Color::write_color(std::ostream &out, color pixel_color, double scale) {
     color color = pixel_color;
 
     color.x != color.x ? color.x = 0.0 : 0;
@@ -88,33 +92,6 @@ void Color::write_color(std::ostream &out, color pixel_color,
     color.z != color.z ? color.z = 0.0 : 0;
 
     // Divide a cor pelo número de amostras.
-    auto scale = 1.0 / samples_per_pixel;
-    color.x *= scale;
-    color.y *= scale;
-    color.z *= scale;
-
-    // Write the translated [0,255] value of each color component.
-    out << static_cast<int>(255 * intensity.clamp(color.x)) << ' '
-        << static_cast<int>(255 * intensity.clamp(color.y)) << ' '
-        << static_cast<int>(255 * intensity.clamp(color.z)) << '\n';
-}
-
-double Color::linear_to_gamma(double linear_component) {
-    if (linear_component > 0) {
-        return sqrt(linear_component);
-    }
-    return 0;
-}
-
-void Color::write_color_SDL(SDL_Renderer *renderer, color pixel_color,
-                            int samples_per_pixel) {
-    color color = pixel_color;
-
-    color.x != color.x ? color.x = 0.0 : 0;
-    color.y != color.y ? color.y = 0.0 : 0;
-    color.z != color.z ? color.z = 0.0 : 0;
-
-    auto scale = 1.0 / samples_per_pixel;
     color.x *= scale;
     color.y *= scale;
     color.z *= scale;
@@ -123,9 +100,31 @@ void Color::write_color_SDL(SDL_Renderer *renderer, color pixel_color,
     // color.y = linear_to_gamma(color.y);
     // color.z = linear_to_gamma(color.z);
 
-    SDL_Color sdl_color = {static_cast<Uint8>(255 * intensity.clamp(color.x)),
-                           static_cast<Uint8>(255 * intensity.clamp(color.y)),
-                           static_cast<Uint8>(255 * intensity.clamp(color.z)),
+    // Write the translated [0,255] value of each color component.
+    out << static_cast<int>(255 * intensity.clamp(color.x)) << ' '
+        << static_cast<int>(255 * intensity.clamp(color.y)) << ' '
+        << static_cast<int>(255 * intensity.clamp(color.z)) << '\n';
+}
+
+void Color::write_color_SDL(SDL_Renderer *renderer, color pixel_color,
+                            double scale) {
+    color color = pixel_color;
+
+    color.x != color.x ? color.x = 0.0 : 0;
+    color.y != color.y ? color.y = 0.0 : 0;
+    color.z != color.z ? color.z = 0.0 : 0;
+
+    color.x *= scale;
+    color.y *= scale;
+    color.z *= scale;
+
+    color.x = linear_to_gamma(color.x);
+    color.y = linear_to_gamma(color.y);
+    color.z = linear_to_gamma(color.z);
+
+    SDL_Color sdl_color = {static_cast<Uint8>(256 * intensity.clamp(color.x)),
+                           static_cast<Uint8>(256 * intensity.clamp(color.y)),
+                           static_cast<Uint8>(256 * intensity.clamp(color.z)),
                            SDL_ALPHA_OPAQUE};
 
     SDL_SetRenderDrawColor(renderer, sdl_color.r, sdl_color.g, sdl_color.b,

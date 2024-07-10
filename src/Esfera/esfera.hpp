@@ -17,9 +17,12 @@ class Esfera {
     // Caixa
     shared_ptr<hittable> box_;
 
+    hittable_list world;
+    hittable_list lights;
+
   public:
-    bvh_node solar_scene();
-    bvh_node simple_light();
-    bvh_node single_scene();
-    bvh_node random_scene();
+    Scene solar_scene();
+    Scene simple_light();
+    Scene single_scene();
+    Scene random_scene();
 };

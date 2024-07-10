@@ -3,7 +3,7 @@
 #include "../../Engine/src/Quad/quad.hpp"
 #include "../../Engine/src/Sphere/sphere.hpp"
 
-bvh_node CornellBox::cornell_smoke() {
+Scene CornellBox::cornell_smoke() {
     hittable_list world;
 
     red = make_shared<lambertian>(color(.65, .05, .05));
@@ -37,10 +37,15 @@ bvh_node CornellBox::cornell_smoke() {
     world.add(make_shared<constant_medium>(box1, 0.01, color(0, 0, 0)));
     world.add(make_shared<constant_medium>(box2, 0.01, color(1, 1, 1)));
 
-    return bvh_node(world);
+    hittable_list lights;
+    auto m = shared_ptr<material>();
+    lights.add(make_shared<quad>(point3(343, 554, 332), vec3(-130, 0, 0),
+                                 vec3(0, 0, -105), m));
+
+    return {world, lights};
 }
 
-bvh_node CornellBox::cornell_box() {
+Scene CornellBox::cornell_box() {
     hittable_list world;
 
     // Cores e luz
@@ -49,37 +54,44 @@ bvh_node CornellBox::cornell_box() {
     green = make_shared<lambertian>(color(.12, .45, .15));
     light = make_shared<diffuse_light>(color(15, 15, 15));
 
-    // Paredes e lâmpada
-    world.add(make_shared<quad>(point3(555, 0, 0), vec3(0, 555, 0),
-                                vec3(0, 0, 555), green));
-    world.add(make_shared<quad>(point3(0, 0, 0), vec3(0, 555, 0),
-                                vec3(0, 0, 555), red));
-    world.add(make_shared<quad>(point3(343, 554, 332), vec3(-130, 0, 0),
-                                vec3(0, 0, -105), light));
-    world.add(make_shared<quad>(point3(0, 0, 0), vec3(555, 0, 0),
+    // Cornell box sides
+    world.add(make_shared<quad>(point3(555, 0, 0), vec3(0, 0, 555),
+                                vec3(0, 555, 0), green));
+    world.add(make_shared<quad>(point3(0, 0, 555), vec3(0, 0, -555),
+                                vec3(0, 555, 0), red));
+    world.add(make_shared<quad>(point3(0, 555, 0), vec3(555, 0, 0),
                                 vec3(0, 0, 555), white));
-    world.add(make_shared<quad>(point3(555, 555, 555), vec3(-555, 0, 0),
-                                vec3(0, 0, -555), white));
     world.add(make_shared<quad>(point3(0, 0, 555), vec3(555, 0, 0),
+                                vec3(0, 0, -555), white));
+    world.add(make_shared<quad>(point3(555, 0, 555), vec3(-555, 0, 0),
                                 vec3(0, 555, 0), white));
 
-    // Objetos
+    // Light
+    world.add(make_shared<quad>(point3(213, 554, 227), vec3(130, 0, 0),
+                                vec3(0, 0, 105), light));
+
+    // Box
     shared_ptr<hittable> box1 =
         box(point3(0, 0, 0), point3(165, 330, 165), white);
     box1 = make_shared<rotate_y>(box1, 15);
     box1 = make_shared<translate>(box1, vec3(265, 0, 295));
     world.add(box1);
 
-    shared_ptr<hittable> box2 =
-        box(point3(0, 0, 0), point3(165, 165, 165), white);
-    box2 = make_shared<rotate_y>(box2, -18);
-    box2 = make_shared<translate>(box2, vec3(130, 0, 65));
-    world.add(box2);
+    // Glass Sphere
+    auto glass = make_shared<dielectric>(1.5);
+    world.add(make_shared<sphere>(point3(190, 90, 190), 90, glass));
 
-    return bvh_node(world);
+    // Light Sources
+    hittable_list lights;
+    auto m = shared_ptr<material>();
+    lights.add(make_shared<quad>(point3(343, 554, 332), vec3(-130, 0, 0),
+                                 vec3(0, 0, -105), m));
+    lights.add(make_shared<sphere>(point3(190, 90, 190), 90, m));
+
+    return {world, lights};
 }
 
-bvh_node CornellBox::final_scene() {
+Scene CornellBox::final_scene() {
     hittable_list boxes1;
     auto ground = make_shared<lambertian>(color(0.48, 0.83, 0.53));
 
@@ -126,8 +138,8 @@ bvh_node CornellBox::final_scene() {
                                    make_shared<dielectric>(1.5));
     world.add(make_shared<constant_medium>(boundary, .0001, color(1, 1, 1)));
 
-    auto emat =
-        make_shared<lambertian>(make_shared<image_texture>("assets/img/earthmap.jpg"));
+    auto emat = make_shared<lambertian>(
+        make_shared<image_texture>("assets/img/earthmap.jpg"));
     world.add(make_shared<sphere>(point3(400, 200, 400), 100, emat));
     auto pertext = make_shared<noise_texture>(0.2);
     world.add(make_shared<sphere>(point3(220, 280, 300), 80,
@@ -144,5 +156,10 @@ bvh_node CornellBox::final_scene() {
         make_shared<rotate_y>(make_shared<bvh_node>(boxes2), 15),
         vec3(-100, 270, 395)));
 
-    return world;
+    hittable_list lights;
+    auto m = shared_ptr<material>();
+    lights.add(make_shared<quad>(point3(343, 554, 332), vec3(-130, 0, 0),
+                                 vec3(0, 0, -105), m));
+
+    return {world, lights};
 }

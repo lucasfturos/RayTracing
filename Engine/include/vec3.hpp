@@ -146,14 +146,25 @@ inline vec3 random_unit_vector() {
     return unit_vector(random_in_unit_sphere());
 }
 
-template <typename T>
-inline Vec3<T> random_in_hemisphere(const Vec3<T> &normal) {
-    Vec3<T> in_unit_sphere{random_in_unit_sphere()};
+inline vec3 random_in_hemisphere(const vec3 &normal) {
+    vec3 in_unit_sphere{random_in_unit_sphere()};
     if (dot(in_unit_sphere, normal) > .0) {
         return -in_unit_sphere;
     } else {
         return in_unit_sphere;
     }
+}
+
+inline vec3 random_cosine_direction() {
+    auto r1 = random_double();
+    auto r2 = random_double();
+
+    auto phi = 2 * M_PI * r1;
+    auto x = std::cos(phi) * std::sqrt(r2);
+    auto y = std::sin(phi) * std::sqrt(r2);
+    auto z = std::sqrt(1 - r2);
+
+    return vec3(x, y, z);
 }
 
 inline vec3 random_in_unit_disk() {

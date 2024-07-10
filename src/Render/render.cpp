@@ -1,6 +1,7 @@
 #include "render.hpp"
 
-Render::Render(const bvh_node &root, int opc) : world(root) {
+Render::Render(const Scene &root, int opc)
+    : world(root.world), lights(root.lights) {
     if (opc == 1) {
         initSDL2();
     }
@@ -101,13 +102,12 @@ void Render::run() {
         }
 
         if (!ren_complete) {
-            cam->render(world, background, current_scanline,
-                        [&](int i, const color &pixel_color) {
+            cam->render(bvh_node(world), lights, background, current_scanline,
+                        [&](int i, double scale, const color &pixel_color) {
                             int x = i;
                             int y = current_scanline;
 
-                            color_ptr->write_color_SDL(ren, pixel_color,
-                                                       samples_per_pixel);
+                            color_ptr->write_color_SDL(ren, pixel_color, scale);
                             SDL_RenderDrawPoint(ren, x, y);
                         });
             current_scanline++;
@@ -125,7 +125,7 @@ void Render::run_ppm() {
     // Color
     color_ptr = make_shared<Color>();
     color background(0, 0, 0);
-    double illumination = 0.7;
+    double illumination = .2;
     background = color(illumination, illumination, illumination);
 
     // Renderização
@@ -133,9 +133,10 @@ void Render::run_ppm() {
     for (auto j{0}; j < image_height + 1; ++j) {
         std::cerr << "\rLinhas de varredura restantes: " << j << ' '
                   << std::flush;
-        cam->render(world, background, j, [&](int, const color &pixel_color) {
-            color_ptr->write_color(std::cout, pixel_color, samples_per_pixel);
-        });
+        cam->render(world, lights, background, j,
+                    [&](int, double scale, const color &pixel_color) {
+                        color_ptr->write_color(std::cout, pixel_color, scale);
+                    });
     }
 
     std::cout << "\nTerminou" << '\n';
@@ -148,9 +149,10 @@ void Render::run_term() {
 
     // Renderização
     for (auto j{0}; j < image_height + 1; ++j) {
-        cam->render(world, background, j, [&](int, const color &pixel_color) {
-            color_ptr->run_color(std::cout, pixel_color, samples_per_pixel);
-        });
+        cam->render(world, lights, background, j,
+                    [&](int, double scale, const color &pixel_color) {
+                        color_ptr->run_color(std::cout, pixel_color, scale);
+                    });
         std::cout << "\033[0m\n";
     }
 }

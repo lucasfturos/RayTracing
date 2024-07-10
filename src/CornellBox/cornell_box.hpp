@@ -14,7 +14,7 @@ class CornellBox {
     shared_ptr<diffuse_light> light;
 
   public:
-    bvh_node cornell_box();
-    bvh_node cornell_smoke();
-    bvh_node final_scene();
+    Scene cornell_box();
+    Scene cornell_smoke();
+    Scene final_scene();
 };
