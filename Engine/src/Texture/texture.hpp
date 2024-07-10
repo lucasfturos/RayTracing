@@ -36,7 +36,8 @@ class checker_texture : public texture {
           odd(make_shared<solid_color>(c2)) {}
 
     virtual color value(double u, double v, const point3 &p) const override {
-        auto sines{sin(10 * p.x) * sin(10 * p.y) * sin(10 * p.z)};
+        auto sines{std::sin(10 * p.x) * std::sin(10 * p.y) *
+                   std::sin(10 * p.z)};
         if (sines < 0) {
             return odd->value(u, v, p);
         } else {

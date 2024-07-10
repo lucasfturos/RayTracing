@@ -28,7 +28,7 @@ bool Triangle::hit(const ray &r, interval ray_t, hit_record &rec) const {
     }
 
     double t = f * dot(e2, origin_cross_e1);
-    if (t < ray_t.min || t > ray_t.max) {
+    if (!ray_t.surrounds(t)) {
         return false;
     }
 

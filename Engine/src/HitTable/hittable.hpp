@@ -27,8 +27,10 @@ class hittable {
 
 class translate : public hittable {
   public:
-    translate(shared_ptr<hittable> p, const vec3 &displacement)
-        : ptr(p), offset(displacement) {}
+    translate(shared_ptr<hittable> object, const vec3 &offset)
+        : object(object), offset(offset) {
+        bbox = object->bounding_box() + offset;
+    }
 
     virtual bool hit(const ray &r, interval ray_t,
                      hit_record &rec) const override;
@@ -36,7 +38,7 @@ class translate : public hittable {
     aabb bounding_box() const override { return bbox; }
 
   public:
-    shared_ptr<hittable> ptr;
+    shared_ptr<hittable> object;
     vec3 offset;
     aabb bbox;
 };

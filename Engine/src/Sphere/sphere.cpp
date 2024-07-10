@@ -11,11 +11,11 @@ bool sphere::hit(const ray &r, interval ray_t, hit_record &rec) const {
         return false;
     }
 
-    auto sqrtd = sqrt(discriminant);
+    auto sqrtd = std::sqrt(discriminant);
     auto root = (-half_b - sqrtd) / a;
-    if (ray_t.surrounds(root)) {
+    if (!ray_t.surrounds(root)) {
         root = (-half_b + sqrtd) / a;
-        if (ray_t.surrounds(root)) {
+        if (!ray_t.surrounds(root)) {
             return false;
         }
     }

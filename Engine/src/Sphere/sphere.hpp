@@ -15,7 +15,7 @@ class sphere : public hittable {
     virtual bool hit(const ray &r, interval ray_t,
                      hit_record &rec) const override;
 
-    aabb bounding_box() const override { return bbox; }
+    virtual aabb bounding_box() const override { return bbox; }
 
   private:
     static void get_sphere_uv(const point3 &p, double &u, double &v) {
@@ -26,8 +26,8 @@ class sphere : public hittable {
         //     <0 1 0> yields <0.50 1.00>       < 0 -1  0> yields <0.50 0.00>
         //     <0 0 1> yields <0.25 0.50>       < 0  0 -1> yields <0.75 0.50>
 
-        auto theta{acos(-p.y)};
-        auto phi{atan2(-p.z, p.x) + pi};
+        auto theta{std::acos(-p.y)};
+        auto phi{std::atan2(-p.z, p.x) + pi};
 
         u = phi / (2 * pi);
         v = theta / pi;

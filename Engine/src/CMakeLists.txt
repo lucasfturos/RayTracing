@@ -3,15 +3,14 @@
 set(ENGINE_HEADERS
     # HEADER da Engine src
     AABB/aabb.hpp
-    Box/box.hpp
     BVH/bvh.hpp
     Color/color.hpp
     Constant_Medium/constant_medium.hpp
     HitTable/hittable_list.hpp
     HitTable/hittable.hpp
     Interval/interval.hpp
+    Quad/quad.hpp
     ReadObjectFile/read_object_file.hpp
-    Rect/rect.hpp
     Sphere/sphere.hpp
     Texture/texture.hpp
     Triangle/triangle.hpp
@@ -20,15 +19,14 @@ set(ENGINE_HEADERS
 set(ENGINE_SOURCES
     # SOURCE da Engine
     AABB/aabb.cpp
-    Box/box.cpp
     BVH/bvh.cpp
     Color/color.cpp
     Constant_Medium/constant_medium.cpp
     HitTable/hittable_list.cpp
     HitTable/hittable.cpp
     Interval/interval.cpp
+    Quad/quad.cpp
     ReadObjectFile/read_object_file.cpp
-    Rect/rect.cpp
     Sphere/sphere.cpp
     Texture/texture.cpp
     Triangle/triangle.cpp

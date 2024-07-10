@@ -19,7 +19,6 @@ template <typename T> inline T degrees_to_radians(T degrees) {
 using std::make_shared;
 using std::make_unique;
 using std::shared_ptr;
-using std::sqrt;
 using std::unique_ptr;
 using std::unordered_map;
 

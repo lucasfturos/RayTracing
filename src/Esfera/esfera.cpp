@@ -1,5 +1,5 @@
 #include "esfera.hpp"
-#include "../../Engine/src/Box/box.hpp"
+#include "../../Engine/src/Quad/quad.hpp"
 #include "../../Engine/src/Sphere/sphere.hpp"
 
 bvh_node Esfera::solar_scene() {
@@ -26,9 +26,8 @@ bvh_node Esfera::single_scene() {
     material_dieletric = make_shared<dielectric>(1.5);
 
     // Chão
-    box_ = make_shared<box>(point3(-2, -2.0, -2), point3(2, -1, 2),
-                            material_lambertian_checker);
-    world.add(box_);
+    world.add(make_shared<quad>(point3(3, 1, -2), vec3(2, 0, 0), vec3(0, 2, 0),
+                                difflight));
     //  Objeto no centro
     world.add(make_shared<sphere>(point3(0, -0.5, 0), 0.5, material_metal));
     // Objeto a esquerda
@@ -42,21 +41,21 @@ bvh_node Esfera::single_scene() {
 }
 
 bvh_node Esfera::simple_light() {
-    hittable_list objects;
+    hittable_list world;
 
-    material_metal = make_shared<metal>(color(.8, .8, .8), .0);
-    auto pertext{make_shared<noise_texture>(4)};
-    box_ = make_shared<box>(point3(-2, -0.5, -2), point3(2, -0.6, 2),
-                            material_metal);
-    objects.add(box_);
-    objects.add(make_shared<sphere>(point3(0, 0, 0), .5,
-                                    make_shared<lambertian>(pertext)));
+    auto pertext = make_shared<noise_texture>(4);
+    world.add(make_shared<sphere>(point3(0, -1000, 0), 1000,
+                                  make_shared<lambertian>(pertext)));
+    world.add(make_shared<sphere>(point3(0, 2, 0), 2,
+                                  make_shared<lambertian>(pertext)));
 
-    difflight = make_shared<diffuse_light>(color(4, 4, 4));
-    objects.add(
-        make_shared<box>(point3(-1, 0.7, -1), point3(1, -0.6, 1), difflight));
+    auto difflight = make_shared<diffuse_light>(color(4, 4, 4));
+    world.add(make_shared<sphere>(point3(0, 7, 0), 2, difflight));
 
-    return bvh_node(objects);
+    world.add(make_shared<quad>(point3(3, 1, -2), vec3(2, 0, 0), vec3(0, 2, 0),
+                                difflight));
+
+    return bvh_node(world);
 }
 
 bvh_node Esfera::random_scene() {

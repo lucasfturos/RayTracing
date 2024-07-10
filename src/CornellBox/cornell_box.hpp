@@ -6,8 +6,6 @@
 class CornellBox {
   private:
     // Material
-    shared_ptr<hittable> box1;
-    shared_ptr<hittable> box2;
     shared_ptr<metal> metal_tex;
     shared_ptr<lambertian> red;
     shared_ptr<lambertian> white;
@@ -18,4 +16,5 @@ class CornellBox {
   public:
     bvh_node cornell_box();
     bvh_node cornell_smoke();
+    bvh_node final_scene();
 };

@@ -4,9 +4,6 @@
 #include <iostream>
 #include <random>
 
-using std::fabs;
-using std::sqrt;
-
 inline double random_double() {
     // Returns a random real in [0,1).
     static std::uniform_real_distribution<double> distribution(0.0, 1.0);
@@ -65,13 +62,13 @@ template <typename T> class Vec3 {
 
     Vec3 &operator/=(const T t) { return *this *= 1 / t; }
 
-    T length() const { return sqrt(length_squared()); }
+    T length() const { return std::sqrt(length_squared()); }
 
     T length_squared() const { return x * x + y * y + z * z; }
 
     bool near_zero() const {
         const auto s = 1e-8;
-        return (fabs(x) < s) && (fabs(y) < s) && (fabs(z) < s);
+        return (std::abs(x) < s) && (std::abs(y) < s) && (std::abs(z) < s);
     }
 
     static Vec3 random() {
@@ -175,8 +172,9 @@ inline Vec3<T> reflect(const Vec3<T> &v, const Vec3<T> &n) {
 template <typename T>
 inline Vec3<T> refract(const Vec3<T> &uv, const Vec3<T> &n,
                        double etai_over_etat) {
-    auto cos_theta = fmin(dot(-uv, n), 1.0);
+    auto cos_theta = std::min(dot(-uv, n), 1.0);
     Vec3<T> r_out_perp = etai_over_etat * (uv + cos_theta * n);
-    Vec3<T> r_out_parallel = -sqrt(fabs(1.0 - r_out_perp.length_squared())) * n;
+    Vec3<T> r_out_parallel =
+        -std::sqrt(std::abs(1.0 - r_out_perp.length_squared())) * n;
     return r_out_perp + r_out_parallel;
 }
