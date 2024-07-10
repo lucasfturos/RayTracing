@@ -39,10 +39,10 @@ bvh_node Object::single_scene() {
         triangles.emplace_back(triangle);
     }
 
-    world.add(make_shared<bvh_node>(triangles, 0, triangles.size(), 0, 1));
+    world.add(make_shared<bvh_node>(triangles, 0, triangles.size()));
     world.add(
         make_shared<box>(point3(-2, 4.5, -2), point3(2, 4.6, 2), difflight));
     world.add(box_);
 
-    return bvh_node(world, 0.0, 1.0);
+    return bvh_node(world);
 }

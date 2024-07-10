@@ -7,7 +7,7 @@ bvh_node Esfera::solar_scene() {
     auto solar_texture{make_shared<image_texture>(filename)};
     auto solar_surface{make_shared<lambertian>(solar_texture)};
     auto globe{make_shared<sphere>(point3(0, 0, 0), 2, solar_surface)};
-    return bvh_node(hittable_list(globe), 0.0, 1.0);
+    return bvh_node(hittable_list(globe));
 }
 
 bvh_node Esfera::single_scene() {
@@ -32,13 +32,13 @@ bvh_node Esfera::single_scene() {
     //  Objeto no centro
     world.add(make_shared<sphere>(point3(0, -0.5, 0), 0.5, material_metal));
     // Objeto a esquerda
-    // world.add(make_shared<sphere>(point3(-1.0, .0, -1.0), .5, difflight));
+    world.add(make_shared<sphere>(point3(-1.0, .0, -1.0), .5, difflight));
     // Objeto a direita
-    // world.add(make_shared<sphere>(point3(1.0, .0, -1.0), .5, difflight));
+    world.add(make_shared<sphere>(point3(1.0, .0, -1.0), .5, difflight));
     // Objeto em cima do centro
-    // world.add(make_shared<sphere>(point3(.0, 1.2, -1), .5, difflight));
+    world.add(make_shared<sphere>(point3(.0, 1.2, -1), .5, difflight));
 
-    return bvh_node(world, 0.0, 1.0);
+    return bvh_node(world);
 }
 
 bvh_node Esfera::simple_light() {
@@ -56,7 +56,7 @@ bvh_node Esfera::simple_light() {
     objects.add(
         make_shared<box>(point3(-1, 0.7, -1), point3(1, -0.6, 1), difflight));
 
-    return bvh_node(objects, 0.0, 1.0);
+    return bvh_node(objects);
 }
 
 bvh_node Esfera::random_scene() {
@@ -92,5 +92,5 @@ bvh_node Esfera::random_scene() {
         }
     }
 
-    return bvh_node(world, 0.0, 1.0);
+    return bvh_node(world);
 }

@@ -22,9 +22,12 @@ Render::Render(const bvh_node &root, int opc) : world(root) {
     image_width = screen_width;
     int max_depth = 3;
     double vfov = 50;
+    double defocus_angle = 0;
+    double focus_dist = lookfrom.z;
 
     cam = make_shared<camera>(aspect_ratio, image_width, samples_per_pixel,
-                              max_depth, vfov, lookfrom, lookat, vup);
+                              max_depth, vfov, defocus_angle, focus_dist,
+                              lookfrom, lookat, vup);
 
     image_height = cam->getHeight();
 }
@@ -70,7 +73,7 @@ void Render::run() {
     // Color
     color_ptr = make_shared<Color>();
     color background(0, 0, 0);
-    double illumination = 0.7;
+    double illumination = 0.5;
     background = color(illumination, illumination, illumination);
 
     // Janela
@@ -78,7 +81,6 @@ void Render::run() {
     SDL_Event event;
     bool ren_complete = false;
     int current_scanline = 0;
-    int start_y = (screen_height - image_height) / 2;
 
     SDL_RenderClear(ren);
     while (!quit) {
@@ -97,8 +99,7 @@ void Render::run() {
             cam->render(world, background, current_scanline,
                         [&](int i, const color &pixel_color) {
                             int x = i;
-                            int y =
-                                start_y + image_height - current_scanline - 1;
+                            int y = current_scanline;
 
                             color_ptr->write_color_SDL(ren, pixel_color,
                                                        samples_per_pixel);
@@ -122,9 +123,9 @@ void Render::run_ppm() {
 
     // Renderização
     std::cout << "P3\n" << image_width << ' ' << image_height << "\n255\n";
-    for (auto j{image_height - 1}; j >= 0; --j) {
-        std::cerr << "\rLinhas de varredura restantes: " << (image_height - j)
-                  << ' ' << std::flush;
+    for (auto j{0}; j < image_height + 1; ++j) {
+        std::cerr << "\rLinhas de varredura restantes: " << j << ' '
+                  << std::flush;
         cam->render(world, background, j, [&](int, const color &pixel_color) {
             color_ptr->write_color(std::cout, pixel_color, samples_per_pixel);
         });
@@ -136,10 +137,10 @@ void Render::run_ppm() {
 void Render::run_term() {
     // Color
     color_ptr = make_shared<Color>();
-    color background(.0, 0.749, 1.0);
+    color background(.0, 0.75, 1.0);
 
     // Renderização
-    for (auto j{image_height - 1}; j >= 0; --j) {
+    for (auto j{0}; j < image_height + 1; ++j) {
         cam->render(world, background, j, [&](int, const color &pixel_color) {
             color_ptr->run_color(std::cout, pixel_color, samples_per_pixel);
         });

@@ -31,7 +31,7 @@ bvh_node CornellBox::cornell_smoke() {
     objects.add(make_shared<constant_medium>(box1, 0.01, color(0, 0, 0)));
     objects.add(make_shared<constant_medium>(box2, 0.01, color(1, 1, 1)));
 
-    return bvh_node(objects, 0.0, 1.0);
+    return bvh_node(objects);
 }
 
 bvh_node CornellBox::cornell_box() {
@@ -63,5 +63,5 @@ bvh_node CornellBox::cornell_box() {
     box2 = make_shared<translate>(box2, vec3(65, 0, 32.5));
     objects.add(box2);
 
-    return bvh_node(objects, 0.0, 1.0);
+    return bvh_node(objects);
 }
