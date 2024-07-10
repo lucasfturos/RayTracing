@@ -20,7 +20,7 @@ class Render {
     // Imagem
     int image_width; // Limite da função do run_term é 200 image_width
     int image_height;
-    const int samples_per_pixel{10};
+    const int samples_per_pixel{100};
 
     // Camera
     shared_ptr<camera> cam;

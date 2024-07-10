@@ -9,25 +9,25 @@ Render::Render(const Scene &root, int opc)
     // Initialize cam
     // point3 lookfrom(26, 3, 6);
     // point3 lookfrom(13, 2, 3);
-    // point3 lookfrom(278, 278, -800); // Cornell Box
+    point3 lookfrom(278, 278, -800); // Cornell Box
     // point3 lookfrom(478, 278, -600); // Cornell Box
-    point3 lookfrom(0, 2.2, 7.5); // visão de frente
+    // point3 lookfrom(0, 2.2, 7.5); // visão de frente
     // point3 lookfrom(0, 0, 9);
     // point3 lookfrom(3, 3, 2); // Visão da diagonal
     // point3 lookfrom(15, 0, 30); // Posição da câmera para visualização
     // diagonal
 
     //  Visão do observador
-    point3 lookat(0, 2, 0);
-    // point3 lookat(278, 278, 0); // Cornell Box
+    // point3 lookat(0, 2, 0);
+    point3 lookat(278, 278, 0); // Cornell Box
     // point3 lookat(0, 0, 0);
     vec3 vup(0, 1, 0);
 
-    double aspect_ratio = 1.5;
-    image_width = screen_width;
+    double aspect_ratio = 1.;
+    image_width = 800;
     int max_depth = 3;
-    // double vfov = 40;
-    double vfov = 50;
+    double vfov = 40;
+    // double vfov = 50;
     double defocus_angle = 0;
     double focus_dist = 10;
 
@@ -125,7 +125,7 @@ void Render::run_ppm() {
     // Color
     color_ptr = make_shared<Color>();
     color background(0, 0, 0);
-    double illumination = .2;
+    double illumination = .1;
     background = color(illumination, illumination, illumination);
 
     // Renderização
