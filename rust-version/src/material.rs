@@ -49,6 +49,7 @@ pub struct Metal {
     pub fuzz: f64,
 }
 
+#[allow(dead_code)]
 impl Metal {
     pub fn new(albedo: Color, fuzz: f64) -> Self {
         Self { albedo, fuzz }
@@ -76,6 +77,7 @@ pub struct Dielectric {
     refraction_index: f64,
 }
 
+#[allow(dead_code)]
 impl Dielectric {
     pub fn new(refraction_index: f64) -> Self {
         Self { refraction_index }

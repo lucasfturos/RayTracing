@@ -68,6 +68,33 @@ pub fn random_double() -> f64 {
 }
 
 #[allow(dead_code)]
+pub fn random_color() -> Color {
+    Color::new(random_double(), random_double(), random_double())
+}
+
+#[allow(dead_code)]
 pub fn random_double_range(min: f64, max: f64) -> f64 {
     min + (max - min) * random_double()
+}
+
+#[allow(dead_code)]
+pub fn random_color_range(min: f64, max: f64) -> Color {
+    Color::new(
+        random_double_range(min, max),
+        random_double_range(min, max),
+        random_double_range(min, max),
+    )
+}
+
+pub fn random_in_unit_disk() -> Vector3<f64> {
+    loop {
+        let p = Vector3::new(
+            random_double_range(-1.0, 1.0),
+            random_double_range(-1.0, 1.0),
+            0.0,
+        );
+        if p.norm_squared() < 1.0 {
+            return p;
+        }
+    }
 }

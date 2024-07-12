@@ -11,6 +11,9 @@ pub struct Camera {
     pixel_delta_u: Vector3<f64>,
     pixel_delta_v: Vector3<f64>,
     pixel_samples_scale: f64,
+    defocus_angle: f64,
+    defocus_disk_u: Vector3<f64>,
+    defocus_disk_v: Vector3<f64>,
 }
 
 impl Camera {
@@ -19,31 +22,47 @@ impl Camera {
         image_width: usize,
         samples_per_pixel: usize,
         max_depth: usize,
+        vfov: f64,
+        lookfrom: Point3<f64>,
+        lookat: Point3<f64>,
+        vup: Vector3<f64>,
+        defocus_angle: f64,
+        focus_dist: f64,
     ) -> Self {
         let image_height = (image_width as f64 / aspect_ratio) as usize;
-        let image_height = image_height.max(1);
+        let image_height = image_height;
 
-        let center = Point3::new(0.0, 0.0, 0.0);
+        let pixel_samples_scale = 1.0 / samples_per_pixel as f64;
+
+        let center = lookfrom;
 
         // Determine viewport dimensions.
-        let focal_length = 1.0;
-        let viewport_height = 2.0;
+        let theta = degrees_to_radians(vfov);
+        let h = (theta / 2.0).tan();
+        let viewport_height = 2.0 * h * focus_dist;
         let viewport_width = viewport_height * (image_width as f64 / image_height as f64);
 
+        // Calculate the u,v,w unit basis vectors for the camera coordinate frame.
+        let w = unit_vector(lookfrom - lookat);
+        let u = unit_vector(vup.cross(&w));
+        let v = w.cross(&u);
+
         // Calculate the vectors across the horizontal and down the vertical viewport edges.
-        let viewport_u = Vector3::new(viewport_width, 0.0, 0.0);
-        let viewport_v = Vector3::new(0.0, -viewport_height, 0.0);
+        let viewport_u = viewport_width * u;
+        let viewport_v = viewport_height * -v;
 
         // Calculate the horizontal and vertical delta vectors from pixel to pixel.
         let pixel_delta_u = viewport_u / image_width as f64;
         let pixel_delta_v = viewport_v / image_height as f64;
 
         // Calculate the location of the upper left pixel.
-        let viewport_upper_left =
-            center - Vector3::new(0.0, 0.0, focal_length) - viewport_u / 2.0 - viewport_v / 2.0;
+        let viewport_upper_left = center - (focus_dist * w) - viewport_u / 2.0 - viewport_v / 2.0;
         let pixel00_loc = viewport_upper_left + 0.5 * (pixel_delta_u + pixel_delta_v);
 
-        let pixel_samples_scale = 1.0 / samples_per_pixel.max(10) as f64;
+        // Calculate the camera defocus disk basis vectors.
+        let defocus_radius = focus_dist * (degrees_to_radians(defocus_angle / 2.0)).tan();
+        let defocus_disk_u = u * defocus_radius;
+        let defocus_disk_v = v * defocus_radius;
 
         Self {
             image_width,
@@ -55,6 +74,9 @@ impl Camera {
             pixel_delta_u,
             pixel_delta_v,
             pixel_samples_scale,
+            defocus_angle,
+            defocus_disk_u,
+            defocus_disk_v,
         }
     }
 
@@ -90,7 +112,11 @@ impl Camera {
             + (i as f64 + offset.x) * self.pixel_delta_u
             + (j as f64 + offset.y) * self.pixel_delta_v;
 
-        let ray_origin = self.center;
+        let ray_origin = if self.defocus_angle <= 0.0 {
+            self.center
+        } else {
+            self.defocus_disk_sample()
+        };
         let ray_direction = pixel_sample - ray_origin;
 
         Ray::new(ray_origin, ray_direction.normalize())
@@ -98,6 +124,11 @@ impl Camera {
 
     fn sample_square(&self) -> Vector3<f64> {
         Vector3::new(random_double() - 0.5, random_double() - 0.5, 0.0)
+    }
+
+    fn defocus_disk_sample(&self) -> Point3<f64> {
+        let p = random_in_unit_disk();
+        self.center + (p.x * self.defocus_disk_u) + (p.y * self.defocus_disk_v)
     }
 
     pub fn render(&self, world: &dyn Hittable) {
