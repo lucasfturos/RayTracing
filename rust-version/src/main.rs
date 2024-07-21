@@ -16,8 +16,8 @@ use raytracing::*;
 use sphere::Sphere;
 
 fn main() {
-    let aspect_ratio = 16.0 / 9.0;
-    let image_width = 1200;
+    let aspect_ratio = 1.0;
+    let image_width = 400;
     let samples_per_pixel = 10;
     let max_depth = 10;
 
@@ -103,3 +103,5 @@ fn main() {
 
     cam.render(&world);
 }
+
+// https://raytracing.github.io/books/RayTracingTheNextWeek.html#boundingvolumehierarchies
