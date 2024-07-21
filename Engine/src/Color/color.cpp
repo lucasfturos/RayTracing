@@ -1,4 +1,7 @@
 #include "color.hpp"
+#include "../Interval/interval.hpp"
+#include "table_color.hpp"
+#include <algorithm>
 
 static const interval intensity(0.0, 0.999);
 
@@ -122,10 +125,12 @@ void Color::write_color_SDL(SDL_Renderer *renderer, color pixel_color,
     color.y = linear_to_gamma(color.y);
     color.z = linear_to_gamma(color.z);
 
-    SDL_Color sdl_color = {static_cast<Uint8>(256 * intensity.clamp(color.x)),
-                           static_cast<Uint8>(256 * intensity.clamp(color.y)),
-                           static_cast<Uint8>(256 * intensity.clamp(color.z)),
-                           SDL_ALPHA_OPAQUE};
+    SDL_Color sdl_color = {
+        .r = static_cast<Uint8>(256 * intensity.clamp(color.x)),
+        .g = static_cast<Uint8>(256 * intensity.clamp(color.y)),
+        .b = static_cast<Uint8>(256 * intensity.clamp(color.z)),
+        .a = SDL_ALPHA_OPAQUE,
+    };
 
     SDL_SetRenderDrawColor(renderer, sdl_color.r, sdl_color.g, sdl_color.b,
                            sdl_color.a);

@@ -8,13 +8,13 @@ Object::Object(const std::string &filepath) {
 }
 
 Scene Object::single_scene() {
-    auto pertext = make_shared<noise_texture>(4);
+    // auto pertext = make_shared<noise_texture>(4);
     auto checker = make_shared<checker_texture>(color(0.0, 0.0, 0.0),
                                                 color(0.9, 0.9, 0.9));
     auto difflight = make_shared<diffuse_light>(color(4, 4, 4));
     // auto material_triangle = make_shared<lambertian>(color(.55, .62, .27));
-    auto material_triangle = make_shared<lambertian>(pertext);
-    // auto material_triangle = make_shared<metal>(color(.55, .62, .27), 0);
+    // auto material_triangle = make_shared<lambertian>(pertext);
+    auto material_triangle = make_shared<metal>(color(.55, .62, .27), 0);
     // auto material_triangle = make_shared<dielectric>(1.5);
     // auto material_triangle = make_shared<lambertian>(
     //     make_shared<image_texture>("assets/img/earthmap.jpg"));

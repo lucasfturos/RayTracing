@@ -24,6 +24,4 @@ bool interval::contains(double x) const { return min <= x && x <= max; }
 
 bool interval::surrounds(double x) const { return min < x && x < max; }
 
-double interval::clamp(double x) const {
-    return std::clamp(x, min, max);
-}
+double interval::clamp(double x) const { return std::clamp(x, min, max); }

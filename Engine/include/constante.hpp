@@ -7,7 +7,7 @@
 #include <unordered_map>
 
 // Constants
-const double pi{3.1415926535897932385};
+const double pi{M_PI};
 const double eps = std::numeric_limits<float>::epsilon();
 
 // Utility Functions

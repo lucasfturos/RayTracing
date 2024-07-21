@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../../include/constante.hpp"
-#include "../../include/pdf.hpp"
+#include "../../include/onb.hpp"
 #include "../HitTable/hittable.hpp"
 
 class sphere : public hittable {

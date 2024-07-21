@@ -1,85 +1,31 @@
 #include "render.hpp"
 
 Render::Render(const Scene &root, int opc)
-    : world(root.world), lights(root.lights) {
+    : win(nullptr), ren(nullptr), world(root.world), lights(root.lights) {
     if (opc == 1) {
-        initSDL2();
+        setupSDL2();
     }
 
-    // Initialize cam
-    // point3 lookfrom(26, 3, 6);
-    // point3 lookfrom(13, 2, 3);
-    point3 lookfrom(278, 278, -800); // Cornell Box
-    // point3 lookfrom(478, 278, -600); // Cornell Box
-    // point3 lookfrom(0, 2.2, 7.5); // visão de frente
-    // point3 lookfrom(0, 0, 9);
-    // point3 lookfrom(3, 3, 2); // Visão da diagonal
-    // point3 lookfrom(15, 0, 30); // Posição da câmera para visualização
-    // diagonal
-
-    //  Visão do observador
-    // point3 lookat(0, 2, 0);
-    point3 lookat(278, 278, 0); // Cornell Box
-    // point3 lookat(0, 0, 0);
-    vec3 vup(0, 1, 0);
-
-    double aspect_ratio = 1.;
-    image_width = 800;
-    int max_depth = 3;
-    double vfov = 40;
-    // double vfov = 50;
-    double defocus_angle = 0;
-    double focus_dist = 10;
-
-    cam = make_shared<camera>(aspect_ratio, image_width, samples_per_pixel,
-                              max_depth, vfov, defocus_angle, focus_dist,
-                              lookfrom, lookat, vup);
-
-    image_height = cam->getHeight();
+    setupCamera();
 }
 
 Render::~Render() {
-    if (ren) {
-        SDL_DestroyRenderer(ren);
-        ren = nullptr;
-    }
     if (win) {
         SDL_DestroyWindow(win);
         win = nullptr;
     }
+    if (ren) {
+        SDL_DestroyRenderer(ren);
+        ren = nullptr;
+    }
     SDL_Quit();
-}
-
-void Render::initSDL2() {
-    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-        std::cerr << "Erro ao inicializar o SDL: " << SDL_GetError() << '\n';
-        exit(EXIT_FAILURE);
-    }
-
-    win = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_UNDEFINED,
-                           SDL_WINDOWPOS_UNDEFINED, screen_width, screen_height,
-                           SDL_WINDOW_VULKAN);
-    if (!win) {
-        std::cerr << "Erro ao criar a janela: " << SDL_GetError() << '\n';
-        SDL_Quit();
-        exit(EXIT_FAILURE);
-    }
-
-    ren = SDL_CreateRenderer(win, -1,
-                             SDL_RENDERER_SOFTWARE | SDL_RENDERER_PRESENTVSYNC);
-    if (!ren) {
-        std::cerr << "Erro ao criar o renderizador: " << SDL_GetError() << '\n';
-        SDL_DestroyWindow(win);
-        SDL_Quit();
-        exit(EXIT_FAILURE);
-    }
 }
 
 void Render::run() {
     // Color
     color_ptr = make_shared<Color>();
     color background(0, 0, 0);
-    double illumination = 0.5;
+    double illumination = 0.1;
     background = color(illumination, illumination, illumination);
 
     // Janela
@@ -88,10 +34,39 @@ void Render::run() {
     bool ren_complete = false;
     int current_scanline = 0;
 
+    // Mouse
+    int last_mouseX = 0;
+    int last_mouseY = 0;
+    bool mouse_down = false;
+
     SDL_RenderClear(ren);
     while (!quit) {
         while (SDL_PollEvent(&event)) {
-            event.type == SDL_QUIT ? (quit = true) : 0;
+            switch (event.type) {
+            case SDL_QUIT:
+                quit = true;
+                break;
+            case SDL_MOUSEBUTTONDOWN:
+                if (event.button.button == SDL_BUTTON_LEFT) {
+                    mouse_down = true;
+                    SDL_GetMouseState(&last_mouseX, &last_mouseY);
+                }
+                break;
+            case SDL_MOUSEBUTTONUP:
+                if (event.button.button == SDL_BUTTON_LEFT) {
+                    mouse_down = false;
+                }
+                break;
+            case SDL_MOUSEMOTION:
+                if (mouse_down) {
+                    // int delta_x = event.motion.x - last_x;
+                    // int delta_y = event.motion.y - last_y;
+                    last_mouseX = event.motion.x;
+                    last_mouseY = event.motion.y;
+                }
+            default:
+                break;
+            }
             switch (event.key.keysym.sym) {
             case SDLK_ESCAPE:
                 quit = true;
@@ -100,7 +75,6 @@ void Render::run() {
                 break;
             }
         }
-
         if (!ren_complete) {
             cam->render(bvh_node(world), lights, background, current_scanline,
                         [&](int i, double scale, const color &pixel_color) {

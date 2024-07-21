@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../../Engine/include/camera.hpp"
-#include "../../Engine/src/BVH/bvh.hpp"
 #include "../../Engine/src/Color/color.hpp"
 #include <SDL2/SDL.h>
 
@@ -15,15 +14,16 @@ class Render {
     // SDL2
     SDL_Window *win;
     SDL_Renderer *ren;
-    void initSDL2();
+    void setupSDL2();
 
     // Imagem
     int image_width; // Limite da função do run_term é 200 image_width
     int image_height;
-    const int samples_per_pixel{100};
+    const int samples_per_pixel{10};
 
     // Camera
     shared_ptr<camera> cam;
+    void setupCamera();
 
     // Color
     shared_ptr<Color> color_ptr;

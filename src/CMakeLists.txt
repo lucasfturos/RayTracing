@@ -12,6 +12,7 @@ set(PROJECT_SOURCE                    # Directory of all source file
   # SOURCE Scenes
   Object/obj.cpp
   Render/render.cpp
+  Render/setup.cpp
   Esfera/esfera.cpp
   CornellBox/cornell_box.cpp
   # SOURCE main
