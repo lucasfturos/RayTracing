@@ -13,7 +13,8 @@ class camera {
         : image_width(image_width), samples_per_pixel(samples_per_pixel),
           max_depth(max_depth), vfov(vfov), aspect_ratio(aspect_ratio),
           defocus_angle(defocus_angle), focus_dist(focus_dist),
-          lookfrom(lookfrom), lookat(lookat), vup(vup) {
+          lookfrom(lookfrom), lookat(lookat), vup(vup), yaw(-90.0), pitch(0.0),
+          zoom(1) {
         initialize();
     }
 
@@ -31,6 +32,33 @@ class camera {
             }
             draw_pixel(i, pixel_samples_scale, pixel_color);
         }
+    }
+
+    void processMouseMovement(int deltaX, int deltaY) {
+        float sensitivity = 0.1f;
+        yaw += deltaX * sensitivity;
+        pitch += deltaY * sensitivity;
+
+        if (pitch > 89.0f) {
+            pitch = 89.0f;
+        }
+        if (pitch < -89.0f) {
+            pitch = -89.0f;
+        }
+
+        updateCameraVectors();
+    }
+
+    void processMouseScroll(int deltaY) {
+        float zoom_factor = 0.1f;
+        zoom += deltaY * zoom_factor;
+        if (zoom < -45.0f) {
+            zoom = -45.0f;
+        }
+        if (zoom > 45.0f) {
+            zoom = 45.0f;
+        }
+        updateCameraVectors();
     }
 
     int getHeight() { return image_height; }
@@ -51,14 +79,21 @@ class camera {
     point3 lookat;
     vec3 vup;
 
+    double yaw;
+    double pitch;
+    double zoom;
+
     // Variáveis privadas
     point3 center;
     point3 pixel00_loc;
+
     vec3 pixel_delta_u;
     vec3 pixel_delta_v;
     vec3 u, v, w;
+
     vec3 defocus_disk_u;
     vec3 defocus_disk_v;
+
     int sqrt_spp;
     double recip_sqrt_spp;
     double pixel_samples_scale;
@@ -145,6 +180,34 @@ class camera {
         // Returns a random point in the camera defocus disk.
         auto p = random_in_unit_disk();
         return center + (p.x * defocus_disk_u) + (p.y * defocus_disk_v);
+    }
+
+    void updateCameraVectors() {
+        vec3 front;
+        front.x = std::cos(degrees_to_radians(yaw)) *
+                  std::cos(degrees_to_radians(pitch));
+        front.y = std::sin(degrees_to_radians(pitch));
+        front.z = std::sin(degrees_to_radians(yaw)) *
+                  std::cos(degrees_to_radians(pitch));
+        front = unit_vector(front);
+
+        w = unit_vector(lookfrom - (lookfrom + front));
+        u = unit_vector(cross(vup, w));
+        v = cross(w, u);
+
+        auto theta = degrees_to_radians(vfov);
+        auto h = std::tan(theta / 2);
+        auto viewport_height = 2.0 * h * focus_dist / -zoom;
+        auto viewport_width = aspect_ratio * viewport_height;
+        std::cout << "Zoom: " << zoom << std::endl;
+        std::cout << "Viewport Height: " << viewport_height << std::endl;
+        std::cout << "Viewport Width: " << viewport_width << std::endl;
+
+        vec3 horizontal = viewport_width * u;
+        vec3 vertical = viewport_height * v;
+        pixel00_loc = lookfrom - horizontal / 2 - vertical / 2 - focus_dist * w;
+        pixel_delta_u = horizontal / image_width;
+        pixel_delta_v = vertical / image_height;
     }
 
     color ray_color(const ray &r, color background, int depth,

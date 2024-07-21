@@ -28,19 +28,24 @@ void Render::run() {
     double illumination = 0.1;
     background = color(illumination, illumination, illumination);
 
-    // Janela
-    bool quit = false;
-    SDL_Event event;
-    bool ren_complete = false;
-    int current_scanline = 0;
-
     // Mouse
     int last_mouseX = 0;
     int last_mouseY = 0;
     bool mouse_down = false;
 
+    // Frame rate
+    const int target_fps = 60;
+    const int frame_delay = 1000 / target_fps;
+    Uint32 frame_start = 0;
+    int frame_time;
+
+    SDL_Event event;
+    bool quit = false;
+    int current_scanline = 0;
+
     SDL_RenderClear(ren);
     while (!quit) {
+        frame_start = SDL_GetTicks();
         while (SDL_PollEvent(&event)) {
             switch (event.type) {
             case SDL_QUIT:
@@ -59,39 +64,47 @@ void Render::run() {
                 break;
             case SDL_MOUSEMOTION:
                 if (mouse_down) {
-                    // int delta_x = event.motion.x - last_x;
-                    // int delta_y = event.motion.y - last_y;
+                    int delta_x = event.motion.x - last_mouseX;
+                    int delta_y = event.motion.y - last_mouseY;
+                    cam->processMouseMovement(delta_x, delta_y);
                     last_mouseX = event.motion.x;
                     last_mouseY = event.motion.y;
                 }
-            default:
                 break;
-            }
-            switch (event.key.keysym.sym) {
-            case SDLK_ESCAPE:
-                quit = true;
+            case SDL_MOUSEWHEEL:
+                cam->processMouseScroll(event.wheel.y);
+                break;
+            case SDL_KEYDOWN:
+                switch (event.key.keysym.sym) {
+                case SDLK_ESCAPE:
+                    quit = true;
+                    break;
+                default:
+                    break;
+                }
                 break;
             default:
                 break;
             }
         }
-        if (!ren_complete) {
+        if (current_scanline < image_height) {
             cam->render(bvh_node(world), lights, background, current_scanline,
                         [&](int i, double scale, const color &pixel_color) {
                             int x = i;
                             int y = current_scanline;
-
                             color_ptr->write_color_SDL(ren, pixel_color, scale);
                             SDL_RenderDrawPoint(ren, x, y);
                         });
             current_scanline++;
-
-            if (current_scanline == image_height) {
-                ren_complete = true;
-                std::cout << "Done \n";
-            }
+        } else {
+            current_scanline = 0;
         }
         SDL_RenderPresent(ren);
+
+        frame_time = SDL_GetTicks() - frame_start;
+        if (frame_delay > frame_time) {
+            SDL_Delay(frame_delay - frame_time);
+        }
     }
 }
 
