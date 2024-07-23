@@ -88,20 +88,14 @@ void Color::run_color(std::ostream &out, color pixel_color, double scale) {
 }
 
 void Color::write_color(std::ostream &out, color pixel_color, double scale) {
-    color color = pixel_color;
-
+    color color = pixel_color * scale;
     color.x != color.x ? color.x = 0.0 : 0;
     color.y != color.y ? color.y = 0.0 : 0;
     color.z != color.z ? color.z = 0.0 : 0;
 
-    // Divide a cor pelo número de amostras.
-    color.x *= scale;
-    color.y *= scale;
-    color.z *= scale;
-
-    // color.x = linear_to_gamma(color.x);
-    // color.y = linear_to_gamma(color.y);
-    // color.z = linear_to_gamma(color.z);
+    color.x = linear_to_gamma(color.x);
+    color.y = linear_to_gamma(color.y);
+    color.z = linear_to_gamma(color.z);
 
     // Write the translated [0,255] value of each color component.
     out << static_cast<int>(255 * intensity.clamp(color.x)) << ' '
@@ -109,29 +103,22 @@ void Color::write_color(std::ostream &out, color pixel_color, double scale) {
         << static_cast<int>(255 * intensity.clamp(color.z)) << '\n';
 }
 
-void Color::write_color_SDL(SDL_Renderer *renderer, color pixel_color,
-                            double scale) {
-    color color = pixel_color;
+void Color::write_color_SDL(SDL_Surface *surface, color pixel_color,
+                            double scale, int x, int y) {
+    color scaled_color = pixel_color * scale;
+    scaled_color.x != scaled_color.x ? scaled_color.x = 0.0 : 0;
+    scaled_color.y != scaled_color.y ? scaled_color.y = 0.0 : 0;
+    scaled_color.z != scaled_color.z ? scaled_color.z = 0.0 : 0;
 
-    color.x != color.x ? color.x = 0.0 : 0;
-    color.y != color.y ? color.y = 0.0 : 0;
-    color.z != color.z ? color.z = 0.0 : 0;
+    scaled_color.x = linear_to_gamma(scaled_color.x);
+    scaled_color.y = linear_to_gamma(scaled_color.y);
+    scaled_color.z = linear_to_gamma(scaled_color.z);
 
-    color.x *= scale;
-    color.y *= scale;
-    color.z *= scale;
+    Uint8 r = static_cast<Uint8>(256 * intensity.clamp(scaled_color.x));
+    Uint8 g = static_cast<Uint8>(256 * intensity.clamp(scaled_color.y));
+    Uint8 b = static_cast<Uint8>(256 * intensity.clamp(scaled_color.z));
+    Uint32 color = (255 << 24) | (r << 16) | (g << 8) | b;
 
-    color.x = linear_to_gamma(color.x);
-    color.y = linear_to_gamma(color.y);
-    color.z = linear_to_gamma(color.z);
-
-    SDL_Color sdl_color = {
-        .r = static_cast<Uint8>(256 * intensity.clamp(color.x)),
-        .g = static_cast<Uint8>(256 * intensity.clamp(color.y)),
-        .b = static_cast<Uint8>(256 * intensity.clamp(color.z)),
-        .a = SDL_ALPHA_OPAQUE,
-    };
-
-    SDL_SetRenderDrawColor(renderer, sdl_color.r, sdl_color.g, sdl_color.b,
-                           sdl_color.a);
+    Uint32 *pixels = (Uint32 *)surface->pixels;
+    pixels[y * surface->w + x] = color;
 }

@@ -14,6 +14,8 @@ class Render {
     // SDL2
     SDL_Window *win;
     SDL_Renderer *ren;
+    SDL_Texture *texture;
+    SDL_Surface *surface;
     void setupSDL2();
 
     // Imagem

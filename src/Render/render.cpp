@@ -1,7 +1,8 @@
 #include "render.hpp"
 
 Render::Render(const Scene &root, int opc)
-    : win(nullptr), ren(nullptr), world(root.world), lights(root.lights) {
+    : win(nullptr), ren(nullptr), texture(nullptr), surface(nullptr),
+      world(root.world), lights(root.lights) {
     if (opc == 1) {
         setupSDL2();
     }
@@ -18,6 +19,15 @@ Render::~Render() {
         SDL_DestroyRenderer(ren);
         ren = nullptr;
     }
+    if (texture) {
+        SDL_DestroyTexture(texture);
+        texture = nullptr;
+    }
+    if (surface) {
+        SDL_FreeSurface(surface);
+        surface = nullptr;
+    }
+
     SDL_Quit();
 }
 
@@ -25,7 +35,7 @@ void Render::run() {
     // Color
     color_ptr = make_shared<Color>();
     color background(0, 0, 0);
-    double illumination = 0.1;
+    double illumination = 0.3;
     background = color(illumination, illumination, illumination);
 
     // Mouse
@@ -92,13 +102,18 @@ void Render::run() {
                         [&](int i, double scale, const color &pixel_color) {
                             int x = i;
                             int y = current_scanline;
-                            color_ptr->write_color_SDL(ren, pixel_color, scale);
-                            SDL_RenderDrawPoint(ren, x, y);
+                            color_ptr->write_color_SDL(surface, pixel_color,
+                                                       scale, x, y);
                         });
             current_scanline++;
         } else {
             current_scanline = 0;
         }
+
+        SDL_UpdateTexture(texture, nullptr, surface->pixels, surface->pitch);
+        SDL_RenderClear(ren);
+        SDL_RenderCopy(ren, texture, nullptr, nullptr);
+
         SDL_RenderPresent(ren);
 
         frame_time = SDL_GetTicks() - frame_start;

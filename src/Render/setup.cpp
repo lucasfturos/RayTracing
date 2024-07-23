@@ -23,6 +23,29 @@ void Render::setupSDL2() {
         SDL_Quit();
         exit(EXIT_FAILURE);
     }
+
+    surface =
+        SDL_CreateRGBSurface(0, screen_width, screen_height, 32, 0x00FF0000,
+                             0x0000FF00, 0x000000FF, 0xFF000000);
+    if (surface == nullptr) {
+        SDL_DestroyRenderer(ren);
+        SDL_DestroyWindow(win);
+        std::cerr << "SDL_CreateRGBSurface Error: " << SDL_GetError() << '\n';
+        SDL_Quit();
+        exit(EXIT_FAILURE);
+    }
+
+    texture = SDL_CreateTexture(ren, SDL_PIXELFORMAT_ARGB8888,
+                                SDL_TEXTUREACCESS_STREAMING, screen_width,
+                                screen_height);
+    if (texture == nullptr) {
+        SDL_FreeSurface(surface);
+        SDL_DestroyRenderer(ren);
+        SDL_DestroyWindow(win);
+        std::cerr << "SDL_CreateTexture Error: " << SDL_GetError() << '\n';
+        SDL_Quit();
+        exit(EXIT_FAILURE);
+    }
 }
 
 void Render::setupCamera() {

@@ -16,8 +16,8 @@ class Color {
 
   public:
     void write_color(std::ostream &out, color pixel_color, double scale);
-    void write_color_SDL(SDL_Renderer *renderer, color pixel_color,
-                         double scale);
+    void write_color_SDL(SDL_Surface *surface, color pixel_color, double scale,
+                         int x, int y);
 
     void run_color(std::ostream &out, color pixel_color, double scale);
 };

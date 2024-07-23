@@ -18,7 +18,7 @@ class camera {
         initialize();
     }
 
-    void render(const bvh_node &world, const hittable &lights,
+    void render(const bvh_node &world, const hittable_list &lights,
                 const color &background, int j,
                 std::function<void(int, double, const color &)> draw_pixel) {
         for (int i = 0; i < image_width; ++i) {
@@ -38,14 +38,12 @@ class camera {
         float sensitivity = 0.1f;
         yaw += deltaX * sensitivity;
         pitch += deltaY * sensitivity;
-
-        if (pitch > 89.0f) {
-            pitch = 89.0f;
-        }
         if (pitch < -89.0f) {
             pitch = -89.0f;
         }
-
+        if (pitch > 89.0f) {
+            pitch = 89.0f;
+        }
         updateCameraVectors();
     }
 
@@ -199,9 +197,6 @@ class camera {
         auto h = std::tan(theta / 2);
         auto viewport_height = 2.0 * h * focus_dist / -zoom;
         auto viewport_width = aspect_ratio * viewport_height;
-        std::cout << "Zoom: " << zoom << std::endl;
-        std::cout << "Viewport Height: " << viewport_height << std::endl;
-        std::cout << "Viewport Width: " << viewport_width << std::endl;
 
         vec3 horizontal = viewport_width * u;
         vec3 vertical = viewport_height * v;
