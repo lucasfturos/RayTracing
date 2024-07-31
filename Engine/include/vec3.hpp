@@ -28,6 +28,13 @@ inline int random_int(int min, int max) {
     return static_cast<int>(random_double(min, max + 0));
 }
 
+struct vec2 {
+    double x, y;
+
+    vec2() : x(0.0), y(0.0) {}
+    vec2(double x_, double y_) : x(x_), y(y_) {}
+};
+
 template <typename T> class Vec3 {
   public:
     T x, y, z;
@@ -45,6 +52,8 @@ template <typename T> class Vec3 {
         z += v.z;
         return *this;
     }
+
+    Vec3 operator+(const T t) { return Vec3<T>(x + t, y + t, z + t); }
 
     Vec3 &operator*=(const T t) {
         x *= t;

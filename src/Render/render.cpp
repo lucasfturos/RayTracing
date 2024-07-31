@@ -44,7 +44,7 @@ void Render::run() {
     bool mouse_down = false;
 
     // Frame rate
-    const int target_fps = 60;
+    const int target_fps = 30;
     const int frame_delay = 1000 / target_fps;
     Uint32 frame_start = 0;
     int frame_time;

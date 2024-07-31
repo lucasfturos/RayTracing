@@ -4,7 +4,7 @@
 
 class Triangle : public hittable {
   public:
-    Triangle(const vec3 &v0, const vec3 &v1, const vec3 &v2,
+    Triangle(const vec3 &v0, const vec3 &v1, const vec3 &v2, const vec2 &tex,
              shared_ptr<material> mat);
 
     virtual bool hit(const ray &r, interval ray_t,
@@ -14,6 +14,7 @@ class Triangle : public hittable {
 
   private:
     vec3 v0, v1, v2;
+    vec2 texture;
     shared_ptr<material> mat_ptr;
     vec3 e1, e2;
 };

@@ -1,8 +1,8 @@
 #include "triangle.hpp"
 
 Triangle::Triangle(const vec3 &v0, const vec3 &v1, const vec3 &v2,
-                   shared_ptr<material> mat)
-    : v0(v0), v1(v1), v2(v2), mat_ptr(mat) {
+                   const vec2 &tex, shared_ptr<material> mat)
+    : v0(v0), v1(v1), v2(v2), texture(tex), mat_ptr(mat) {
     e1 = v1 - v0;
     e2 = v2 - v0;
 }
@@ -32,8 +32,9 @@ bool Triangle::hit(const ray &r, interval ray_t, hit_record &rec) const {
         return false;
     }
 
-    rec.u = u;
-    rec.v = v;
+    rec.u = u + texture.x;
+    rec.v = v + texture.y;
+
     rec.t = t;
     rec.p = r.at(t);
 
