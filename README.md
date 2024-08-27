@@ -23,7 +23,6 @@ Também será implementado métodos de paralelismo para tornar a renderização 
 -   GCC/G++(ou MinGW no Windows)
 -   Biblioteca STB
 -   SDL2
--   Vulkan
 
 ### Instruções
 
