@@ -7,11 +7,11 @@
 #include <unordered_map>
 
 // Constants
-const double pi{M_PI};
+const double pi = M_PI;
 const double eps = std::numeric_limits<float>::epsilon();
 
 // Utility Functions
-template <typename T> inline T degrees_to_radians(T degrees) {
+template <typename T> inline T radians(T degrees) {
     return degrees * pi / 180.0;
 }
 

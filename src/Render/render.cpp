@@ -32,26 +32,29 @@ Render::~Render() {
 }
 
 void Render::run() {
-    // Color
+    // Configurações iniciais
     color_ptr = make_shared<Color>();
     color background(0, 0, 0);
     double illumination = 0.3;
     background = color(illumination, illumination, illumination);
 
-    // Mouse
+    // Configurações do mouse e frame rate
     int last_mouseX = 0;
     int last_mouseY = 0;
     bool mouse_down = false;
-
-    // Frame rate
     const int target_fps = 30;
     const int frame_delay = 1000 / target_fps;
     Uint32 frame_start = 0;
     int frame_time;
 
+    // Configuração de evento e loop
     SDL_Event event;
     bool quit = false;
-    int current_scanline = 0;
+
+    // Tamanho do tile e controle de progresso
+    const int tile_size = 32;
+    int current_tile_x = 0;
+    int current_tile_y = 0;
 
     SDL_RenderClear(ren);
     while (!quit) {
@@ -97,23 +100,31 @@ void Render::run() {
                 break;
             }
         }
-        if (current_scanline < image_height) {
-            cam->render(bvh_node(world), lights, background, current_scanline,
-                        [&](int i, double scale, const color &pixel_color) {
-                            int x = i;
-                            int y = current_scanline;
-                            color_ptr->write_color_SDL(surface, pixel_color,
-                                                       scale, x, y);
-                        });
-            current_scanline++;
-        } else {
-            current_scanline = 0;
+
+        int x0 = current_tile_x;
+        int y0 = current_tile_y;
+        int x1 = std::min(current_tile_x + tile_size, image_width);
+        int y1 = std::min(current_tile_y + tile_size, image_height);
+
+        cam->render_tile(x0, y0, x1, y1, bvh_node(world), lights, background,
+                         [&](int i, int j, int, int, double scale,
+                             const color &pixel_color) {
+                             color_ptr->write_color_SDL(surface, pixel_color,
+                                                        scale, i, j);
+                         });
+
+        current_tile_x += tile_size;
+        if (current_tile_x >= image_width) {
+            current_tile_x = 0;
+            current_tile_y += tile_size;
+            if (current_tile_y >= image_height) {
+                current_tile_y = 0;
+            }
         }
 
         SDL_UpdateTexture(texture, nullptr, surface->pixels, surface->pitch);
         SDL_RenderClear(ren);
         SDL_RenderCopy(ren, texture, nullptr, nullptr);
-
         SDL_RenderPresent(ren);
 
         frame_time = SDL_GetTicks() - frame_start;

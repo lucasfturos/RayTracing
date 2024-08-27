@@ -6,6 +6,14 @@
 #include "perlin.hpp"
 #include <functional>
 
+struct PixelHash {
+    std::size_t operator()(const std::pair<int, int> &p) const {
+        auto h1 = std::hash<int>{}(p.first);
+        auto h2 = std::hash<int>{}(p.second);
+        return h1 ^ h2;
+    }
+};
+
 class camera {
   public:
     camera(double aspect_ratio, int image_width, int samples_per_pixel,
@@ -24,14 +32,66 @@ class camera {
                 std::function<void(int, double, const color &)> draw_pixel) {
         for (int i = 0; i < image_width; ++i) {
             color pixel_color(0, 0, 0);
-            for (int s_j = 0; s_j < sqrt_spp; s_j++) {
-                for (int s_i = 0; s_i < sqrt_spp; s_i++) {
-                    ray r = get_ray(i, j, s_i, s_j);
-                    pixel_color +=
-                        ray_color(r, background, max_depth, world, lights);
+            for (int s_j = 0; s_j < sqrt_spp; ++s_j) {
+                for (int s_i = 0; s_i < sqrt_spp; ++s_i) {
+                    std::pair<int, int> pixel_coord = {j, i};
+                    if (pixel_cache.find(pixel_coord) != pixel_cache.end()) {
+                        pixel_color += pixel_cache[pixel_coord];
+                    } else {
+                        ray r = get_ray(i, j, s_i, s_j);
+                        pixel_color +=
+                            ray_color(r, background, max_depth, world, lights);
+                        pixel_cache[pixel_coord] = pixel_color;
+                    }
                 }
             }
             draw_pixel(i, pixel_samples_scale, pixel_color);
+        }
+    }
+
+    void render_with_tiles(
+        const bvh_node &world, const hittable_list &lights,
+        const color &background, int tile_size,
+        std::function<void(int, int, int, int, double, const color &)>
+            draw_tile) {
+
+        for (int tile_y = 0; tile_y < image_height; tile_y += tile_size) {
+            for (int tile_x = 0; tile_x < image_width; tile_x += tile_size) {
+                int x0 = tile_x;
+                int y0 = tile_y;
+                int x1 = std::min(tile_x + tile_size, image_width);
+                int y1 = std::min(tile_y + tile_size, image_height);
+
+                render_tile(x0, y0, x1, y1, world, lights, background,
+                            draw_tile);
+            }
+        }
+    }
+
+    void
+    render_tile(int x0, int y0, int x1, int y1, const bvh_node &world,
+                const hittable_list &lights, const color &background,
+                std::function<void(int, int, int, int, double, const color &)>
+                    draw_tile) {
+        for (int j = y0; j < y1; ++j) {
+            for (int i = x0; i < x1; ++i) {
+                color pixel_color(0, 0, 0);
+                for (int s_j = 0; s_j < sqrt_spp; ++s_j) {
+                    for (int s_i = 0; s_i < sqrt_spp; ++s_i) {
+                        std::pair<int, int> pixel_coord = {j, i};
+                        if (pixel_cache.find(pixel_coord) !=
+                            pixel_cache.end()) {
+                            pixel_color += pixel_cache[pixel_coord];
+                        } else {
+                            ray r = get_ray(i, j, s_i, s_j);
+                            pixel_color += ray_color(r, background, max_depth,
+                                                     world, lights);
+                            pixel_cache[pixel_coord] = pixel_color;
+                        }
+                    }
+                }
+                draw_tile(i, j, i + 1, j + 1, pixel_samples_scale, pixel_color);
+            }
         }
     }
 
@@ -46,6 +106,7 @@ class camera {
             pitch = 89.0f;
         }
         updateCameraVectors();
+        pixel_cache.clear();
     }
 
     void processMouseScroll(int deltaY) {
@@ -58,6 +119,7 @@ class camera {
             zoom = 45.0f;
         }
         updateCameraVectors();
+        pixel_cache.clear();
     }
 
     int getHeight() { return image_height; }
@@ -100,6 +162,7 @@ class camera {
     double pixel_samples_scale;
 
     std::vector<std::vector<vec3>> precomputed_noise;
+    std::unordered_map<std::pair<int, int>, vec3, PixelHash> pixel_cache;
 
     void initialize() {
         image_height = static_cast<int>(image_width / aspect_ratio);
@@ -112,7 +175,7 @@ class camera {
         recip_sqrt_spp = 1.0 / sqrt_spp;
 
         // Determine viewport dimensions.
-        auto theta = degrees_to_radians(vfov);
+        auto theta = radians(vfov);
         auto h = std::tan(theta / 2);
         auto viewport_height = 2 * h * focus_dist;
         auto viewport_width =
@@ -141,8 +204,7 @@ class camera {
             viewport_upper_left + 0.5 * (pixel_delta_u + pixel_delta_v);
 
         // Calculate the camera defocus disk basis vectors.
-        auto defocus_radius =
-            focus_dist * std::tan(degrees_to_radians(defocus_angle / 2));
+        auto defocus_radius = focus_dist * std::tan(radians(defocus_angle / 2));
         defocus_disk_u = u * defocus_radius;
         defocus_disk_v = v * defocus_radius;
 
@@ -151,9 +213,9 @@ class camera {
     }
 
     ray get_ray(int i, int j, int s_i, int s_j) const {
-        // Construct a camera ray originating from the defocus disk and directed
-        // at a randomly sampled point around the pixel location i, j for
-        // stratified sample square s_i, s_j.
+        // Construct a camera ray originating from the defocus disk and
+        // directed at a randomly sampled point around the pixel location i,
+        // j for stratified sample square s_i, s_j.
         auto offset = sample_square_stratified(s_i, s_j);
         auto pixel_sample = pixel00_loc + ((i + offset.x) * pixel_delta_u) +
                             ((j + offset.y) * pixel_delta_v);
@@ -169,12 +231,9 @@ class camera {
         for (int i = 0; i < image_width; ++i) {
             precomputed_noise[i].resize(image_height);
             for (int j = 0; j < image_height; ++j) {
-                precomputed_noise[i][j] = vec3(
-                    perlin_noise.noise(vec3(random_double(), random_double(),
-                                            random_double())),
-                    perlin_noise.noise(vec3(random_double(), random_double(),
-                                            random_double())),
-                    0);
+                precomputed_noise[i][j] =
+                    vec3(perlin_noise.noise(vec3(i / 100.0, j / 100.0, 0)),
+                         perlin_noise.noise(vec3(i / 100.0, j / 100.0, 1)), 0);
             }
         }
     }
@@ -207,18 +266,16 @@ class camera {
 
     void updateCameraVectors() {
         vec3 front;
-        front.x = std::cos(degrees_to_radians(yaw)) *
-                  std::cos(degrees_to_radians(pitch));
-        front.y = std::sin(degrees_to_radians(pitch));
-        front.z = std::sin(degrees_to_radians(yaw)) *
-                  std::cos(degrees_to_radians(pitch));
+        front.x = std::cos(radians(yaw)) * std::cos(radians(pitch));
+        front.y = std::sin(radians(pitch));
+        front.z = std::sin(radians(yaw)) * std::cos(radians(pitch));
         front = unit_vector(front);
 
         w = unit_vector(lookfrom - (lookfrom + front));
         u = unit_vector(cross(vup, w));
         v = cross(w, u);
 
-        auto theta = degrees_to_radians(vfov);
+        auto theta = radians(vfov);
         auto h = std::tan(theta / 2);
         auto viewport_height = 2.0 * h * focus_dist / -zoom;
         auto viewport_width = aspect_ratio * viewport_height;

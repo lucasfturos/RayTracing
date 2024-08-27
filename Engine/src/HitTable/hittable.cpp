@@ -12,8 +12,8 @@ bool translate::hit(const ray &r, interval ray_t, hit_record &rec) const {
 }
 
 rotate_y::rotate_y(shared_ptr<hittable> p, double angle)
-    : ptr(p), sin_theta(std::sin(degrees_to_radians(angle))),
-      cos_theta(std::cos(degrees_to_radians(angle))) {
+    : ptr(p), sin_theta(std::sin(radians(angle))),
+      cos_theta(std::cos(radians(angle))) {
     bbox = ptr->bounding_box();
 
     point3 min(infinity, infinity, infinity);

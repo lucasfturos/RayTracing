@@ -1,9 +1,14 @@
 #include "color.hpp"
 #include "../Interval/interval.hpp"
 #include "table_color.hpp"
-#include <algorithm>
 
 static const interval intensity(0.0, 0.999);
+
+Color::Color() : m_threadPool(std::make_shared<ThreadPool>()) {
+    m_threadPool->start();
+}
+
+Color::~Color() { m_threadPool->stop(); }
 
 int Color::distance_hsl(int i, int h, int s, int l) {
     int dh{h - table_hsl[i][0]};
@@ -97,7 +102,6 @@ void Color::write_color(std::ostream &out, color pixel_color, double scale) {
     color.y = linear_to_gamma(color.y);
     color.z = linear_to_gamma(color.z);
 
-    // Write the translated [0,255] value of each color component.
     out << static_cast<int>(255 * intensity.clamp(color.x)) << ' '
         << static_cast<int>(255 * intensity.clamp(color.y)) << ' '
         << static_cast<int>(255 * intensity.clamp(color.z)) << '\n';
@@ -105,20 +109,22 @@ void Color::write_color(std::ostream &out, color pixel_color, double scale) {
 
 void Color::write_color_SDL(SDL_Surface *surface, color pixel_color,
                             double scale, int x, int y) {
-    color scaled_color = pixel_color * scale;
-    scaled_color.x != scaled_color.x ? scaled_color.x = 0.0 : 0;
-    scaled_color.y != scaled_color.y ? scaled_color.y = 0.0 : 0;
-    scaled_color.z != scaled_color.z ? scaled_color.z = 0.0 : 0;
+    m_threadPool->enqueue([this, surface, pixel_color, scale, x, y] {
+        color scaled_color = pixel_color * scale;
+        scaled_color.x != scaled_color.x ? scaled_color.x = 0.0 : 0;
+        scaled_color.y != scaled_color.y ? scaled_color.y = 0.0 : 0;
+        scaled_color.z != scaled_color.z ? scaled_color.z = 0.0 : 0;
 
-    scaled_color.x = linear_to_gamma(scaled_color.x);
-    scaled_color.y = linear_to_gamma(scaled_color.y);
-    scaled_color.z = linear_to_gamma(scaled_color.z);
+        scaled_color.x = linear_to_gamma(scaled_color.x);
+        scaled_color.y = linear_to_gamma(scaled_color.y);
+        scaled_color.z = linear_to_gamma(scaled_color.z);
 
-    Uint8 r = static_cast<Uint8>(256 * intensity.clamp(scaled_color.x));
-    Uint8 g = static_cast<Uint8>(256 * intensity.clamp(scaled_color.y));
-    Uint8 b = static_cast<Uint8>(256 * intensity.clamp(scaled_color.z));
-    Uint32 color = (255 << 24) | (r << 16) | (g << 8) | b;
+        Uint8 r = static_cast<Uint8>(256 * intensity.clamp(scaled_color.x));
+        Uint8 g = static_cast<Uint8>(256 * intensity.clamp(scaled_color.y));
+        Uint8 b = static_cast<Uint8>(256 * intensity.clamp(scaled_color.z));
+        Uint32 color = (255 << 24) | (r << 16) | (g << 8) | b;
 
-    Uint32 *pixels = (Uint32 *)surface->pixels;
-    pixels[y * surface->w + x] = color;
+        Uint32 *pixels = (Uint32 *)surface->pixels;
+        pixels[y * surface->w + x] = color;
+    });
 }

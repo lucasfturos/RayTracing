@@ -14,8 +14,8 @@ Scene Object::single_scene() {
     auto difflight = make_shared<diffuse_light>(color(4, 4, 4));
     // auto material_triangle = make_shared<lambertian>(color(.55, .62, .27));
     // auto material_triangle = make_shared<lambertian>(pertext);
-    auto material_triangle = make_shared<lambertian>(checker);
-    // auto material_triangle = make_shared<metal>(color(.55, .62, .27), 0);
+    // auto material_triangle = make_shared<lambertian>(checker);
+    auto material_triangle = make_shared<metal>(color(.55, .62, .27), 0);
     // auto material_triangle = make_shared<dielectric>(1.5);
     // auto material_triangle = make_shared<lambertian>(
     //     make_shared<image_texture>("assets/img/earthmap.jpg"));
@@ -23,7 +23,7 @@ Scene Object::single_scene() {
     // auto material_ground = make_shared<lambertian>(color(.5, .0, .8));
     // auto material_ground = make_shared<lambertian>(checker);
 
-    float scale = 0.5;
+    float scale = 1.0;
     std::vector<shared_ptr<hittable>> triangles;
     std::vector<vec3> vertices = read_object_ptr->sources().vertices;
     std::vector<ivec3> faces = read_object_ptr->sources().faces;

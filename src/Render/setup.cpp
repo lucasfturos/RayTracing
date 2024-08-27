@@ -8,15 +8,15 @@ void Render::setupSDL2() {
 
     win = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_UNDEFINED,
                            SDL_WINDOWPOS_UNDEFINED, screen_width, screen_height,
-                           SDL_WINDOW_VULKAN);
+                           SDL_WINDOW_SHOWN);
     if (!win) {
         std::cerr << "Erro ao criar a janela: " << SDL_GetError() << '\n';
         SDL_Quit();
         exit(EXIT_FAILURE);
     }
 
-    ren = SDL_CreateRenderer(win, -1,
-                             SDL_RENDERER_SOFTWARE | SDL_RENDERER_PRESENTVSYNC);
+    ren = SDL_CreateRenderer(
+        win, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     if (!ren) {
         std::cerr << "Erro ao criar o renderizador: " << SDL_GetError() << '\n';
         SDL_DestroyWindow(win);
