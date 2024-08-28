@@ -26,7 +26,7 @@ class Camera {
           max_depth(max_depth), vfov(vfov), aspect_ratio(aspect_ratio),
           defocus_angle(defocus_angle), focus_dist(focus_dist),
           lookfrom(lookfrom), lookat(lookat), vup(vup), yaw(-90.0), pitch(0.0),
-          zoom(1), perlin_noise() {
+          zoom(1), perlin_noise(make_shared<Perlin>()) {
         initialize();
     }
 
@@ -68,9 +68,10 @@ class Camera {
                             pixel_color += pixel_cache[pixel_coord];
                         } else {
                             auto r = getRay(i, j, s_i, s_j);
-                            pixel_color += rayColor(r, background, max_depth,
-                                                    world, lights);
-                            pixel_cache[pixel_coord] = pixel_color;
+                            color sample_color = rayColor(
+                                r, background, max_depth, world, lights);
+                            pixel_cache[pixel_coord] = sample_color;
+                            pixel_color += sample_color;
                         }
                     }
                 }
@@ -80,28 +81,20 @@ class Camera {
     }
 
     void processMouseMovement(int deltaX, int deltaY) {
-        double sensitivity = 0.1;
+        constexpr double sensitivity = 0.1;
+        Interval interval(-89.0, 89.0);
         yaw += deltaX * sensitivity;
         pitch += deltaY * sensitivity;
-        if (pitch < -89.0f) {
-            pitch = -89.0f;
-        }
-        if (pitch > 89.0f) {
-            pitch = 89.0f;
-        }
+        pitch = interval.clamp(pitch);
         updateCameraVectors();
         pixel_cache.clear();
     }
 
     void processMouseScroll(int deltaY) {
-        double zoom_factor = 0.1;
+        constexpr double zoom_factor = 0.1;
+        Interval interval(-45.0, 45.0);
         zoom += deltaY * zoom_factor;
-        if (zoom < -45.0f) {
-            zoom = -45.0f;
-        }
-        if (zoom > 45.0f) {
-            zoom = 45.0f;
-        }
+        zoom = interval.clamp(zoom);
         updateCameraVectors();
         pixel_cache.clear();
     }
@@ -128,7 +121,7 @@ class Camera {
     double pitch;
     double zoom;
 
-    Perlin perlin_noise;
+    shared_ptr<Perlin> perlin_noise;
 
     // Variáveis privadas
     point3 center;
@@ -216,8 +209,8 @@ class Camera {
             precomputed_noise[i].resize(image_height);
             for (int j = 0; j < image_height; ++j) {
                 precomputed_noise[i][j] =
-                    vec3(perlin_noise.noise(vec3(i / 100.0, j / 100.0, 0)),
-                         perlin_noise.noise(vec3(i / 100.0, j / 100.0, 1)), 0);
+                    vec3(perlin_noise->noise(vec3(i / 100.0, j / 100.0, 0)),
+                         perlin_noise->noise(vec3(i / 100.0, j / 100.0, 1)), 0);
             }
         }
     }
@@ -264,8 +257,8 @@ class Camera {
         auto viewport_height = 2.0 * h * focus_dist / -zoom;
         auto viewport_width = aspect_ratio * viewport_height;
 
-        vec3 horizontal = viewport_width * u;
-        vec3 vertical = viewport_height * v;
+        auto horizontal = viewport_width * u;
+        auto vertical = viewport_height * v;
         pixel00_loc = lookfrom - horizontal / 2 - vertical / 2 - focus_dist * w;
         pixel_delta_u = horizontal / image_width;
         pixel_delta_v = vertical / image_height;
