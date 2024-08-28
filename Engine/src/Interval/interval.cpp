@@ -1,27 +1,27 @@
 #include "interval.hpp"
 #include <algorithm>
 
-const interval interval::empty = interval(infinity, -infinity);
-const interval interval::universe = interval(-infinity, infinity);
+const Interval Interval::empty = Interval(infinity, -infinity);
+const Interval Interval::universe = Interval(-infinity, infinity);
 
-interval::interval() : min(+infinity), max(-infinity) {}
+Interval::Interval() : min(+infinity), max(-infinity) {}
 
-interval::interval(double min, double max) : min(min), max(max) {}
+Interval::Interval(double min, double max) : min(min), max(max) {}
 
-interval::interval(const interval &a, const interval &b) {
+Interval::Interval(const Interval &a, const Interval &b) {
     min = a.min <= b.min ? a.min : b.min;
     max = a.max >= b.max ? a.max : b.max;
 }
 
-interval interval::expand(double delta) const {
+Interval Interval::expand(double delta) const {
     auto padding = delta / 2;
-    return interval(min - padding, max + padding);
+    return Interval(min - padding, max + padding);
 }
 
-double interval::size() const { return max - min; }
+double Interval::size() const { return max - min; }
 
-bool interval::contains(double x) const { return min <= x && x <= max; }
+bool Interval::contains(double x) const { return min <= x && x <= max; }
 
-bool interval::surrounds(double x) const { return min < x && x < max; }
+bool Interval::surrounds(double x) const { return min < x && x < max; }
 
-double interval::clamp(double x) const { return std::clamp(x, min, max); }
+double Interval::clamp(double x) const { return std::clamp(x, min, max); }

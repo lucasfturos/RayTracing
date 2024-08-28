@@ -5,23 +5,23 @@
 #include "../HitTable/hittable.hpp"
 #include "../Texture/texture.hpp"
 
-class constant_medium : public hittable {
+class ConstantMedium : public HitTable {
   public:
-    constant_medium(shared_ptr<hittable> b, double d, shared_ptr<texture> a)
+    ConstantMedium(shared_ptr<HitTable> b, double d, shared_ptr<Texture> a)
         : boundary(b), neg_inv_density(-1 / d),
-          phase_function(make_shared<isotropic>(a)) {}
+          phase_function(make_shared<Isotropic>(a)) {}
 
-    constant_medium(shared_ptr<hittable> b, double d, color c)
+    ConstantMedium(shared_ptr<HitTable> b, double d, color c)
         : boundary(b), neg_inv_density(-1 / d),
-          phase_function(make_shared<isotropic>(c)) {}
+          phase_function(make_shared<Isotropic>(c)) {}
 
-    virtual bool hit(const ray &r, interval ray_t,
-                     hit_record &rec) const override;
+    virtual bool hit(const Ray &r, Interval ray_t,
+                     HitRecord &rec) const override;
 
-    aabb bounding_box() const override { return boundary->bounding_box(); }
+    AABB boundingBox() const override { return boundary->boundingBox(); }
 
   public:
-    shared_ptr<hittable> boundary;
+    shared_ptr<HitTable> boundary;
     double neg_inv_density;
-    shared_ptr<material> phase_function;
+    shared_ptr<Material> phase_function;
 };

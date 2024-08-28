@@ -2,30 +2,30 @@
 
 #include "../../include/constante.hpp"
 
-class aabb {
+class AABB {
   public:
-    interval x, y, z;
-    static const aabb empty, universe;
+    Interval x, y, z;
+    static const AABB empty, universe;
 
-    aabb() {}
-    aabb(const interval &x, const interval &y, const interval &z);
-    aabb(const point3 &a, const point3 &b);
-    aabb(const aabb &box0, const aabb &box1);
+    AABB() {}
+    AABB(const Interval &x, const Interval &y, const Interval &z);
+    AABB(const point3 &a, const point3 &b);
+    AABB(const AABB &box0, const AABB &box1);
 
-    const interval &axis_interval(int n) const;
+    const Interval &axisInterval(int n) const;
 
-    bool hit(const ray &r, interval ray_t) const;
+    bool hit(const Ray &r, Interval ray_t) const;
 
-    int longest_axis() const;
+    int longestAxis() const;
 
   private:
-    void pad_to_minimums();
+    void padToMinimums();
 };
 
-inline aabb operator+(const aabb &bbox, const vec3 &offset) {
-    return aabb(bbox.x + offset.x, bbox.y + offset.y, bbox.z + offset.z);
+inline AABB operator+(const AABB &bbox, const vec3 &offset) {
+    return AABB(bbox.x + offset.x, bbox.y + offset.y, bbox.z + offset.z);
 }
 
-inline aabb operator+(const vec3 &offset, const aabb &bbox) {
+inline AABB operator+(const vec3 &offset, const AABB &bbox) {
     return bbox + offset;
 }

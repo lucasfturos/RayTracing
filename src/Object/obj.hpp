@@ -7,8 +7,8 @@
 class Object {
     // Read Object File
     shared_ptr<ReadObjectFile> read_object_ptr;
-    hittable_list world;
-    hittable_list lights;
+    HittableList world;
+    HittableList lights;
 
   public:
     Object(const std::string &filepath);

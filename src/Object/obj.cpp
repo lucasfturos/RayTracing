@@ -8,23 +8,23 @@ Object::Object(const std::string &filepath) {
 }
 
 Scene Object::single_scene() {
-    // auto pertext = make_shared<noise_texture>(4);
-    auto checker = make_shared<checker_texture>(color(0.0, 0.0, 0.0),
-                                                color(0.9, 0.9, 0.9));
-    auto difflight = make_shared<diffuse_light>(color(4, 4, 4));
-    // auto material_triangle = make_shared<lambertian>(color(.55, .62, .27));
-    // auto material_triangle = make_shared<lambertian>(pertext);
-    // auto material_triangle = make_shared<lambertian>(checker);
-    auto material_triangle = make_shared<metal>(color(.55, .62, .27), 0);
-    // auto material_triangle = make_shared<dielectric>(1.5);
-    // auto material_triangle = make_shared<lambertian>(
-    //     make_shared<image_texture>("assets/img/earthmap.jpg"));
+    auto pertext = make_shared<NoiseTexture>(4);
+    auto checker =
+        make_shared<CheckerTexture>(color(0.0, 0.0, 0.0), color(0.9, 0.9, 0.9));
+    auto difflight = make_shared<DiffuseLight>(color(4, 4, 4));
+    // auto material_triangle = make_shared<Lambertian>(color(.55, .62, .27));
+    // auto material_triangle = make_shared<Lambertian>(pertext);
+    // auto material_triangle = make_shared<Lambertian>(checker);
+    auto material_triangle = make_shared<Metal>(color(.55, .62, .27), 0);
+    // auto material_triangle = make_shared<Dielectric>(1.5);
+    // auto material_triangle = make_shared<Lambertian>(
+    // make_shared<ImageTexture>("assets/img/earthmap.jpg"));
 
     // auto material_ground = make_shared<lambertian>(color(.5, .0, .8));
     // auto material_ground = make_shared<lambertian>(checker);
 
     float scale = 1.0;
-    std::vector<shared_ptr<hittable>> triangles;
+    std::vector<shared_ptr<HitTable>> triangles;
     std::vector<vec3> vertices = read_object_ptr->sources().vertices;
     std::vector<ivec3> faces = read_object_ptr->sources().faces;
     std::vector<vec2> textures = read_object_ptr->sources().textures;
@@ -45,13 +45,13 @@ Scene Object::single_scene() {
         triangles.emplace_back(triangle);
     }
 
-    world.add(make_shared<bvh_node>(triangles, 0, triangles.size()));
+    world.add(make_shared<BVHNode>(triangles, 0, triangles.size()));
     world.add(box(point3(-2, 4.5, -2), point3(2, 4.6, 2), difflight));
     // world.add(box(point3(-2, -0.5, -2), point3(2, -0.6, 2),
     // material_ground));
 
     lights.add(
-        box(point3(-2, 4.5, -2), point3(2, 4.6, 2), shared_ptr<material>()));
+        box(point3(-2, 4.5, -2), point3(2, 4.6, 2), shared_ptr<Material>()));
 
     return {world, lights};
 }

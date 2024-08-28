@@ -2,34 +2,34 @@
 
 #include "hittable.hpp"
 
-class hittable_list : public hittable {
+class HittableList : public HitTable {
   public:
-    std::vector<shared_ptr<hittable>> objects;
+    std::vector<shared_ptr<HitTable>> objects;
 
-    hittable_list() {}
-    hittable_list(shared_ptr<hittable> object) { add(object); }
+    HittableList() {}
+    HittableList(shared_ptr<HitTable> object) { add(object); }
 
     void clear() { objects.clear(); }
-    void add(shared_ptr<hittable> object) {
+    void add(shared_ptr<HitTable> object) {
         objects.push_back(object);
-        bbox = aabb(bbox, object->bounding_box());
+        bbox = AABB(bbox, object->boundingBox());
     }
 
-    virtual bool hit(const ray &r, interval ray_t,
-                     hit_record &rec) const override;
+    virtual bool hit(const Ray &r, Interval ray_t,
+                     HitRecord &rec) const override;
 
-    aabb bounding_box() const override { return bbox; }
+    AABB boundingBox() const override { return bbox; }
 
-    virtual double pdf_value(const point3 &origin,
-                             const vec3 &direction) const override;
+    virtual double pdfValue(const point3 &origin,
+                            const vec3 &direction) const override;
 
     virtual vec3 random(const point3 &origin) const override;
 
   private:
-    aabb bbox;
+    AABB bbox;
 };
 
 struct Scene {
-    hittable_list world;
-    hittable_list lights;
+    HittableList world;
+    HittableList lights;
 };

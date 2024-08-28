@@ -2,31 +2,31 @@
 
 #include "../HitTable/hittable_list.hpp"
 
-class bvh_node : public hittable {
+class BVHNode : public HitTable {
   public:
-    bvh_node() = default;
+    BVHNode() = default;
 
-    bvh_node(hittable_list list)
-        : bvh_node(list.objects, 0, list.objects.size()) {}
+    BVHNode(HittableList list)
+        : BVHNode(list.objects, 0, list.objects.size()) {}
 
-    bvh_node(const std::vector<shared_ptr<hittable>> objects, size_t start,
-             size_t end);
+    BVHNode(const std::vector<shared_ptr<HitTable>> objects, size_t start,
+            size_t end);
 
-    virtual bool hit(const ray &r, interval ray_t,
-                     hit_record &rec) const override;
-    aabb bounding_box() const override { return bbox; }
+    virtual bool hit(const Ray &r, Interval ray_t,
+                     HitRecord &rec) const override;
+    AABB boundingBox() const override { return bbox; }
 
-    static bool box_compare(const shared_ptr<hittable> a,
-                            const shared_ptr<hittable> b, int axis);
-    static bool box_x_compare(const shared_ptr<hittable> &a,
-                              const shared_ptr<hittable> &b);
-    static bool box_y_compare(const shared_ptr<hittable> &a,
-                              const shared_ptr<hittable> &b);
-    static bool box_z_compare(const shared_ptr<hittable> &a,
-                              const shared_ptr<hittable> &b);
+    static bool boxCompare(const shared_ptr<HitTable> a,
+                           const shared_ptr<HitTable> b, int axis);
+    static bool boxCompareX(const shared_ptr<HitTable> &a,
+                            const shared_ptr<HitTable> &b);
+    static bool boxCompareY(const shared_ptr<HitTable> &a,
+                            const shared_ptr<HitTable> &b);
+    static bool boxCompareZ(const shared_ptr<HitTable> &a,
+                            const shared_ptr<HitTable> &b);
 
   public:
-    shared_ptr<hittable> left;
-    shared_ptr<hittable> right;
-    aabb bbox;
+    shared_ptr<HitTable> left;
+    shared_ptr<HitTable> right;
+    AABB bbox;
 };

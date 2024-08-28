@@ -7,8 +7,8 @@
 class Render {
   private:
     // Window
-    const int screen_width{1080};
-    const int screen_height{720};
+    const int screen_width = 1080;
+    const int screen_height = 720;
     std::string title{"Ray Tracing - Window Render"};
 
     // SDL2
@@ -24,15 +24,15 @@ class Render {
     const int samples_per_pixel{10};
 
     // Camera
-    shared_ptr<camera> cam;
+    shared_ptr<Camera> cam;
     void setupCamera();
 
     // Color
     shared_ptr<Color> color_ptr;
 
     // Objeto
-    hittable_list world;
-    hittable_list lights;
+    HittableList world;
+    HittableList lights;
 
   public:
     Render(const Scene &root, int opc);

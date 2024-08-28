@@ -74,7 +74,7 @@ void Render::setupCamera() {
     double defocus_angle = 0;
     double focus_dist = 10;
 
-    cam = make_shared<camera>(aspect_ratio, image_width, samples_per_pixel,
+    cam = make_shared<Camera>(aspect_ratio, image_width, samples_per_pixel,
                               max_depth, vfov, defocus_angle, focus_dist,
                               lookfrom, lookat, vup);
 

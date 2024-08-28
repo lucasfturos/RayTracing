@@ -2,10 +2,10 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>
 
-color image_texture::value(double u, double v, const vec3 & /* p */) const {
+color ImageTexture::value(double u, double v, const vec3 & /* p */) const {
     // Se não tivermos dados de textura, retorna uma cor ciano sólido como
     // um auxílio de depuração.
-    interval interval(0.0, 1.0);
+    Interval interval(0.0, 1.0);
     if (data == nullptr) {
         return color(0, 1, 1);
     }
@@ -34,7 +34,7 @@ color image_texture::value(double u, double v, const vec3 & /* p */) const {
                  color_scale * pixel[2]);
 }
 
-image_texture::image_texture(const char *filename) {
+ImageTexture::ImageTexture(const char *filename) {
     auto components_per_pixel = bytes_per_pixel;
 
     data = stbi_load(filename, &width, &height, &components_per_pixel,
@@ -48,4 +48,4 @@ image_texture::image_texture(const char *filename) {
     bytes_per_scanline = bytes_per_pixel * width;
 }
 
-image_texture::~image_texture() { STBI_FREE(data); }
+ImageTexture::~ImageTexture() { STBI_FREE(data); }

@@ -2,66 +2,68 @@
 
 #include "../AABB/aabb.hpp"
 
-class material;
+class Material;
 
-struct hit_record {
+struct HitRecord {
     point3 p;
     vec3 normal;
     double t;
     bool front_face;
-    shared_ptr<material> mat_ptr;
+    shared_ptr<Material> mat_ptr;
     double u, v;
 
-    inline void set_face_normal(const ray &r, const vec3 &outward_normal) {
+    inline void setFaceNormal(const Ray &r, const vec3 &outward_normal) {
         front_face = dot(r.direction(), outward_normal) < 0;
         normal = front_face ? outward_normal : -outward_normal;
     }
 };
 
-class hittable {
+class HitTable {
   public:
-    virtual bool hit(const ray &r, interval ray_t, hit_record &rec) const = 0;
+    virtual bool hit(const Ray &r, Interval ray_t, HitRecord &rec) const = 0;
 
-    virtual aabb bounding_box() const = 0;
+    virtual AABB boundingBox() const = 0;
 
-    virtual double pdf_value(const point3 & /* origin */,
-                             const vec3 & /* direction */) const {
+    virtual double pdfValue(const point3 & /* origin */,
+                            const vec3 & /* direction */) const {
         return 0.0;
     }
 
-    virtual vec3 random(const point3 &/* origin */) const { return vec3(1, 0, 0); }
+    virtual vec3 random(const point3 & /* origin */) const {
+        return vec3(1, 0, 0);
+    }
 };
 
-class translate : public hittable {
+class Translate : public HitTable {
   public:
-    translate(shared_ptr<hittable> object, const vec3 &offset)
+    Translate(shared_ptr<HitTable> object, const vec3 &offset)
         : object(object), offset(offset) {
-        bbox = object->bounding_box() + offset;
+        bbox = object->boundingBox() + offset;
     }
 
-    virtual bool hit(const ray &r, interval ray_t,
-                     hit_record &rec) const override;
+    virtual bool hit(const Ray &r, Interval ray_t,
+                     HitRecord &rec) const override;
 
-    aabb bounding_box() const override { return bbox; }
+    AABB boundingBox() const override { return bbox; }
 
   public:
-    shared_ptr<hittable> object;
+    shared_ptr<HitTable> object;
     vec3 offset;
-    aabb bbox;
+    AABB bbox;
 };
 
-class rotate_y : public hittable {
+class RotateY : public HitTable {
   public:
-    rotate_y(shared_ptr<hittable> p, double angle);
+    RotateY(shared_ptr<HitTable> p, double angle);
 
-    virtual bool hit(const ray &r, interval ray_t,
-                     hit_record &rec) const override;
+    virtual bool hit(const Ray &r, Interval ray_t,
+                     HitRecord &rec) const override;
 
-    virtual aabb bounding_box() const override { return bbox; }
+    virtual AABB boundingBox() const override { return bbox; }
 
   public:
-    shared_ptr<hittable> ptr;
+    shared_ptr<HitTable> ptr;
     double sin_theta;
     double cos_theta;
-    aabb bbox;
+    AABB bbox;
 };

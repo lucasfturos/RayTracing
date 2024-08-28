@@ -1,30 +1,30 @@
 #include "aabb.hpp"
 
-const aabb aabb::empty =
-    aabb(interval::empty, interval::empty, interval::empty);
-const aabb aabb::universe =
-    aabb(interval::universe, interval::universe, interval::universe);
+const AABB AABB::empty =
+    AABB(Interval::empty, Interval::empty, Interval::empty);
+const AABB AABB::universe =
+    AABB(Interval::universe, Interval::universe, Interval::universe);
 
-aabb::aabb(const interval &x, const interval &y, const interval &z)
+AABB::AABB(const Interval &x, const Interval &y, const Interval &z)
     : x(x), y(y), z(z) {
-    pad_to_minimums();
+    padToMinimums();
 }
 
-aabb::aabb(const point3 &a, const point3 &b) {
-    x = (a.x <= b.x) ? interval(a.x, b.x) : interval(b.x, a.x);
-    y = (a.y <= b.y) ? interval(a.y, b.y) : interval(b.y, a.y);
-    z = (a.z <= b.z) ? interval(a.z, b.z) : interval(b.z, a.z);
+AABB::AABB(const point3 &a, const point3 &b) {
+    x = (a.x <= b.x) ? Interval(a.x, b.x) : Interval(b.x, a.x);
+    y = (a.y <= b.y) ? Interval(a.y, b.y) : Interval(b.y, a.y);
+    z = (a.z <= b.z) ? Interval(a.z, b.z) : Interval(b.z, a.z);
 
-    pad_to_minimums();
+    padToMinimums();
 }
 
-aabb::aabb(const aabb &box0, const aabb &box1) {
-    x = interval(box0.x, box1.x);
-    y = interval(box0.y, box1.y);
-    z = interval(box0.z, box1.z);
+AABB::AABB(const AABB &box0, const AABB &box1) {
+    x = Interval(box0.x, box1.x);
+    y = Interval(box0.y, box1.y);
+    z = Interval(box0.z, box1.z);
 }
 
-const interval &aabb::axis_interval(int n) const {
+const Interval &AABB::axisInterval(int n) const {
     if (n == 1) {
         return y;
     }
@@ -34,12 +34,12 @@ const interval &aabb::axis_interval(int n) const {
     return x;
 }
 
-bool aabb::hit(const ray &r, interval ray_t) const {
+bool AABB::hit(const Ray &r, Interval ray_t) const {
     const point3 &ray_orig = r.origin();
     const vec3 &ray_dir = r.direction();
 
     for (int axis = 0; axis < 3; axis++) {
-        const interval &ax = axis_interval(axis);
+        const Interval &ax = axisInterval(axis);
         const double adinv = 1.0 / ray_dir[axis];
 
         auto t0 = (ax.min - ray_orig[axis]) * adinv;
@@ -60,7 +60,7 @@ bool aabb::hit(const ray &r, interval ray_t) const {
     return true;
 }
 
-int aabb::longest_axis() const {
+int AABB::longestAxis() const {
     if (x.size() > y.size()) {
         return x.size() > z.size() ? 0 : 2;
     } else {
@@ -68,7 +68,7 @@ int aabb::longest_axis() const {
     }
 }
 
-void aabb::pad_to_minimums() {
+void AABB::padToMinimums() {
     double delta = eps;
     if (x.size() < delta) {
         x = x.expand(delta);

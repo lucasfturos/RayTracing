@@ -1,20 +1,20 @@
 #include "hittable.hpp"
 
-bool translate::hit(const ray &r, interval ray_t, hit_record &rec) const {
-    ray moved_r(r.origin() - offset, r.direction(), r.time());
+bool Translate::hit(const Ray &r, Interval ray_t, HitRecord &rec) const {
+    Ray moved_r(r.origin() - offset, r.direction(), r.time());
     if (!object->hit(moved_r, ray_t, rec))
         return false;
 
     rec.p += offset;
-    rec.set_face_normal(moved_r, rec.normal);
+    rec.setFaceNormal(moved_r, rec.normal);
 
     return true;
 }
 
-rotate_y::rotate_y(shared_ptr<hittable> p, double angle)
+RotateY::RotateY(shared_ptr<HitTable> p, double angle)
     : ptr(p), sin_theta(std::sin(radians(angle))),
       cos_theta(std::cos(radians(angle))) {
-    bbox = ptr->bounding_box();
+    bbox = ptr->boundingBox();
 
     point3 min(infinity, infinity, infinity);
     point3 max(-infinity, -infinity, -infinity);
@@ -39,10 +39,10 @@ rotate_y::rotate_y(shared_ptr<hittable> p, double angle)
         }
     }
 
-    bbox = aabb(min, max);
+    bbox = AABB(min, max);
 }
 
-bool rotate_y::hit(const ray &r, interval ray_t, hit_record &rec) const {
+bool RotateY::hit(const Ray &r, Interval ray_t, HitRecord &rec) const {
     auto origin = r.origin();
     auto direction = r.direction();
 
@@ -52,7 +52,7 @@ bool rotate_y::hit(const ray &r, interval ray_t, hit_record &rec) const {
     direction.x = cos_theta * r.direction().x - sin_theta * r.direction().z;
     direction.z = sin_theta * r.direction().x + cos_theta * r.direction().z;
 
-    ray rotated_r(origin, direction, r.time());
+    Ray rotated_r(origin, direction, r.time());
     if (!ptr->hit(rotated_r, ray_t, rec)) {
         return false;
     }
@@ -67,7 +67,7 @@ bool rotate_y::hit(const ray &r, interval ray_t, hit_record &rec) const {
     normal.z = -sin_theta * rec.normal.x + cos_theta * rec.normal.z;
 
     rec.p = p;
-    rec.set_face_normal(rotated_r, normal);
+    rec.setFaceNormal(rotated_r, normal);
 
     return true;
 }

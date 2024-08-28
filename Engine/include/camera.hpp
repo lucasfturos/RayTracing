@@ -3,7 +3,10 @@
 #include "../src/BVH/bvh.hpp"
 #include "constante.hpp"
 #include "material.hpp"
+#include "pdf.hpp"
 #include "perlin.hpp"
+#include "ray.hpp"
+#include "vec3.hpp"
 #include <functional>
 
 struct PixelHash {
@@ -14,9 +17,9 @@ struct PixelHash {
     }
 };
 
-class camera {
+class Camera {
   public:
-    camera(double aspect_ratio, int image_width, int samples_per_pixel,
+    Camera(double aspect_ratio, int image_width, int samples_per_pixel,
            int max_depth, double vfov, double defocus_angle, double focus_dist,
            const point3 &lookfrom, const point3 &lookat, const vec3 &vup)
         : image_width(image_width), samples_per_pixel(samples_per_pixel),
@@ -27,7 +30,7 @@ class camera {
         initialize();
     }
 
-    void render(const bvh_node &world, const hittable_list &lights,
+    void render(const BVHNode &world, const HittableList &lights,
                 const color &background, int j,
                 std::function<void(int, double, const color &)> draw_pixel) {
         for (int i = 0; i < image_width; ++i) {
@@ -38,9 +41,9 @@ class camera {
                     if (pixel_cache.find(pixel_coord) != pixel_cache.end()) {
                         pixel_color += pixel_cache[pixel_coord];
                     } else {
-                        ray r = get_ray(i, j, s_i, s_j);
+                        Ray r = getRay(i, j, s_i, s_j);
                         pixel_color +=
-                            ray_color(r, background, max_depth, world, lights);
+                            rayColor(r, background, max_depth, world, lights);
                         pixel_cache[pixel_coord] = pixel_color;
                     }
                 }
@@ -49,30 +52,11 @@ class camera {
         }
     }
 
-    void render_with_tiles(
-        const bvh_node &world, const hittable_list &lights,
-        const color &background, int tile_size,
-        std::function<void(int, int, int, int, double, const color &)>
-            draw_tile) {
-
-        for (int tile_y = 0; tile_y < image_height; tile_y += tile_size) {
-            for (int tile_x = 0; tile_x < image_width; tile_x += tile_size) {
-                int x0 = tile_x;
-                int y0 = tile_y;
-                int x1 = std::min(tile_x + tile_size, image_width);
-                int y1 = std::min(tile_y + tile_size, image_height);
-
-                render_tile(x0, y0, x1, y1, world, lights, background,
-                            draw_tile);
-            }
-        }
-    }
-
     void
-    render_tile(int x0, int y0, int x1, int y1, const bvh_node &world,
-                const hittable_list &lights, const color &background,
-                std::function<void(int, int, int, int, double, const color &)>
-                    draw_tile) {
+    renderTile(int x0, int y0, int x1, int y1, const BVHNode &world,
+               const HittableList &lights, const color &background,
+               std::function<void(int, int, int, int, double, const color &)>
+                   draw_tile) {
         for (int j = y0; j < y1; ++j) {
             for (int i = x0; i < x1; ++i) {
                 color pixel_color(0, 0, 0);
@@ -83,9 +67,9 @@ class camera {
                             pixel_cache.end()) {
                             pixel_color += pixel_cache[pixel_coord];
                         } else {
-                            ray r = get_ray(i, j, s_i, s_j);
-                            pixel_color += ray_color(r, background, max_depth,
-                                                     world, lights);
+                            auto r = getRay(i, j, s_i, s_j);
+                            pixel_color += rayColor(r, background, max_depth,
+                                                    world, lights);
                             pixel_cache[pixel_coord] = pixel_color;
                         }
                     }
@@ -144,7 +128,7 @@ class camera {
     double pitch;
     double zoom;
 
-    perlin perlin_noise;
+    Perlin perlin_noise;
 
     // Variáveis privadas
     point3 center;
@@ -183,14 +167,14 @@ class camera {
 
         // Calculate the u,v,w unit basis vectors for the camera coordinate
         // frame.
-        w = unit_vector(lookfrom - lookat);
-        u = unit_vector(cross(vup, w));
+        w = unitVector(lookfrom - lookat);
+        u = unitVector(cross(vup, w));
         v = cross(w, u);
 
         // Calculate the vectors across the horizontal and down the vertical
         // viewport edges.
-        vec3 viewport_u = viewport_width * u;
-        vec3 viewport_v = viewport_height * -v;
+        auto viewport_u = viewport_width * u;
+        auto viewport_v = viewport_height * -v;
 
         // Calculate the horizontal and vertical delta vectors from pixel to
         // pixel.
@@ -209,24 +193,24 @@ class camera {
         defocus_disk_v = v * defocus_radius;
 
         // Pre-calculate Perlin noise
-        initialize_perlin_noise();
+        initializePerlinNoise();
     }
 
-    ray get_ray(int i, int j, int s_i, int s_j) const {
+    Ray getRay(int i, int j, int s_i, int s_j) const {
         // Construct a camera ray originating from the defocus disk and
         // directed at a randomly sampled point around the pixel location i,
         // j for stratified sample square s_i, s_j.
-        auto offset = sample_square_stratified(s_i, s_j);
+        auto offset = sampleSquareStratified(s_i, s_j);
         auto pixel_sample = pixel00_loc + ((i + offset.x) * pixel_delta_u) +
                             ((j + offset.y) * pixel_delta_v);
 
-        auto ray_origin = (defocus_angle <= 0) ? center : defocus_disk_sample();
+        auto ray_origin = (defocus_angle <= 0) ? center : defocusDiskSample();
         auto ray_direction = pixel_sample - ray_origin;
 
-        return ray(ray_origin, ray_direction);
+        return Ray(ray_origin, ray_direction);
     }
 
-    void initialize_perlin_noise() {
+    void initializePerlinNoise() {
         precomputed_noise.resize(image_width);
         for (int i = 0; i < image_width; ++i) {
             precomputed_noise[i].resize(image_height);
@@ -238,18 +222,18 @@ class camera {
         }
     }
 
-    vec3 sample_square() const {
+    vec3 sampleSquare() const {
         // Retorna o vetor para um ponto aleatório no quadrado unitário
         // [-.5,-.5]-[+.5,+.5] usando ruído Perlin.
-        int i = static_cast<int>(random_double() * image_width);
-        int j = static_cast<int>(random_double() * image_height);
+        int i = static_cast<int>(randomDouble() * image_width);
+        int j = static_cast<int>(randomDouble() * image_height);
         vec3 noise = precomputed_noise[i][j];
         return vec3(noise.x - 0.5, noise.y - 0.5, 0);
     }
 
-    vec3 sample_square_stratified(int s_i, int s_j) const {
-        int i = (s_i + static_cast<int>(random_double())) % image_width;
-        int j = (s_j + static_cast<int>(random_double())) % image_height;
+    vec3 sampleSquareStratified(int s_i, int s_j) const {
+        int i = (s_i + static_cast<int>(randomDouble())) % image_width;
+        int j = (s_j + static_cast<int>(randomDouble())) % image_height;
         vec3 noise = precomputed_noise[i][j];
 
         auto px = ((s_i + noise.x) * recip_sqrt_spp) - 0.5;
@@ -258,9 +242,9 @@ class camera {
         return vec3(px, py, 0);
     }
 
-    point3 defocus_disk_sample() const {
+    point3 defocusDiskSample() const {
         // Returns a random point in the camera defocus disk.
-        auto p = random_in_unit_disk();
+        auto p = randomInUnitDisk();
         return center + (p.x * defocus_disk_u) + (p.y * defocus_disk_v);
     }
 
@@ -269,10 +253,10 @@ class camera {
         front.x = std::cos(radians(yaw)) * std::cos(radians(pitch));
         front.y = std::sin(radians(pitch));
         front.z = std::sin(radians(yaw)) * std::cos(radians(pitch));
-        front = unit_vector(front);
+        front = unitVector(front);
 
-        w = unit_vector(lookfrom - (lookfrom + front));
-        u = unit_vector(cross(vup, w));
+        w = unitVector(lookfrom - (lookfrom + front));
+        u = unitVector(cross(vup, w));
         v = cross(w, u);
 
         auto theta = radians(vfov);
@@ -287,19 +271,19 @@ class camera {
         pixel_delta_v = vertical / image_height;
     }
 
-    color ray_color(const ray &r, color background, int depth,
-                    const hittable &world, const hittable &lights) const {
+    color rayColor(const Ray &r, color background, int depth,
+                   const HitTable &world, const HitTable &lights) const {
         if (depth <= 0) {
             return color(0, 0, 0);
         }
 
-        hit_record rec;
+        HitRecord rec;
 
-        if (!world.hit(r, interval(0.001, infinity), rec)) {
+        if (!world.hit(r, Interval(0.001, infinity), rec)) {
             return background;
         }
 
-        scatter_record srec;
+        ScatterRecord srec;
         color color_from_emission =
             rec.mat_ptr->emitted(r, rec, rec.u, rec.v, rec.p);
 
@@ -308,20 +292,20 @@ class camera {
         }
 
         if (srec.skip_pdf) {
-            return srec.attenuation * ray_color(srec.skip_pdf_ray, background,
-                                                depth - 1, world, lights);
+            return srec.attenuation * rayColor(srec.skip_pdf_ray, background,
+                                               depth - 1, world, lights);
         }
 
-        auto light_ptr = make_shared<hittable_pdf>(lights, rec.p);
-        mixture_pdf p(light_ptr, srec.pdf_ptr);
+        auto light_ptr = make_shared<HittablePDF>(lights, rec.p);
+        MixturePDF p(light_ptr, srec.pdf_ptr);
 
-        ray scattered = ray(rec.p, p.generate(), r.time());
+        Ray scattered(rec.p, p.generate(), r.time());
         auto pdf_val = p.value(scattered.direction());
 
-        double scattering_pdf = rec.mat_ptr->scattering_pdf(r, rec, scattered);
+        double scattering_pdf = rec.mat_ptr->scatteringPDF(r, rec, scattered);
 
         color sample_color =
-            ray_color(scattered, background, depth - 1, world, lights);
+            rayColor(scattered, background, depth - 1, world, lights);
         color color_from_scatter =
             (srec.attenuation * scattering_pdf * sample_color) / pdf_val;
 

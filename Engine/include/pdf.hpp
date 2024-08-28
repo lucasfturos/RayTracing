@@ -3,76 +3,73 @@
 #include "../src/HitTable/hittable_list.hpp"
 #include "onb.hpp"
 
-class pdf {
+class PDF {
   public:
-    virtual ~pdf() {}
+    virtual ~PDF() {}
 
     virtual double value(const vec3 &direction) const = 0;
     virtual vec3 generate() const = 0;
 };
 
-class sphere_pdf : public pdf {
+class SpherePDF : public PDF {
   public:
-    sphere_pdf() {}
+    SpherePDF() {}
 
     double value(const vec3 & /* direction */) const override {
         return 1 / (4 * pi);
     }
 
-    vec3 generate() const override { return random_unit_vector(); }
+    vec3 generate() const override { return randomUnitVector(); }
 };
 
-class cosine_pdf : public pdf {
+class CosinePDF : public PDF {
   public:
-    cosine_pdf(const vec3 &w) { uvw.build_from_w(w); }
+    CosinePDF(const vec3 &w) { uvw.buildFromW(w); }
 
     double value(const vec3 &direction) const override {
-        auto cosine_theta = dot(unit_vector(direction), uvw.w());
+        auto cosine_theta = dot(unitVector(direction), uvw.w());
         return fmax(0, cosine_theta / pi);
     }
 
     vec3 generate() const override {
-        return uvw.local(random_cosine_direction());
+        return uvw.local(randomCosineDirection());
     }
 
   private:
-    onb uvw;
+    ONB uvw;
 };
 
-class hittable_pdf : public pdf {
+class HittablePDF : public PDF {
   public:
-    hittable_pdf(const hittable &objects, const point3 &origin)
+    HittablePDF(const HitTable &objects, const point3 &origin)
         : objects(objects), origin(origin) {}
 
     double value(const vec3 &direction) const override {
-        return objects.pdf_value(origin, direction);
+        return objects.pdfValue(origin, direction);
     }
 
     vec3 generate() const override { return objects.random(origin); }
 
   private:
-    const hittable &objects;
+    const HitTable &objects;
     point3 origin;
 };
 
-class mixture_pdf : public pdf {
+class MixturePDF : public PDF {
   public:
-    mixture_pdf(shared_ptr<pdf> p0, shared_ptr<pdf> p1) {
-        p[0] = p0;
-        p[1] = p1;
-    }
+    MixturePDF(shared_ptr<PDF> p0, shared_ptr<PDF> p1) : p({p0, p1}) {}
 
     double value(const vec3 &direction) const override {
         return 0.5 * p[0]->value(direction) + 0.5 * p[1]->value(direction);
     }
 
     vec3 generate() const override {
-        if (random_double() < 0.5)
+        if (randomDouble() < 0.5)
             return p[0]->generate();
         else
             return p[1]->generate();
     }
 
   private:
-    shared_ptr<pdf> p[2];
+    std::vector<shared_ptr<PDF>> p;
 };

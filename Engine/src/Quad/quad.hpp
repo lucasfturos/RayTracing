@@ -3,22 +3,22 @@
 #include "../../include/constante.hpp"
 #include "../HitTable/hittable_list.hpp"
 
-class quad : public hittable {
+class Quad : public HitTable {
   public:
-    quad(const point3 &Q, const vec3 &u, const vec3 &v,
-         shared_ptr<material> mat);
+    Quad(const point3 &Q, const vec3 &u, const vec3 &v,
+         shared_ptr<Material> mat);
 
-    virtual void set_bounding_box();
+    virtual void setBoundingBox();
 
-    virtual aabb bounding_box() const override;
+    virtual AABB boundingBox() const override;
 
-    virtual bool hit(const ray &r, interval ray_t,
-                     hit_record &rec) const override;
+    virtual bool hit(const Ray &r, Interval ray_t,
+                     HitRecord &rec) const override;
 
-    virtual bool is_interior(double a, double b, hit_record &rec) const;
+    virtual bool isInterior(double a, double b, HitRecord &rec) const;
 
-    virtual double pdf_value(const point3 &origin,
-                             const vec3 &direction) const override;
+    virtual double pdfValue(const point3 &origin,
+                            const vec3 &direction) const override;
 
     virtual vec3 random(const point3 &origin) const override;
 
@@ -28,39 +28,37 @@ class quad : public hittable {
     vec3 normal;
     double D;
     double area;
-    shared_ptr<material> mat;
-    aabb bbox;
+    shared_ptr<Material> mat;
+    AABB bbox;
 };
 
-inline shared_ptr<hittable_list> box(const point3 &a, const point3 &b,
-                                     shared_ptr<material> mat) {
+inline shared_ptr<HittableList> box(const point3 &a, const point3 &b,
+                                    shared_ptr<Material> mat) {
     // Returns the 3D box (six sides) that contains the two opposite vertices a
     // & b.
 
-    auto sides = make_shared<hittable_list>();
+    auto sides = make_shared<HittableList>();
 
     // Construct the two opposite vertices with the minimum and maximum
     // coordinates.
-    auto min =
-        point3(std::min(a.x, b.x), std::min(a.y, b.y), std::min(a.z, b.z));
-    auto max =
-        point3(std::max(a.x, b.x), std::max(a.y, b.y), std::max(a.z, b.z));
+    point3 min(std::min(a.x, b.x), std::min(a.y, b.y), std::min(a.z, b.z));
+    point3 max(std::max(a.x, b.x), std::max(a.y, b.y), std::max(a.z, b.z));
 
-    auto dx = vec3(max.x - min.x, 0, 0);
-    auto dy = vec3(0, max.y - min.y, 0);
-    auto dz = vec3(0, 0, max.z - min.z);
+    vec3 dx(max.x - min.x, 0, 0);
+    vec3 dy(0, max.y - min.y, 0);
+    vec3 dz(0, 0, max.z - min.z);
 
-    sides->add(make_shared<quad>(point3(min.x, min.y, max.z), dx, dy,
+    sides->add(make_shared<Quad>(point3(min.x, min.y, max.z), dx, dy,
                                  mat)); // front
-    sides->add(make_shared<quad>(point3(max.x, min.y, max.z), -dz, dy,
+    sides->add(make_shared<Quad>(point3(max.x, min.y, max.z), -dz, dy,
                                  mat)); // right
-    sides->add(make_shared<quad>(point3(max.x, min.y, min.z), -dx, dy,
+    sides->add(make_shared<Quad>(point3(max.x, min.y, min.z), -dx, dy,
                                  mat)); // back
-    sides->add(make_shared<quad>(point3(min.x, min.y, min.z), dz, dy,
+    sides->add(make_shared<Quad>(point3(min.x, min.y, min.z), dz, dy,
                                  mat)); // left
-    sides->add(make_shared<quad>(point3(min.x, max.y, max.z), dx, -dz,
+    sides->add(make_shared<Quad>(point3(min.x, max.y, max.z), dx, -dz,
                                  mat)); // top
-    sides->add(make_shared<quad>(point3(min.x, min.y, min.z), dx, dz,
+    sides->add(make_shared<Quad>(point3(min.x, min.y, min.z), dx, dz,
                                  mat)); // bottom
 
     return sides;

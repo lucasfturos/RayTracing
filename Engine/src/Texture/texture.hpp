@@ -3,18 +3,18 @@
 #include "../../include/constante.hpp"
 #include "../../include/perlin.hpp"
 
-class texture {
+class Texture {
   public:
     virtual color value(double u, double v, const point3 &p) const = 0;
 };
 
-class solid_color : public texture {
+class SolidColor : public Texture {
   public:
-    solid_color() {}
-    solid_color(color c) : color_value(c) {}
+    SolidColor() {}
+    SolidColor(color c) : color_value(c) {}
 
-    solid_color(double red, double green, double blue)
-        : solid_color(color(red, green, blue)) {}
+    SolidColor(double red, double green, double blue)
+        : SolidColor(color(red, green, blue)) {}
 
     virtual color value(double /* u */, double /* v */,
                         const vec3 & /* p */) const override {
@@ -25,15 +25,14 @@ class solid_color : public texture {
     color color_value;
 };
 
-class checker_texture : public texture {
+class CheckerTexture : public Texture {
   public:
-    checker_texture() {}
-    checker_texture(shared_ptr<texture> _even, shared_ptr<texture> _odd)
+    CheckerTexture() {}
+    CheckerTexture(shared_ptr<Texture> _even, shared_ptr<Texture> _odd)
         : even(_even), odd(_odd) {}
 
-    checker_texture(color c1, color c2)
-        : even(make_shared<solid_color>(c1)),
-          odd(make_shared<solid_color>(c2)) {}
+    CheckerTexture(color c1, color c2)
+        : even(make_shared<SolidColor>(c1)), odd(make_shared<SolidColor>(c2)) {}
 
     virtual color value(double u, double v, const point3 &p) const override {
         auto sines{std::sin(10 * p.x) * std::sin(10 * p.y) *
@@ -46,14 +45,14 @@ class checker_texture : public texture {
     }
 
   public:
-    shared_ptr<texture> even;
-    shared_ptr<texture> odd;
+    shared_ptr<Texture> even;
+    shared_ptr<Texture> odd;
 };
 
-class noise_texture : public texture {
+class NoiseTexture : public Texture {
   public:
-    noise_texture() {}
-    noise_texture(double sc) : scale(sc) {}
+    NoiseTexture() {}
+    NoiseTexture(double sc) : scale(sc) {}
 
     virtual color value(double /* u */, double /* v */,
                         const point3 &p) const override {
@@ -73,20 +72,20 @@ class noise_texture : public texture {
     }
 
   public:
-    perlin noise;
+    Perlin noise;
     double scale;
 };
 
-class image_texture : public texture {
+class ImageTexture : public Texture {
   public:
     const static int bytes_per_pixel = 4;
 
-    image_texture()
+    ImageTexture()
         : data(nullptr), width(0), height(0), bytes_per_scanline(0) {}
 
-    image_texture(const char *filename);
+    ImageTexture(const char *filename);
 
-    ~image_texture();
+    ~ImageTexture();
 
     virtual color value(double u, double v, const vec3 &p) const override;
 

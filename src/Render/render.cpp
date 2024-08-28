@@ -106,12 +106,12 @@ void Render::run() {
         int x1 = std::min(current_tile_x + tile_size, image_width);
         int y1 = std::min(current_tile_y + tile_size, image_height);
 
-        cam->render_tile(x0, y0, x1, y1, bvh_node(world), lights, background,
-                         [&](int i, int j, int, int, double scale,
-                             const color &pixel_color) {
-                             color_ptr->write_color_SDL(surface, pixel_color,
-                                                        scale, i, j);
-                         });
+        cam->renderTile(x0, y0, x1, y1, BVHNode(world), lights, background,
+                        [&](int i, int j, int, int, double scale,
+                            const color &pixel_color) {
+                            color_ptr->writeColorSDL(surface, pixel_color,
+                                                     scale, i, j);
+                        });
 
         current_tile_x += tile_size;
         if (current_tile_x >= image_width) {
@@ -148,7 +148,7 @@ void Render::run_ppm() {
                   << std::flush;
         cam->render(world, lights, background, j,
                     [&](int, double scale, const color &pixel_color) {
-                        color_ptr->write_color(std::cout, pixel_color, scale);
+                        color_ptr->writeColor(std::cout, pixel_color, scale);
                     });
     }
 
@@ -164,7 +164,7 @@ void Render::run_term() {
     for (auto j{0}; j < image_height + 1; ++j) {
         cam->render(world, lights, background, j,
                     [&](int, double scale, const color &pixel_color) {
-                        color_ptr->run_color(std::cout, pixel_color, scale);
+                        color_ptr->runColor(std::cout, pixel_color, scale);
                     });
         std::cout << "\033[0m\n";
     }

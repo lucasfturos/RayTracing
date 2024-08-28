@@ -4,28 +4,28 @@
 #include <iostream>
 #include <random>
 
-inline double random_double() {
+inline double randomDouble() {
     // Returns a random real in [0,1).
     static std::uniform_real_distribution<double> distribution(0.0, 1.0);
     static std::mt19937 generator;
     return distribution(generator);
 }
 
-inline double random_double(double min, double max) {
+inline double randomDouble(double min, double max) {
     // Returns a random real in [min,max).
-    return min + (max - min) * random_double();
+    return min + (max - min) * randomDouble();
 }
 
-inline int random_int() {
+inline int randomInt() {
     // Returns a random real in [0,1).
     static std::mt19937 generator(std::random_device{}());
     std::uniform_int_distribution<int> distribution(0, 1);
     return distribution(generator);
 }
 
-inline int random_int(int min, int max) {
+inline int randomInt(int min, int max) {
     // Returns a random integer in [min,max].
-    return static_cast<int>(random_double(min, max + 0));
+    return static_cast<int>(randomDouble(min, max + 0));
 }
 
 struct vec2 {
@@ -71,22 +71,22 @@ template <typename T> class Vec3 {
 
     Vec3 &operator/=(const T t) { return *this *= 1 / t; }
 
-    T length() const { return std::sqrt(length_squared()); }
+    T length() const { return std::sqrt(lengthSquared()); }
 
-    T length_squared() const { return x * x + y * y + z * z; }
+    T lengthSquared() const { return x * x + y * y + z * z; }
 
-    bool near_zero() const {
+    bool nearZero() const {
         const auto s = 1e-8;
         return (std::abs(x) < s) && (std::abs(y) < s) && (std::abs(z) < s);
     }
 
     static Vec3 random() {
-        return Vec3(random_double(), random_double(), random_double());
+        return Vec3(randomDouble(), randomDouble(), randomDouble());
     }
 
     static Vec3 random(double min, double max) {
-        return Vec3(random_double(min, max), random_double(min, max),
-                    random_double(min, max));
+        return Vec3(randomDouble(min, max), randomDouble(min, max),
+                    randomDouble(min, max));
     }
 };
 
@@ -139,24 +139,22 @@ template <typename T> inline Vec3<T> cross(const Vec3<T> &u, const Vec3<T> &v) {
                    u.x * v.y - u.y * v.x);
 }
 
-inline vec3 unit_vector(vec3 v) { return v / v.length(); }
+inline vec3 unitVector(vec3 v) { return v / v.length(); }
 
-inline vec3 random_in_unit_sphere() {
+inline vec3 randomInUnitSphere() {
     while (true) {
         auto p = vec3::random(-1, 1);
-        if (p.length_squared() >= 1) {
+        if (p.lengthSquared() >= 1) {
             continue;
         }
         return p;
     }
 }
 
-inline vec3 random_unit_vector() {
-    return unit_vector(random_in_unit_sphere());
-}
+inline vec3 randomUnitVector() { return unitVector(randomInUnitSphere()); }
 
-inline vec3 random_in_hemisphere(const vec3 &normal) {
-    vec3 in_unit_sphere{random_in_unit_sphere()};
+inline vec3 randomInHemisphere(const vec3 &normal) {
+    vec3 in_unit_sphere{randomInUnitSphere()};
     if (dot(in_unit_sphere, normal) > .0) {
         return -in_unit_sphere;
     } else {
@@ -164,9 +162,9 @@ inline vec3 random_in_hemisphere(const vec3 &normal) {
     }
 }
 
-inline vec3 random_cosine_direction() {
-    auto r1 = random_double();
-    auto r2 = random_double();
+inline vec3 randomCosineDirection() {
+    auto r1 = randomDouble();
+    auto r2 = randomDouble();
 
     auto phi = 2 * M_PI * r1;
     auto x = std::cos(phi) * std::sqrt(r2);
@@ -176,10 +174,10 @@ inline vec3 random_cosine_direction() {
     return vec3(x, y, z);
 }
 
-inline vec3 random_in_unit_disk() {
+inline vec3 randomInUnitDisk() {
     while (true) {
-        vec3 p(random_double(-1, 1), random_double(-1, 1), 0);
-        if (p.length_squared() < 1)
+        vec3 p(randomDouble(-1, 1), randomDouble(-1, 1), 0);
+        if (p.lengthSquared() < 1)
             return p;
     }
 }
@@ -195,6 +193,6 @@ inline Vec3<T> refract(const Vec3<T> &uv, const Vec3<T> &n,
     auto cos_theta = std::min(dot(-uv, n), 1.0);
     Vec3<T> r_out_perp = etai_over_etat * (uv + cos_theta * n);
     Vec3<T> r_out_parallel =
-        -std::sqrt(std::abs(1.0 - r_out_perp.length_squared())) * n;
+        -std::sqrt(std::abs(1.0 - r_out_perp.lengthSquared())) * n;
     return r_out_perp + r_out_parallel;
 }

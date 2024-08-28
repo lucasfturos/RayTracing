@@ -2,9 +2,9 @@
 
 #include "constante.hpp"
 
-class onb {
+class ONB {
   public:
-    onb() {}
+    ONB() : axis(3) {}
 
     vec3 operator[](int i) const { return axis[i]; }
     vec3 &operator[](int i) { return axis[i]; }
@@ -21,10 +21,10 @@ class onb {
         return a.x * u() + a.y * v() + a.z * w();
     }
 
-    void build_from_w(const vec3 &w) {
-        vec3 unit_w = unit_vector(w);
+    void buildFromW(const vec3 &w) {
+        vec3 unit_w = unitVector(w);
         vec3 a = (std::abs(unit_w.x) > 0.9) ? vec3(0, 1, 0) : vec3(1, 0, 0);
-        vec3 v = unit_vector(cross(unit_w, a));
+        vec3 v = unitVector(cross(unit_w, a));
         vec3 u = cross(unit_w, v);
         axis[0] = u;
         axis[1] = v;
@@ -32,5 +32,5 @@ class onb {
     }
 
   public:
-    vec3 axis[3];
+    std::vector<vec3> axis;
 };

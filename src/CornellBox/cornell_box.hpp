@@ -6,12 +6,12 @@
 class CornellBox {
   private:
     // Material
-    shared_ptr<metal> metal_tex;
-    shared_ptr<lambertian> red;
-    shared_ptr<lambertian> white;
-    shared_ptr<lambertian> green;
-    shared_ptr<lambertian> blue;
-    shared_ptr<diffuse_light> light;
+    shared_ptr<Metal> metal_tex;
+    shared_ptr<Lambertian> red;
+    shared_ptr<Lambertian> white;
+    shared_ptr<Lambertian> green;
+    shared_ptr<Lambertian> blue;
+    shared_ptr<DiffuseLight> light;
 
   public:
     Scene cornell_box();

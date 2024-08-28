@@ -1,17 +1,17 @@
 #include "constant_medium.hpp"
 
-bool constant_medium::hit(const ray &r, interval ray_t, hit_record &rec) const {
+bool ConstantMedium::hit(const Ray &r, Interval ray_t, HitRecord &rec) const {
     // Print occasional samples when debugging. To enable, set enableDebug true.
     const bool enableDebug = false;
-    const bool debugging = enableDebug && random_double() < eps;
+    const bool debugging = enableDebug && randomDouble() < eps;
 
-    hit_record rec1, rec2;
+    HitRecord rec1, rec2;
 
-    if (!boundary->hit(r, interval(-infinity, infinity), rec1)) {
+    if (!boundary->hit(r, Interval(-infinity, infinity), rec1)) {
         return false;
     }
 
-    if (!boundary->hit(r, interval(rec1.t + eps, infinity), rec2)) {
+    if (!boundary->hit(r, Interval(rec1.t + eps, infinity), rec2)) {
         return false;
     }
 
@@ -36,7 +36,7 @@ bool constant_medium::hit(const ray &r, interval ray_t, hit_record &rec) const {
 
     const double ray_length = r.direction().length();
     const double distance_inside_boundary = (rec2.t - rec1.t) * ray_length;
-    const double hit_distance = neg_inv_density * log(random_double());
+    const double hit_distance = neg_inv_density * std::log(randomDouble());
 
     if (hit_distance > distance_inside_boundary) {
         return false;
