@@ -13,3 +13,5 @@
 # CMakelists
 **/build/
 build/
+
+.cache
