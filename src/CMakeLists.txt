@@ -31,17 +31,15 @@ find_package(SDL2 REQUIRED)
 # Find Threads libraries
 find_package(Threads REQUIRED)
 
-include_directories(${SDL2_INCLUDE_DIRS})
-
-target_link_libraries(${PROJECT_NAME}
-  PRIVATE Threads::Threads
-  PRIVATE ${SDL2_LIBRARIES}
-  PRIVATE engine_lib
+target_include_directories(${PROJECT_NAME} PRIVATE
+  ${SDL2_INCLUDE_DIRS}
+  ${CMAKE_CURRENT_SOURCE_DIR}/
 )
 
-# Specifies include directories to use when compiling a given target
-target_include_directories(${PROJECT_NAME} 
-  PRIVATE src 
+target_link_libraries(${PROJECT_NAME} PRIVATE
+  Threads::Threads
+  ${SDL2_LIBRARIES}
+  Engine_lib
 )
 
 # -------------------------------------------------------------------

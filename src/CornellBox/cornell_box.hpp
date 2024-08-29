@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../../Engine/include/material.hpp"
-#include "../../Engine/src/BVH/bvh.hpp"
+#include "BVH/bvh.hpp"
+#include "render/material.hpp"
 
 class CornellBox {
   private:

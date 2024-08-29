@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../../Engine/include/camera.hpp"
-#include "../../Engine/src/Color/color.hpp"
+#include "Color/color.hpp"
+#include "Camera/camera.hpp"
 #include <SDL2/SDL.h>
 
 class Render {

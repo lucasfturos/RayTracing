@@ -1,7 +1,7 @@
 #include "cornell_box.hpp"
-#include "../../Engine/src/Constant_Medium/constant_medium.hpp"
-#include "../../Engine/src/Quad/quad.hpp"
-#include "../../Engine/src/Sphere/sphere.hpp"
+#include "Constant_Medium/constant_medium.hpp"
+#include "Quad/quad.hpp"
+#include "Sphere/sphere.hpp"
 
 Scene CornellBox::cornell_smoke() {
     HittableList world;

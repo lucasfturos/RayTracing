@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../../Engine/include/material.hpp"
-#include "../../Engine/src/BVH/bvh.hpp"
-#include "../../Engine/src/ReadObjectFile/read_object_file.hpp"
+#include "BVH/bvh.hpp"
+#include "ReadObjectFile/read_object_file.hpp"
+#include "render/material.hpp"
 
 class Object {
     // Read Object File

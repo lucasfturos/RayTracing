@@ -13,6 +13,7 @@ set(PROJECT_NAME                      # Define all project info
 project(${PROJECT_NAME})              # Create project "Ray"
 
 set(CMAKE_CXX_STANDARD 20)            # Enable c++20 standard
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # List all the image files
 set(RESOURCES_DIRECTORY 
