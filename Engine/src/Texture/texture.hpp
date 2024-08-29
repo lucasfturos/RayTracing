@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../../include/constante.hpp"
-#include "../../include/perlin.hpp"
+#include "math/perlin.hpp"
+#include "utils/constante.hpp"
 
 class Texture {
   public:

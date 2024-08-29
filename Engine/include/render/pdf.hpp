@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../src/HitTable/hittable_list.hpp"
-#include "onb.hpp"
+#include "HitTable/hittable_list.hpp"
+#include "math/onb.hpp"
 
 class PDF {
   public:

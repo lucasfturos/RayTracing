@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../AABB/aabb.hpp"
+#include "AABB/aabb.hpp"
 
 class Material;
 

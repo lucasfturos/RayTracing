@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../HitTable/hittable.hpp"
+#include "HitTable/hittable.hpp"
 
 class Triangle : public HitTable {
   public:

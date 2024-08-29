@@ -1,5 +1,5 @@
 #include "color.hpp"
-#include "../Interval/interval.hpp"
+#include "Interval/interval.hpp"
 #include "table_color.hpp"
 
 static const Interval intensity(0.0, 0.999);

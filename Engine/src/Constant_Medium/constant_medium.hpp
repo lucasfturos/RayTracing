@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../../include/constante.hpp"
-#include "../../include/material.hpp"
-#include "../HitTable/hittable.hpp"
-#include "../Texture/texture.hpp"
+#include "HitTable/hittable.hpp"
+#include "Texture/texture.hpp"
+#include "render/material.hpp"
+#include "utils/constante.hpp"
 
 class ConstantMedium : public HitTable {
   public:

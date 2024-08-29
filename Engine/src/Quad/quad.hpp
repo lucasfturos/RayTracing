@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../../include/constante.hpp"
-#include "../HitTable/hittable_list.hpp"
+#include "HitTable/hittable_list.hpp"
+#include "utils/constante.hpp"
 
 class Quad : public HitTable {
   public:

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "constante.hpp"
+#include "utils/constante.hpp"
 
 class Perlin {
   public:

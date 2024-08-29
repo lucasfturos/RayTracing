@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../src/Texture/texture.hpp"
+#include "Texture/texture.hpp"
 #include "pdf.hpp"
-#include "ray.hpp"
+#include "utils/ray.hpp"
 
 class ScatterRecord {
   public:

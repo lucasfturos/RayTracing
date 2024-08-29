@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../../include/constante.hpp"
-#include "../../include/onb.hpp"
-#include "../HitTable/hittable.hpp"
+#include "HitTable/hittable.hpp"
+#include "math/onb.hpp"
+#include "utils/constante.hpp"
 
 class Sphere : public HitTable {
   public:
@@ -38,7 +38,8 @@ class Sphere : public HitTable {
     static vec3 randomToSphere(double radius, double distance_squared) {
         auto r1 = randomDouble();
         auto r2 = randomDouble();
-        auto z = 1 + r2 * (std::sqrt(1 - radius * radius / distance_squared) - 1);
+        auto z =
+            1 + r2 * (std::sqrt(1 - radius * radius / distance_squared) - 1);
 
         auto phi = 2 * pi * r1;
         auto x = std::cos(phi) * std::sqrt(1 - z * z);

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../HitTable/hittable_list.hpp"
+#include "HitTable/hittable_list.hpp"
 
 class BVHNode : public HitTable {
   public:

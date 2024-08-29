@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../include/constante.hpp"
+#include "utils/constante.hpp"
 
 class AABB {
   public:

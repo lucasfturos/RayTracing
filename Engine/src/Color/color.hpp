@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../../include/threadpool.hpp"
-#include "../../include/vec3.hpp"
+#include "math/vec3.hpp"
+#include "utils/threadpool.hpp"
 
 #include <SDL2/SDL.h>
 #include <iostream>
